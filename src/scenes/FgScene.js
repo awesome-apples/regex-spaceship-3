@@ -4,6 +4,7 @@ import Enemy from "../entity/Enemy";
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
+import Mushroom from "../entity/Mushroom";
 
 /**
  *
@@ -30,6 +31,10 @@ export default class FgScene extends Phaser.Scene {
     this.load.spritesheet("baby", "assets/spriteSheets/baby_run.png", {
       frameWidth: 18,
       frameHeight: 32,
+    });
+    this.load.spritesheet("mushroom", "assets/spriteSheets/mushroom.png", {
+      frameWidth: 35,
+      frameHeight: 45,
     });
     this.load.image("brandon", "assets/sprites/brandon.png");
     this.load.image("gun", "assets/sprites/gun.png");
@@ -95,11 +100,10 @@ export default class FgScene extends Phaser.Scene {
     ///// SPRITES
 
     this.player = new Player(this, 100, 200, "bubble").setScale(2);
-
     this.enemy = new Enemy(this, 600, 400, "brandon").setScale(0.25);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
-
+    this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
     //PHYSICS
     this.physics.add.collider(this.player, this.groundGroup);
     this.physics.add.collider(this.baby, this.groundGroup);
@@ -107,6 +111,9 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.collider(this.player, this.enemy);
     this.physics.add.collider(this.baby, this.enemy);
     this.physics.add.collider(this.gun, this.groundGroup);
+    this.physics.add.collider(this.mushroom, this.groundGroup);
+    this.physics.add.collider(this.mushroom, this.player);
+    this.physics.add.collider(this.mushroom, this.baby);
     this.lasers = this.physics.add.group({
       classType: Laser,
       runChildUpdate: true,
@@ -126,6 +133,7 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.overlap(
       this.player,
       this.baby,
+      this.mushroom,
       this.gun,
       this.collectGun,
       null,
@@ -149,6 +157,7 @@ export default class FgScene extends Phaser.Scene {
     // << DO UPDATE LOGIC HERE >>
     this.player.update(this.cursors);
     this.baby.update(this.cursors, this.jumpSound);
+    this.mushroom.update();
     this.gun.update(
       time,
       this.player,
@@ -187,13 +196,13 @@ export default class FgScene extends Phaser.Scene {
   createAnimations() {
     this.anims.create({
       key: "run",
-      frames: this.anims.generateFrameNumbers("bubble", { start: 1, end: 6 }),
+      frames: this.anims.generateFrameNumbers("bubble", { start: 1, end: 5 }),
       frameRate: 10,
       repeat: -1,
     });
     this.anims.create({
       key: "jump",
-      frames: [{ key: "bubble", frame: 2 }],
+      frames: [{ key: "bubble", frame: 6 }],
       frameRate: 20,
     });
     this.anims.create({
@@ -203,7 +212,7 @@ export default class FgScene extends Phaser.Scene {
     });
     this.anims.create({
       key: "idleArmed",
-      frames: [{ key: "bubble", frame: 6 }],
+      frames: [{ key: "bubble", frame: 2 }],
       frameRate: 20,
     });
     this.anims.create({
@@ -225,6 +234,26 @@ export default class FgScene extends Phaser.Scene {
     this.anims.create({
       key: "babyidleArmed",
       frames: [{ key: "baby", frame: 6 }],
+      frameRate: 20,
+    });
+    //animations for mushroom
+    this.anims.create({
+      key: "mushroomrun",
+      frames: this.anims.generateFrameNumbers("mushroom", {
+        start: 1,
+        end: 6,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "mushroomidle",
+      frames: [{ key: "mushroom", frame: 1 }],
+      frameRate: 20,
+    });
+    this.anims.create({
+      key: "mushroomjump",
+      frames: [{ key: "mushroom", frame: 6 }],
       frameRate: 20,
     });
   }
