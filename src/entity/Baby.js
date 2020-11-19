@@ -1,6 +1,7 @@
 import "phaser";
+import Phaser from "phaser";
 
-export default class Player extends Phaser.Physics.Arcade.Sprite {
+export default class Baby extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, spriteKey) {
     super(scene, x, y, spriteKey);
 
@@ -20,7 +21,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       }
       this.setVelocityX(-360);
       if (this.body.touching.down) {
-        this.play("run", true);
+        this.play("babyrun", true);
       }
     }
     //move right
@@ -31,7 +32,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
       }
       this.setVelocityX(360);
       if (this.body.touching.down) {
-        this.play("run", true);
+        this.play("babyrun", true);
       }
     }
 
@@ -39,9 +40,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
     else {
       this.setVelocityX(0);
       if (!this.armed) {
-        this.play("idleUnarmed");
+        this.play("babyidleUnarmed");
       } else {
-        this.play("idleArmed");
+        this.play("babyidleArmed");
       }
     }
   }
@@ -52,7 +53,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
   }
   updateInAir() {
     if (!this.body.touching.down) {
-      this.play("jump");
+      this.play("babyjump");
     }
   }
   // Check which controller button is being pushed and execute movement & animation
