@@ -13,9 +13,9 @@ import Baby from "../entity/Baby";
  * @param {number} scrollFactor
  */
 
-export default class FgScene extends Phaser.Scene {
+export default class LvlTwoScene extends Phaser.Scene {
   constructor() {
-    super("FgScene");
+    super("LvlTwoScene");
     this.collectGun = this.collectGun.bind(this);
     this.fireLaser = this.fireLaser.bind(this);
     this.hit = this.hit.bind(this);
@@ -37,15 +37,19 @@ export default class FgScene extends Phaser.Scene {
 
     this.load.image(
       "far-buildings",
-      "assets/backgrounds/cyberpunk/long/far-buildings.png"
+      "assets/backgrounds/industrial/layers/five.png"
     );
     this.load.image(
-      "back-buildings",
-      "assets/backgrounds/cyberpunk/long/back-buildings.png"
+      "back-buildings-one",
+      "assets/backgrounds/industrial/layers/four.png"
+    );
+    this.load.image(
+      "back-buildings-two",
+      "assets/backgrounds/industrial/layers/three.png"
     );
     this.load.image(
       "foreground",
-      "assets/backgrounds/cyberpunk/long/foreground.png"
+      "assets/backgrounds/industrial/layers/two.png"
     );
     this.load.image("ground", "assets/backgrounds/cyberpunk/long/ground.png");
 
@@ -66,13 +70,13 @@ export default class FgScene extends Phaser.Scene {
     const w = this.textures.get(texture).getSourceImage().width;
     const count = Math.ceil(totalWidth / w) * scrollFactor;
 
-    let x = -150;
+    let x = 530;
     for (let i = 0; i < count; ++i) {
       const m = this.add
-        .image(x, game.config.height * 0.5, texture)
-        .setScale(3.1)
+        .image(x, game.config.height * 0.515, texture)
+        .setScale(3.9)
         .setScrollFactor(scrollFactor);
-      x += m.width * 1.8;
+      x += m.width * 3.9;
     }
   }
 
@@ -85,8 +89,9 @@ export default class FgScene extends Phaser.Scene {
 
     //BACKROUND
     this.createLooped(totalWidth, "far-buildings", 0.08);
-    this.createLooped(totalWidth, "back-buildings", 0.18);
-    this.createLooped(totalWidth, "foreground", 0.23);
+    this.createLooped(totalWidth, "back-buildings-one", 0.18);
+    this.createLooped(totalWidth, "back-buildings-two", 0.22);
+    this.createLooped(totalWidth, "foreground", 0.26);
 
     //GROUND
     this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
