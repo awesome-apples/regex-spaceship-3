@@ -11,19 +11,6 @@ import Laser from "../entity/Laser";
  * @param {string} texture
  * @param {number} scrollFactor
  */
-const createLooped = (scene, totalWidth, texture, scrollFactor) => {
-  const w = scene.textures.get(texture).getSourceImage().width;
-  const count = Math.ceil(totalWidth / w) * scrollFactor;
-
-  let x = -150;
-  for (let i = 0; i < count; ++i) {
-    const m = scene.add
-      .image(x, game.config.height * 0.5, texture)
-      .setScale(3.1)
-      .setScrollFactor(scrollFactor);
-    x += m.width * 1.8;
-  }
-};
 
 export default class FgScene extends Phaser.Scene {
   constructor() {
@@ -72,6 +59,20 @@ export default class FgScene extends Phaser.Scene {
     }
   }
 
+  createLooped(totalWidth, texture, scrollFactor) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    const count = Math.ceil(totalWidth / w) * scrollFactor;
+
+    let x = -150;
+    for (let i = 0; i < count; ++i) {
+      const m = this.add
+        .image(x, game.config.height * 0.5, texture)
+        .setScale(3.1)
+        .setScrollFactor(scrollFactor);
+      x += m.width * 1.8;
+    }
+  }
+
   create() {
     // Create game entities
     // << CREATE GAME ENTITIES HERE >>
@@ -80,32 +81,13 @@ export default class FgScene extends Phaser.Scene {
     const totalWidth = width * 20;
 
     //BACKROUND
-    createLooped(this, totalWidth, "far-buildings", 0.08);
-    createLooped(this, totalWidth, "back-buildings", 0.18);
-    createLooped(this, totalWidth, "foreground", 0.23);
-
-    // this.add
-    //   .image(width * 0.5, height * 0.5, "far-buildings")
-    //   .setScale(3.1)
-    //   .setScrollFactor(0.08);
-
-    // this.add
-    //   .image(width * 0.5, height * 0.5, "back-buildings")
-    //   .setScale(3.1)
-    //   .setScrollFactor(0.18);
-
-    // this.add
-    //   .image(width * 0.5, height * 0.5, "foreground")
-    //   .setScale(3.1)
-    //   .setScrollFactor(0.23);
+    this.createLooped(totalWidth, "far-buildings", 0.08);
+    this.createLooped(totalWidth, "back-buildings", 0.18);
+    this.createLooped(totalWidth, "foreground", 0.23);
 
     //GROUND
     this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
     this.createGround(0, 570, 40, "ground");
-    // this.createGround(600, 540);
-    // this.createGround(1200, 540);
-    // this.createGround(1800, 540);
-    // this.createGround(2600, 540);
 
     //ENTITIES
     this.player = new Player(this, 20, 400, "josh").setScale(0.25);
@@ -162,7 +144,6 @@ export default class FgScene extends Phaser.Scene {
       this.cursors,
       this.fireLaser // Callback fn for creating lasers
     );
-    // this.bg_1.tilePositionX = this.myCam.scrollX * 0.3;
   }
 
   fireLaser(x, y, left) {
