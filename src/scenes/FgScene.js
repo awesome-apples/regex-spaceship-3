@@ -3,6 +3,7 @@ import Ground from "../entity/Ground";
 import Enemy from "../entity/Enemy";
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
+import Baby from "../entity/Baby";
 
 /**
  *
@@ -23,9 +24,13 @@ export default class FgScene extends Phaser.Scene {
   preload() {
     // Preload Sprites
     // << LOAD SPRITES HERE >>
-    this.load.spritesheet("josh", "assets/spriteSheets/josh.png", {
-      frameWidth: 340,
-      frameHeight: 460,
+    this.load.spritesheet("bubble", "assets/spriteSheets/bubble_run.png", {
+      frameWidth: 35,
+      frameHeight: 45,
+    });
+    this.load.spritesheet("baby", "assets/spriteSheets/baby_run.png", {
+      frameWidth: 18,
+      frameHeight: 32,
     });
     // this.load.image("ground", "assets/sprites/ground.png");
     this.load.image("brandon", "assets/sprites/brandon.png");
@@ -88,16 +93,21 @@ export default class FgScene extends Phaser.Scene {
     //GROUND
     this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
     this.createGround(0, 570, 40, "ground");
+    
+    ///// SPRITES
 
-    //ENTITIES
-    this.player = new Player(this, 20, 400, "josh").setScale(0.25);
+    this.player = new Player(this, 100, 200, "bubble").setScale(2);
+
     this.enemy = new Enemy(this, 600, 400, "brandon").setScale(0.25);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
+    this.baby = new Baby(this, 30, 200, "baby").setScale(2);
 
     //PHYSICS
     this.physics.add.collider(this.player, this.groundGroup);
+    this.physics.add.collider(this.baby, this.groundGroup);
     this.physics.add.collider(this.enemy, this.groundGroup);
     this.physics.add.collider(this.player, this.enemy);
+    this.physics.add.collider(this.baby, this.enemy);
     this.physics.add.collider(this.gun, this.groundGroup);
     this.lasers = this.physics.add.group({
       classType: Laser,
@@ -117,6 +127,7 @@ export default class FgScene extends Phaser.Scene {
     //COLLISIONS
     this.physics.add.overlap(
       this.player,
+      this.baby,
       this.gun,
       this.collectGun,
       null,
@@ -138,6 +149,7 @@ export default class FgScene extends Phaser.Scene {
   update(time, delta) {
     // << DO UPDATE LOGIC HERE >>
     this.player.update(this.cursors);
+    this.baby.update(this.cursors);
     this.gun.update(
       time,
       this.player,
@@ -172,28 +184,49 @@ export default class FgScene extends Phaser.Scene {
     laser.setActive(false);
     laser.setVisible(false);
   }
-
+  //animations for player and baby sprites
   createAnimations() {
     this.anims.create({
       key: "run",
-      frames: this.anims.generateFrameNumbers("josh", { start: 17, end: 20 }),
+      frames: this.anims.generateFrameNumbers("bubble", { start: 1, end: 6 }),
       frameRate: 10,
       repeat: -1,
     });
     this.anims.create({
       key: "jump",
-      frames: [{ key: "josh", frame: 17 }],
+      frames: [{ key: "bubble", frame: 2 }],
       frameRate: 20,
     });
     this.anims.create({
       key: "idleUnarmed",
-      frames: [{ key: "josh", frame: 11 }],
-      frameRate: 10,
+      frames: [{ key: "bubble", frame: 1 }],
+      frameRate: 20,
     });
     this.anims.create({
       key: "idleArmed",
-      frames: [{ key: "josh", frame: 6 }],
+      frames: [{ key: "bubble", frame: 6 }],
+      frameRate: 20,
+    });
+    this.anims.create({
+      key: "babyrun",
+      frames: this.anims.generateFrameNumbers("baby", { start: 1, end: 6 }),
       frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "babyjump",
+      frames: [{ key: "baby", frame: 2 }],
+      frameRate: 20,
+    });
+    this.anims.create({
+      key: "babyidleUnarmed",
+      frames: [{ key: "baby", frame: 1 }],
+      frameRate: 20,
+    });
+    this.anims.create({
+      key: "babyidleArmed",
+      frames: [{ key: "baby", frame: 6 }],
+      frameRate: 20,
     });
   }
 
