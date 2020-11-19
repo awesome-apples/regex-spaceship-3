@@ -8,20 +8,10 @@ import Baby from "../entity/Baby";
 /**
  *
  * @param {Phaser.Scene} scene
- * @param {number} count
+ * @param {number} totalWidth
  * @param {string} texture
  * @param {number} scrollFactor
  */
-const createLooped = (scene, count, texture, scrollFactor) => {
-  let x = game.config.width * 0.5;
-  for (let i = 0; i < count; ++i) {
-    const m = scene.add
-      .image(x, game.config.height * 0.5, texture)
-      .setScale(3.1)
-      .setScrollFactor(scrollFactor);
-    x + m.width;
-  }
-};
 
 export default class FgScene extends Phaser.Scene {
   constructor() {
@@ -42,15 +32,11 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 18,
       frameHeight: 32,
     });
-    this.load.image("ground", "assets/sprites/ground.png");
+    // this.load.image("ground", "assets/sprites/ground.png");
     this.load.image("brandon", "assets/sprites/brandon.png");
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laser", "assets/sprites/laserBolt.png");
 
-    // this.load.image(
-    //   "cyberpunk",
-    //   "assets/backgrounds/cyberpunk/cyberpunk-street.png"
-    // );
     this.load.image(
       "far-buildings",
       "assets/backgrounds/cyberpunk/long/far-buildings.png"
@@ -63,62 +49,60 @@ export default class FgScene extends Phaser.Scene {
       "foreground",
       "assets/backgrounds/cyberpunk/long/foreground.png"
     );
+    this.load.image("ground", "assets/backgrounds/cyberpunk/long/ground.png");
 
     // Preload Sounds
     // << LOAD SOUNDS HERE >>
   }
 
-  createGround(x, y) {
-    this.groundGroup.create(x, y, "ground");
+  createGround(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.groundGroup.create(wid, y, texture).setScale(3.1).alpha = 0;
+      wid += w;
+    }
+  }
+
+  createLooped(totalWidth, texture, scrollFactor) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    const count = Math.ceil(totalWidth / w) * scrollFactor;
+
+    let x = -150;
+    for (let i = 0; i < count; ++i) {
+      const m = this.add
+        .image(x, game.config.height * 0.5, texture)
+        .setScale(3.1)
+        .setScrollFactor(scrollFactor);
+      x += m.width * 1.8;
+    }
   }
 
   create() {
     // Create game entities
     // << CREATE GAME ENTITIES HERE >>
-    // this.bg_1 = this.add
-    //   .tileSprite(0, 0, game.config.width, game.config.height, "foreground")
-    //   .setScale(3);
-    // this.bg_1.setOrigin(0, 0);
-    // // fixe it so it won't move when the camera moves.
-    // // Instead we are moving its texture on the update
-    // this.bg_1.setScrollFactor(0);
     const width = game.config.width;
     const height = game.config.height;
+    const totalWidth = width * 20;
 
-    // this.add
-    //   .image(width * 0.5, height * 0.5, "far-buildings")
-    //   .setScale(3.1)
-    //   .setScrollFactor(0.08);
+    //BACKROUND
+    this.createLooped(totalWidth, "far-buildings", 0.08);
+    this.createLooped(totalWidth, "back-buildings", 0.18);
+    this.createLooped(totalWidth, "foreground", 0.23);
 
-    createLooped(this, 4, "far-buildings", 0.08);
-    createLooped(this, 4, "back-buildings", 0.18);
-    createLooped(this, 4, "foreground", 0.23);
-
-    // this.add
-    //   .image(width * 0.5, height * 0.5, "back-buildings")
-    //   .setScale(3.1)
-    //   .setScrollFactor(0.18);
-
-    // this.add
-    //   .image(width * 0.5, height * 0.5, "foreground")
-    //   .setScale(3.1)
-    //   .setScrollFactor(0.23);
-
+    //GROUND
+    this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
+    this.createGround(0, 570, 40, "ground");
+    
     ///// SPRITES
 
     this.player = new Player(this, 100, 200, "bubble").setScale(2);
+
     this.enemy = new Enemy(this, 600, 400, "brandon").setScale(0.25);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
 
     //PHYSICS
-    this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
-    this.createGround(160, 540);
-    this.createGround(600, 540);
-    this.createGround(1200, 540);
-    this.createGround(1800, 540);
-    this.createGround(2600, 540);
-
     this.physics.add.collider(this.player, this.groundGroup);
     this.physics.add.collider(this.baby, this.groundGroup);
     this.physics.add.collider(this.enemy, this.groundGroup);
@@ -137,7 +121,7 @@ export default class FgScene extends Phaser.Scene {
     //CAMERA
     // set workd bounds to allow camera to follow the player
     this.myCam = this.cameras.main;
-    this.myCam.setBounds(0, 0, width * Infinity, height);
+    this.myCam.setBounds(0, 0, width * 20, height);
     this.cameras.main.startFollow(this.player);
 
     //COLLISIONS
@@ -172,7 +156,6 @@ export default class FgScene extends Phaser.Scene {
       this.cursors,
       this.fireLaser // Callback fn for creating lasers
     );
-    // this.bg_1.tilePositionX = this.myCam.scrollX * 0.3;
   }
 
   fireLaser(x, y, left) {
