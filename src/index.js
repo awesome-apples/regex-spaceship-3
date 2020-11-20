@@ -15,22 +15,28 @@ But this hasn't happened yet!
 // Bring in all the scenes
 import "phaser";
 import MainScene from "./scenes/MainScene";
-// import BgScene from "./scenes/BgScene";
 import FgScene from "./scenes/FgScene";
 import LvlTwoScene from "./scenes/LvlTwoScene";
 import LvlThreeScene from "./scenes/LvlThreeScene";
 import LvlFourScene from "./scenes/LvlFourScene";
+import InterludeOne from "./scenes/InterludeOne";
+import InterludeTwo from "./scenes/InterludeTwo";
+import InterludeThree from "./scenes/InterludeThree";
 import config from "./config/config";
 
 class Game extends Phaser.Game {
   constructor() {
     // Add the config file to the game
     super(config);
-
+    //LEVELS
     this.scene.add("FgScene", FgScene);
     this.scene.add("LvlTwoScene", LvlTwoScene);
     this.scene.add("LvlThreeScene", LvlThreeScene);
     this.scene.add("LvlFourScene", LvlFourScene);
+    //INTERLUDES
+    this.scene.add("InterludeOne", InterludeOne);
+    this.scene.add("InterludeTwo", InterludeTwo);
+    this.scene.add("InterludeThree", InterludeThree);
 
     // Add all the scenes
     // << ADD ALL SCENES HERE >>

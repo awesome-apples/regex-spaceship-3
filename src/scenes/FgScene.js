@@ -1,14 +1,13 @@
 import Player from "../entity/Player";
 import Ground from "../entity/Ground";
 import PlatformOne from "../entity/PlatformOne";
-
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
 import Mushroom from "../entity/Mushroom";
 import Floateye from "../entity/Floateye";
 import End from "../entity/End";
-import MainScene from "./MainScene";
+
 /**
  *
  * @param {Phaser.Scene} scene
@@ -125,13 +124,13 @@ export default class FgScene extends Phaser.Scene {
   // }
 
   advanceLevel() {
-    this.scene.start("LvlTwoScene");
+    this.scene.start("InterludeOne");
   }
 
   create() {
     // Create game entities
     // << CREATE GAME ENTITIES HERE >>
-    game.config.level = 1;
+
     const width = game.config.width;
     const height = game.config.height;
     const totalWidth = width * 20;
