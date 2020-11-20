@@ -1,0 +1,19 @@
+import "phaser";
+
+export default class InterludeOne extends Phaser.Scene {
+  constructor() {
+    super("InterludeOne");
+  }
+
+  preload() {
+    this.load.image("lvl2", "assets/titleScreens/lvl2.png");
+  }
+
+  create() {
+    this.add.image(400, 300, "lvl2").setScale(2.5);
+    this.input.on("pointerdown", () => this.scene.start("LvlTwoScene"));
+    // << LOAD BACKGROUND AND FOREGROUND SCENES IN PARALLEL HERE >>
+    // this.scene.launch("BgScene");
+    // this.scene.launch("FgScene");
+  }
+}
