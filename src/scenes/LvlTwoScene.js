@@ -115,7 +115,8 @@ export default class LvlTwoScene extends Phaser.Scene {
     const width = game.config.width;
     const height = game.config.height;
     const totalWidth = width * 20;
-
+    console.log("config points", game.config.points);
+    console.log("config health", game.config.health);
     //BACKROUND
     this.createLooped(totalWidth, "far-buildings2", 0.08);
     this.createLooped(totalWidth, "back-buildings-one2", 0.18);

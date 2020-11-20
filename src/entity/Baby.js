@@ -62,6 +62,7 @@ export default class Baby extends Phaser.Physics.Arcade.Sprite {
     // << INSERT CODE HERE >>
     this.updateMovement(cursors);
     this.updateJump(cursors, jumpSound);
+
     this.updateInAir();
   }
 }
