@@ -2,7 +2,6 @@ import Player from "../entity/Player";
 import Ground from "../entity/Ground";
 import PlatformOne from "../entity/PlatformOne";
 
-
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
@@ -24,8 +23,8 @@ export default class FgScene extends Phaser.Scene {
   constructor() {
     super("FgScene");
     this.collectGun = this.collectGun.bind(this);
-    // this.fireLaser = this.fireLaser.bind(this);
-    // this.hit = this.hit.bind(this);
+    this.fireLaser = this.fireLaser.bind(this);
+    this.hit = this.hit.bind(this);
   }
 
   preload() {
@@ -71,7 +70,9 @@ export default class FgScene extends Phaser.Scene {
 
     //SOUNDS
     this.load.audio("jump", "assets/jump.wav");
-    this.load.audio("achieve", "assets/audio/laser.wav");
+    this.load.audio("achieve", "assets/audio/achieve.wav");
+    this.load.audio("laser", "assets/audio/laser.wav");
+    this.load.audio("kill", "assets/audio/scream.wav");
   }
 
   createGround(x, y, count, texture) {
@@ -160,20 +161,24 @@ export default class FgScene extends Phaser.Scene {
       child.setScale(0.06);
     });
     ///// SPRITES
-    this.player = new Player(this, 100, 200, "bubble").setScale(2);
-    // this.enemy = new Enemy(this, 600, 400, "brandon").setScale(0.25);
+    // this.player = new Player(this, 100, 200, "bubble").setScale(2);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
 
     //PHYSICS
-    this.physics.add.collider(this.player, this.groundGroup);
+    // this.physics.add.collider(this.player, this.groundGroup);
     this.physics.add.collider(this.baby, this.groundGroup);
-
     this.physics.add.collider(this.gun, this.groundGroup);
     this.physics.add.collider(this.mushroom, this.groundGroup);
-    this.physics.add.collider(this.mushroom, this.player);
+    this.physics.add.collider(this.floateye, this.groundGroup);
+    this.physics.add.collider(this.hearts, this.groundGroup);
+    // this.physics.add.collider(this.mushroom, this.player);
+    // this.physics.add.collider(this.floateye, this.player);
+
+    this.physics.add.collider(this.hearts, this.platformGroupOne);
+    this.physics.add.collider(this.baby, this.platformGroupOne);
+
     this.physics.add.collider(this.mushroom, this.baby);
-    this.physics.add.collider(this.floateye, this.player);
     this.physics.add.collider(this.floateye, this.baby);
     // this.physics.add.collider(
     //   this.mushroomGroup,
@@ -203,12 +208,6 @@ export default class FgScene extends Phaser.Scene {
     //   null,
     //   this
     // );
-    this.physics.add.collider(this.floateye, this.groundGroup);
-
-    this.physics.add.collider(this.hearts, this.groundGroup);
-    this.physics.add.collider(this.hearts, this.platformGroupOne);
-    this.physics.add.collider(this.baby, this.platformGroupOne);
-
 
     this.lasers = this.physics.add.group({
       classType: Laser,
@@ -217,16 +216,9 @@ export default class FgScene extends Phaser.Scene {
     });
 
     //COLLISIONS
-    this.physics.add.overlap(
-      this.player,
-      this.baby,
-      this.gun,
-      this.collectGun,
-      null,
-      this
-    );
+    this.physics.add.overlap(this.baby, this.gun, this.collectGun, null, this);
     // When the laser collides with the enemy
-    this.physics.add.overlap(this.lasers, this.enemy, this.hit, null, this);
+    this.physics.add.overlap(this.mushroom, this.lasers, this.hit, null, this);
     this.physics.add.overlap(
       this.baby,
       this.hearts,
@@ -242,8 +234,7 @@ export default class FgScene extends Phaser.Scene {
     // set workd bounds to allow camera to follow the player
     this.myCam = this.cameras.main;
     this.myCam.setBounds(0, 0, width * 20, height);
-    this.cameras.main.startFollow(this.player);
-
+    this.cameras.main.startFollow(this.baby);
 
     //ANIMATIONS
     this.createAnimations();
@@ -251,6 +242,8 @@ export default class FgScene extends Phaser.Scene {
     //SOUNDS
     this.jumpSound = this.sound.add("jump");
     this.heartSound = this.sound.add("achieve");
+    this.laserSound = this.sound.add("laser");
+    this.killSound = this.sound.add("kill");
     // Create collisions for all entities
     // << CREATE COLLISIONS HERE >>
   }
@@ -264,14 +257,14 @@ export default class FgScene extends Phaser.Scene {
   // delta: time elapsed (ms) since last update() call. 16.666 ms @ 60fps
   update(time, delta) {
     // << DO UPDATE LOGIC HERE >>
-    this.player.update(this.cursors);
+
     this.baby.update(this.cursors, this.jumpSound);
     this.mushroom.update();
 
     this.floateye.update();
     this.gun.update(
       time,
-      this.player,
+      this.baby,
       this.cursors,
       this.fireLaser // Callback fn for creating lasers
     );
@@ -279,10 +272,9 @@ export default class FgScene extends Phaser.Scene {
     // this.monsterHit(this.floateyeGroup, player);
   }
 
-  collectHeart(player, star) {
-    star.disableBody(true, true);
+  collectHeart(baby, heart) {
+    heart.disableBody(true, true);
     this.heartSound.play();
-
   }
 
   fireLaser(x, y, left) {
@@ -290,28 +282,29 @@ export default class FgScene extends Phaser.Scene {
     // the laser starts from the gun in the player's hand
     const offsetX = 56;
     const offsetY = 14;
-    const laserX =
-      this.player.x + (this.player.facingLeft ? -offsetX : offsetX);
-    const laserY = this.player.y + offsetY;
-
+    const laserX = this.baby.x + (this.baby.facingLeft ? -offsetX : offsetX);
+    const laserY = this.baby.y + offsetY;
+    this.laserSound.play();
     // Create a laser bullet and scale the sprite down
     const laser = new Laser(
       this,
       laserX,
       laserY,
       "laser",
-      this.player.facingLeft
+      this.baby.facingLeft
     ).setScale(0.25);
     // Add our newly created to the group
     this.lasers.add(laser);
   }
 
   // make the laser inactive and insivible when it hits the enemy
-  //ENEMY LASER INTERACTIONS
-  // hit(enemy, laser) {
-  //   laser.setActive(false);
-  //   laser.setVisible(false);
-  // }
+  // ENEMY LASER INTERACTIONS
+  hit(mushroom, laser) {
+    laser.setActive(false);
+    laser.setVisible(false);
+    mushroom.disableBody(true, true);
+    this.killSound.play();
+  }
   //animations for player and baby sprites
   createAnimations() {
     this.anims.create({
@@ -394,8 +387,8 @@ export default class FgScene extends Phaser.Scene {
     });
   }
 
-  collectGun(player, gun) {
+  collectGun(baby, gun) {
     gun.disableBody(true, true);
-    this.player.armed = true;
+    this.baby.armed = true;
   }
 }
