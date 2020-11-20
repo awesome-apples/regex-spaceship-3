@@ -35,19 +35,19 @@ export default class Mushroom extends Phaser.Physics.Arcade.Sprite {
   //         this.body.setVelocityX(50);
   //     }
   //   }
-  updateMovement(movementInt) {
+  updateMovement() {
     //move left
 
-    if (movementInt > 0) {
-      if (!this.facingLeft) {
-        this.flipX = !this.flipX;
-        this.facingLeft = true;
-      }
-      this.setVelocityX(-5);
-      if (this.body.touching.down) {
-        this.play("mushroomrun", true);
-      }
+    if (!this.facingLeft) {
+      this.flipX = !this.flipX;
+      this.facingLeft = true;
     }
+    console.log("move left mushroom");
+    this.setVelocityX(-5);
+    if (this.body.touching.down) {
+      this.play("mushroomrun", true);
+    }
+
     //move right
     //   else if (movementInt < 6) {
     //     if (this.facingLeft) {
@@ -66,11 +66,11 @@ export default class Mushroom extends Phaser.Physics.Arcade.Sprite {
       this.play("mushroomrun");
     }
   }
-  updateJump(movementInt) {
-    if (movementInt > 12 && this.body.touching.down) {
-      this.setVelocityY(-800);
-    }
-  }
+  //   updateJump(movementInt) {
+  //     if (movementInt > 12 && this.body.touching.down) {
+  //       this.setVelocityY(-800);
+  //     }
+  //   }
   updateInAir() {
     if (!this.body.touching.down) {
       this.play("mushroomjump");
@@ -84,6 +84,7 @@ export default class Mushroom extends Phaser.Physics.Arcade.Sprite {
 
   // Check which controller button is being pushed and execute movement & animation
   update() {
+    this.updateMovement();
     // << INSERT CODE HERE >>
     // this.movement(this.levelNum);
     // this.updateMovement(this.movementInt);

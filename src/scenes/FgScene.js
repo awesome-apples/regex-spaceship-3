@@ -19,13 +19,16 @@ let mushX;
 let mushY;
 let floatX;
 let floatY;
-let gameOver = false;
+
 export default class FgScene extends Phaser.Scene {
   constructor() {
     super("FgScene");
     this.collectGun = this.collectGun.bind(this);
     this.fireLaser = this.fireLaser.bind(this);
     this.hit = this.hit.bind(this);
+
+    this.gameOver = false;
+    this.overlapCollider = 0;
   }
 
   preload() {
@@ -74,7 +77,7 @@ export default class FgScene extends Phaser.Scene {
     );
 
     //SOUNDS
-    this.load.audio("jump", "assets/jump.wav");
+    this.load.audio("jump", "assets/audio/jump.wav");
     this.load.audio("achieve", "assets/audio/achieve.wav");
     this.load.audio("laser", "assets/audio/laser.wav");
     this.load.audio("kill", "assets/audio/scream.wav");
@@ -124,6 +127,7 @@ export default class FgScene extends Phaser.Scene {
   // }
 
   advanceLevel() {
+    console.log("points from inside advance level", game.config.points);
     this.scene.start("InterludeOne");
   }
 
@@ -190,7 +194,6 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.collider(this.hearts, this.platformGroupOne);
     this.physics.add.collider(this.baby, this.platformGroupOne);
 
-    this.physics.add.collider(this.mushroom, this.baby);
     this.physics.add.collider(this.floateye, this.baby);
     // this.physics.add.collider(
     //   this.mushroomGroup,
@@ -231,6 +234,15 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.overlap(this.baby, this.gun, this.collectGun, null, this);
     // When the laser collides with the enemy
     this.physics.add.overlap(this.mushroom, this.lasers, this.hit, null, this);
+
+    this.overlapCollider = this.physics.add.overlap(
+      this.mushroom,
+      this.baby,
+      this.monsterHit,
+      null,
+      this
+    );
+
     this.physics.add.overlap(
       this.baby,
       this.hearts,
@@ -266,12 +278,37 @@ export default class FgScene extends Phaser.Scene {
     // Create collisions for all entities
     // << CREATE COLLISIONS HERE >>
   }
-  // monsterHit(player) {
-  //   this.physics.pause();
-  //   player.setTint(0xff0000);
-  //   player.anims.play("jump");
-  //   gameOver = true;
-  // }
+  monsterHit(mushroom, baby) {
+    baby.anims.play("babyjump");
+    game.config.health -= 0.07;
+    // baby.setTint(0xff000);
+    // let timer = this.time.delayedCall(2000, this.clearRed(baby));
+
+    // this.physics.world.removeCollider(this.overlapCollider);
+    console.log("health", game.config.health);
+
+    if (game.config.health < 1) {
+      this.gameOver = true;
+      baby.setTint(0xff0000);
+      this.physics.pause();
+    }
+  }
+  clearRed(baby) {
+    baby.clearTint();
+  }
+
+  activateCollider(mushroom, baby) {
+    setTimeout(
+      (this.overlapCollider = this.physics.add.overlap(
+        mushroom,
+        baby,
+        this.monsterHit,
+        null,
+        this
+      )),
+      5000
+    );
+  }
   // time: total time elapsed (ms)
   // delta: time elapsed (ms) since last update() call. 16.666 ms @ 60fps
   update(time, delta) {
@@ -293,6 +330,7 @@ export default class FgScene extends Phaser.Scene {
 
   collectHeart(baby, heart) {
     heart.disableBody(true, true);
+    game.config.health++;
     this.heartSound.play();
   }
 
@@ -323,6 +361,7 @@ export default class FgScene extends Phaser.Scene {
     laser.setVisible(false);
     mushroom.disableBody(true, true);
     this.killSound.play();
+    game.config.points++;
   }
   //animations for player and baby sprites
   createAnimations() {

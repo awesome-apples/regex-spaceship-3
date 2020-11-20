@@ -19,6 +19,8 @@ export default class MainScene extends Phaser.Scene {
   // }
 
   create() {
+    game.config.health = 10;
+    game.config.points = 0;
     this.add.image(400, 300, "splash").setScale(2.5);
     this.input.on("pointerdown", () => this.scene.start("FgScene"));
     // << LOAD BACKGROUND AND FOREGROUND SCENES IN PARALLEL HERE >>
