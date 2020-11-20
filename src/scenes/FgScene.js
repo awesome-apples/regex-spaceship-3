@@ -90,17 +90,17 @@ export default class FgScene extends Phaser.Scene {
       x += m.width * 1.8;
     }
   }
-  createMonster(x, y, texture) {
-    if (texture === "mushroom") {
-      x = 650;
-      y = 200;
-      this.mushroomGroup.create(x, y, texture).setScale(2.3);
-    } else if (texture === "floateye") {
-      x = 650;
-      y = 200;
-      this.floateyeGroup.create(x, y, texture).setScale(2.3);
-    }
-  }
+  // createMonster(x, y, texture) {
+  //   if (texture === "mushroom") {
+  //     x = 650;
+  //     y = 200;
+  //     this.mushroomGroup.create(x, y, texture).setScale(2.3);
+  //   } else if (texture === "floateye") {
+  //     x = 650;
+  //     y = 200;
+  //     this.floateyeGroup.create(x, y, texture).setScale(2.3);
+  //   }
+  // }
 
   create() {
     // Create game entities
@@ -117,15 +117,15 @@ export default class FgScene extends Phaser.Scene {
     //GROUND
     this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
     this.createGround(0, 570, 40, "ground");
-    //MUSHROOM GROUP
-    this.mushroomGroup = this.physics.add.group({ classType: Mushroom });
-    //FLOATEYE GROUP
-    this.floateyeGroup = this.physics.add.group({ classType: Floateye });
+    // //MUSHROOM GROUP
+    // this.mushroomGroup = this.physics.add.group({ classType: Mushroom });
+    // //FLOATEYE GROUP
+    // this.floateyeGroup = this.physics.add.group({ classType: Floateye });
     //MUSHROOM
-    this.createMonster(mushX, mushY, "mushroom");
-    this.createMonster(floatX, floatY, "floateye");
-    // this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
-    // this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
+    // this.createMonster(mushX, mushY, "mushroom");
+    // this.createMonster(floatX, floatY, "floateye");
+    this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
+    this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
 
     ///// SPRITES
     this.player = new Player(this, 100, 200, "bubble").setScale(2);
@@ -139,34 +139,38 @@ export default class FgScene extends Phaser.Scene {
 
     this.physics.add.collider(this.gun, this.groundGroup);
     this.physics.add.collider(this.mushroom, this.groundGroup);
-    this.physics.add.collider(
-      this.mushroomGroup,
-      this.player,
-      // monsterHit,
-      null,
-      this
-    );
-    this.physics.add.collider(
-      this.mushroomGroup,
-      this.baby,
-      // monsterHit,
-      null,
-      this
-    );
-    this.physics.add.collider(
-      this.floateyeGroup,
-      this.player,
-      // monsterHit,
-      null,
-      this
-    );
-    this.physics.add.collider(
-      this.floateyeGroup,
-      this.baby,
-      // monsterHit,
-      null,
-      this
-    );
+    this.physics.add.collider(this.mushroom, this.player);
+    this.physics.add.collider(this.mushroom, this.baby);
+    this.physics.add.collider(this.floateye, this.player);
+    this.physics.add.collider(this.floateye, this.baby);
+    // this.physics.add.collider(
+    //   this.mushroomGroup,
+    //   this.player,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+    // this.physics.add.collider(
+    //   this.mushroomGroup,
+    //   this.baby,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+    // this.physics.add.collider(
+    //   this.floateyeGroup,
+    //   this.player,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+    // this.physics.add.collider(
+    //   this.floateyeGroup,
+    //   this.baby,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
     this.physics.add.collider(this.floateye, this.groundGroup);
 
     this.lasers = this.physics.add.group({
