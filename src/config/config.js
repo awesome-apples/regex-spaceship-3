@@ -16,4 +16,5 @@ export default {
       debug: false, // Whether physics engine should run in debug mode
     },
   },
+  level: 1,
 };

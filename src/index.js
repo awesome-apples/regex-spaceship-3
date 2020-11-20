@@ -27,13 +27,14 @@ class Game extends Phaser.Game {
     // Add the config file to the game
     super(config);
 
+    this.scene.add("FgScene", FgScene);
+    this.scene.add("LvlTwoScene", LvlTwoScene);
+    this.scene.add("LvlThreeScene", LvlThreeScene);
+    this.scene.add("LvlFourScene", LvlFourScene);
+
     // Add all the scenes
     // << ADD ALL SCENES HERE >>
     // this.scene.add("BgScene", BgScene);
-    this.scene.add("FgScene", FgScene);
-    // this.scene.add("LvlTwoScene", LvlTwoScene);
-    // this.scene.add("LvlThreeScene", LvlThreeScene);
-    // this.scene.add("LvlFourScene", LvlFourScene);
     this.scene.add("MainScene", MainScene);
 
     // Start the game with the mainscene

@@ -7,6 +7,8 @@ import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
 import Mushroom from "../entity/Mushroom";
 import Floateye from "../entity/Floateye";
+import End from "../entity/End";
+import MainScene from "./MainScene";
 /**
  *
  * @param {Phaser.Scene} scene
@@ -67,6 +69,10 @@ export default class FgScene extends Phaser.Scene {
       "sushi",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-sushi/banner-sushi-1.png"
     );
+    this.load.image(
+      "end",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-arrow.png"
+    );
 
     //SOUNDS
     this.load.audio("jump", "assets/jump.wav");
@@ -118,9 +124,14 @@ export default class FgScene extends Phaser.Scene {
   //   }
   // }
 
+  advanceLevel() {
+    this.scene.start("LvlTwoScene");
+  }
+
   create() {
     // Create game entities
     // << CREATE GAME ENTITIES HERE >>
+    game.config.level = 1;
     const width = game.config.width;
     const height = game.config.height;
     const totalWidth = width * 20;
@@ -142,12 +153,13 @@ export default class FgScene extends Phaser.Scene {
     // this.createMonster(floatX, floatY, "floateye");
     this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
     this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
+    this.end = new End(this, 700, 200, "end");
 
     //PLATFORMS1
-    this.platformGroupOne = this.physics.add.staticGroup({
-      classType: PlatformOne,
-    });
-    this.createPlatformOne(400, 570, 40, "sushi");
+    // this.platformGroupOne = this.physics.add.staticGroup({
+    //   classType: PlatformOne,
+    // });
+    // this.createPlatformOne(400, 570, 40, "sushi");
 
     //HEARTS
     this.hearts = this.physics.add.group({
@@ -172,6 +184,7 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.collider(this.mushroom, this.groundGroup);
     this.physics.add.collider(this.floateye, this.groundGroup);
     this.physics.add.collider(this.hearts, this.groundGroup);
+    this.physics.add.collider(this.end, this.groundGroup);
     // this.physics.add.collider(this.mushroom, this.player);
     // this.physics.add.collider(this.floateye, this.player);
 
@@ -223,6 +236,13 @@ export default class FgScene extends Phaser.Scene {
       this.baby,
       this.hearts,
       this.collectHeart,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      this.baby,
+      this.end,
+      this.advanceLevel,
       null,
       this
     );
