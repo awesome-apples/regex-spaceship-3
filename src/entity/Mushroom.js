@@ -86,8 +86,8 @@ export default class Mushroom extends Phaser.Physics.Arcade.Sprite {
   update() {
     // << INSERT CODE HERE >>
     // this.movement(this.levelNum);
-    this.updateMovement(this.movementInt);
-    this.updateJump(this.movementInt);
-    this.updateInAir();
+    // this.updateMovement(this.movementInt);
+    // this.updateJump(this.movementInt);
+    // this.updateInAir();
   }
 }

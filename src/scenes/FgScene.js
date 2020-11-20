@@ -1,6 +1,8 @@
 import Player from "../entity/Player";
 import Ground from "../entity/Ground";
-// import Enemy from "../entity/Enemy";
+import PlatformOne from "../entity/PlatformOne";
+
+
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
@@ -27,8 +29,7 @@ export default class FgScene extends Phaser.Scene {
   }
 
   preload() {
-    // Preload Sprites
-    // << LOAD SPRITES HERE >>
+    //SPRITES
     this.load.spritesheet("bubble", "assets/spriteSheets/bubble_run.png", {
       frameWidth: 35,
       frameHeight: 45,
@@ -41,14 +42,14 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 35,
       frameHeight: 45,
     });
+
     this.load.spritesheet("floateye", "assets/spriteSheets/floateye.png", {
       frameWidth: 38,
       frameHeight: 35,
     });
-    // this.load.image("ground", "assets/sprites/ground.png");
-    // this.load.image("brandon", "assets/sprites/brandon.png");
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laser", "assets/sprites/laserBolt.png");
+    this.load.image("heart", "assets/sprites/heart.png");
 
     this.load.image(
       "far-buildings",
@@ -63,9 +64,14 @@ export default class FgScene extends Phaser.Scene {
       "assets/backgrounds/cyberpunk/long/foreground.png"
     );
     this.load.image("ground", "assets/backgrounds/cyberpunk/long/ground.png");
+    this.load.image(
+      "sushi",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-sushi/banner-sushi-1.png"
+    );
 
-    // Preload Sounds
-    // << LOAD SOUNDS HERE >>
+    //SOUNDS
+    this.load.audio("jump", "assets/jump.wav");
+    this.load.audio("achieve", "assets/audio/laser.wav");
   }
 
   createGround(x, y, count, texture) {
@@ -73,6 +79,15 @@ export default class FgScene extends Phaser.Scene {
     let wid = x;
     for (let i = 0; i < count; i++) {
       this.groundGroup.create(wid, y, texture).setScale(3.1).alpha = 0;
+      wid += w;
+    }
+  }
+
+  createPlatformOne(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupOne.create(wid, y, texture).setScale(3.1).alpha = 0;
       wid += w;
     }
   }
@@ -127,6 +142,23 @@ export default class FgScene extends Phaser.Scene {
     this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
     this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
 
+    //PLATFORMS1
+    this.platformGroupOne = this.physics.add.staticGroup({
+      classType: PlatformOne,
+    });
+    this.createPlatformOne(400, 570, 40, "sushi");
+
+    //HEARTS
+    this.hearts = this.physics.add.group({
+      key: "heart",
+      repeat: 11,
+      setXY: { x: 2000, y: 0, stepX: 1500 },
+    });
+
+    this.hearts.children.iterate(function (child) {
+      child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
+      child.setScale(0.06);
+    });
     ///// SPRITES
     this.player = new Player(this, 100, 200, "bubble").setScale(2);
     // this.enemy = new Enemy(this, 600, 400, "brandon").setScale(0.25);
@@ -173,20 +205,16 @@ export default class FgScene extends Phaser.Scene {
     // );
     this.physics.add.collider(this.floateye, this.groundGroup);
 
+    this.physics.add.collider(this.hearts, this.groundGroup);
+    this.physics.add.collider(this.hearts, this.platformGroupOne);
+    this.physics.add.collider(this.baby, this.platformGroupOne);
+
+
     this.lasers = this.physics.add.group({
       classType: Laser,
       runChildUpdate: true,
       allowGravity: false,
     });
-
-    //MOVEMENT
-    this.cursors = this.input.keyboard.createCursorKeys();
-
-    //CAMERA
-    // set workd bounds to allow camera to follow the player
-    this.myCam = this.cameras.main;
-    this.myCam.setBounds(0, 0, width * 20, height);
-    this.cameras.main.startFollow(this.player);
 
     //COLLISIONS
     this.physics.add.overlap(
@@ -198,12 +226,31 @@ export default class FgScene extends Phaser.Scene {
       this
     );
     // When the laser collides with the enemy
-    // this.physics.add.overlap(this.lasers, this.enemy, this.hit, null, this);
+    this.physics.add.overlap(this.lasers, this.enemy, this.hit, null, this);
+    this.physics.add.overlap(
+      this.baby,
+      this.hearts,
+      this.collectHeart,
+      null,
+      this
+    );
+
+    //MOVEMENT
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+    //CAMERA
+    // set workd bounds to allow camera to follow the player
+    this.myCam = this.cameras.main;
+    this.myCam.setBounds(0, 0, width * 20, height);
+    this.cameras.main.startFollow(this.player);
+
 
     //ANIMATIONS
     this.createAnimations();
-    // Create sounds
-    // << CREATE SOUNDS HERE >>
+
+    //SOUNDS
+    this.jumpSound = this.sound.add("jump");
+    this.heartSound = this.sound.add("achieve");
     // Create collisions for all entities
     // << CREATE COLLISIONS HERE >>
   }
@@ -218,8 +265,9 @@ export default class FgScene extends Phaser.Scene {
   update(time, delta) {
     // << DO UPDATE LOGIC HERE >>
     this.player.update(this.cursors);
-    this.baby.update(this.cursors);
+    this.baby.update(this.cursors, this.jumpSound);
     this.mushroom.update();
+
     this.floateye.update();
     this.gun.update(
       time,
@@ -229,6 +277,12 @@ export default class FgScene extends Phaser.Scene {
     );
     // this.monsterHit(this.mushroomGroup, player);
     // this.monsterHit(this.floateyeGroup, player);
+  }
+
+  collectHeart(player, star) {
+    star.disableBody(true, true);
+    this.heartSound.play();
+
   }
 
   fireLaser(x, y, left) {
