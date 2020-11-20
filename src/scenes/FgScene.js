@@ -26,7 +26,6 @@ export default class FgScene extends Phaser.Scene {
     this.collectGun = this.collectGun.bind(this);
     this.fireLaser = this.fireLaser.bind(this);
     this.hit = this.hit.bind(this);
-
     this.gameOver = false;
     this.overlapCollider = 0;
   }
@@ -154,15 +153,27 @@ export default class FgScene extends Phaser.Scene {
     //MUSHROOM
     // this.createMonster(mushX, mushY, "mushroom");
     // this.createMonster(floatX, floatY, "floateye");
-    this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
-    this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
-    this.end = new End(this, 700, 200, "end");
 
     //PLATFORMS1
     // this.platformGroupOne = this.physics.add.staticGroup({
     //   classType: PlatformOne,
     // });
     // this.createPlatformOne(400, 570, 40, "sushi");
+
+    //TEXT
+    this.pointText = this.add.text(20, 20, `points: ${game.config.points}`, {
+      fontSize: 32,
+      fontFamily: "Orbitron, sans-serif",
+      fill: "#39ff14",
+    });
+    this.pointText.setScrollFactor(0);
+
+    this.healthText = this.add.text(20, 60, `health: ${game.config.health}`, {
+      fontSize: 32,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.healthText.setScrollFactor(0);
 
     //HEARTS
     this.hearts = this.physics.add.group({
@@ -179,6 +190,14 @@ export default class FgScene extends Phaser.Scene {
     // this.player = new Player(this, 100, 200, "bubble").setScale(2);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
+    this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
+    this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
+    this.end = new End(this, 700, 200, "end");
+
+    //GROUPS
+    this.monsterGroup = this.game.add.group();
+    this.monsterGroup.add(this.mushroom);
+    this.monsterGroup.add(this.floateye);
 
     //PHYSICS
     // this.physics.add.collider(this.player, this.groundGroup);
@@ -281,6 +300,7 @@ export default class FgScene extends Phaser.Scene {
   monsterHit(mushroom, baby) {
     baby.anims.play("babyjump");
     game.config.health -= 0.07;
+    this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
     // baby.setTint(0xff000);
     // let timer = this.time.delayedCall(2000, this.clearRed(baby));
 
@@ -331,6 +351,7 @@ export default class FgScene extends Phaser.Scene {
   collectHeart(baby, heart) {
     heart.disableBody(true, true);
     game.config.health++;
+    this.healthText.setText(`health: ${game.config.health}`);
     this.heartSound.play();
   }
 
@@ -362,6 +383,7 @@ export default class FgScene extends Phaser.Scene {
     mushroom.disableBody(true, true);
     this.killSound.play();
     game.config.points++;
+    this.pointText.setText(`points: ${game.config.points}`);
   }
   //animations for player and baby sprites
   createAnimations() {
