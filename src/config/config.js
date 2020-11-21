@@ -25,4 +25,5 @@ export default {
   health: 0,
   pointsText: 0,
   healthText: 0,
+  time: 0,
 };

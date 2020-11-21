@@ -14,8 +14,5 @@ export default class InterludeOne extends Phaser.Scene {
     console.log("config health", game.config.health);
     this.add.image(400, 300, "lvl2").setScale(2.5);
     this.input.on("pointerdown", () => this.scene.start("LvlTwoScene"));
-    // << LOAD BACKGROUND AND FOREGROUND SCENES IN PARALLEL HERE >>
-    // this.scene.launch("BgScene");
-    // this.scene.launch("FgScene");
   }
 }

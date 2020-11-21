@@ -14,9 +14,18 @@ export default class Laser extends Phaser.Physics.Arcade.Sprite {
     this.lifespan = 900;
     // Important to not apply gravity to the laser bolt!
     this.body.setAllowGravity(false);
+    this.reset(x, y, facingLeft);
   }
 
   // Check which controller button is being pushed and execute movement & animation
+  reset(x, y, facingLeft) {
+    this.setActive(true);
+    this.setVisible(true);
+    this.lifespan = 900;
+    this.facingLeft = facingLeft;
+    this.setPosition(x, y);
+  }
+
   update(time, delta) {
     // << INSERT CODE HERE >>
     this.lifespan -= delta;

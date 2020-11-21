@@ -10,10 +10,7 @@ export default class InterludeThree extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(400, 300, "lvl4").setScale(2.5);
+    this.add.image(400, 300, "lvl4").setScale(3.3);
     this.input.on("pointerdown", () => this.scene.start("LvlFourScene"));
-    // << LOAD BACKGROUND AND FOREGROUND SCENES IN PARALLEL HERE >>
-    // this.scene.launch("BgScene");
-    // this.scene.launch("FgScene");
   }
 }

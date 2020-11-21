@@ -1,12 +1,19 @@
-import Player from "../entity/Player";
 import Ground from "../entity/Ground";
-import Enemy from "../entity/Enemy";
+import PlatformOne from "../entity/PlatformOne";
+import PlatformTwo from "../entity/PlatformTwo";
+import PlatformThree from "../entity/PlatformThree";
+import PlatformFour from "../entity/PlatformFour";
+import PlatformFive from "../entity/PlatformFive";
+import PlatformSix from "../entity/PlatformSix";
+import PlatformSeven from "../entity/PlatformSeven";
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
 import Mushroom from "../entity/Mushroom";
 import Floateye from "../entity/Floateye";
 import End from "../entity/End";
+import Fireball from "../entity/Fireball";
+
 /**
  *
  * @param {Phaser.Scene} scene
@@ -18,7 +25,7 @@ let mushX;
 let mushY;
 let floatX;
 let floatY;
-let gameOver = false;
+
 export default class LvlThreeScene extends Phaser.Scene {
   constructor() {
     super("LvlThreeScene");
@@ -45,6 +52,14 @@ export default class LvlThreeScene extends Phaser.Scene {
       frameWidth: 38,
       frameHeight: 35,
     });
+    this.load.spritesheet(
+      "coke",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-sheet.png",
+      {
+        frameWidth: 27,
+        frameHeight: 78,
+      }
+    );
 
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laser", "assets/sprites/laserBolt.png");
@@ -60,16 +75,51 @@ export default class LvlThreeScene extends Phaser.Scene {
       "sushi",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-sushi/banner-sushi-1.png"
     );
+
+    this.load.image(
+      "coke1",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-1.png"
+    );
+    this.load.image(
+      "coke2",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-2.png"
+    );
+
+    this.load.image(
+      "coke3",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-3.png"
+    );
+    this.load.image(
+      "bannerside",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-side/banner-side-2.png"
+    );
+    this.load.image(
+      "bannerneon",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-big/banner-big-3.png"
+    );
+    this.load.image(
+      "bannerchar",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-neon/banner-neon-3.png"
+    );
+    this.load.image(
+      "bannerblue",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-scroll/banner-scroll-1.png"
+    );
+    this.load.image("fireball", "assets/spriteSheets/fireball/FB002.png");
+
     this.load.image(
       "end",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-arrow.png"
     );
 
+    this.load.image("police", "assets/backgrounds/warpedcity/police.png");
+
     //SOUNDS
     this.load.audio("jump", "assets/audio/jump.wav");
-    this.load.audio("achieve", "assets/audio/achieve.wav");
+    this.load.audio("achieve", "assets/audio/SOPHIE_snap_02.wav");
     this.load.audio("laser", "assets/audio/laser.wav");
     this.load.audio("kill", "assets/audio/scream.wav");
+    this.load.audio("hurt", "assets/audio/hurt.wav");
   }
 
   createGround(x, y, count, texture) {
@@ -78,6 +128,78 @@ export default class LvlThreeScene extends Phaser.Scene {
     for (let i = 0; i < count; i++) {
       this.groundGroup.create(wid, y, texture).setScale(3.1).alpha = 0;
       wid += w;
+    }
+  }
+
+  createPlatformOne(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupOne.create(wid, y, texture).setScale(3.1);
+      wid += w * Math.random() * 100;
+    }
+  }
+
+  createPlatformTwo(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(3.1);
+      wid += w * Math.random() * 300;
+    }
+  }
+
+  createPlatformThree(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(2.1);
+      wid += w * Math.random() * 250;
+    }
+  }
+
+  createPlatformFour(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(2.1);
+      wid += w * Math.random() * 620;
+    }
+  }
+
+  createPlatformFive(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(1.8);
+      wid += w * Math.random() * 340;
+    }
+  }
+
+  createPlatformSix(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(2.3);
+      wid += w * Math.random() * 250;
+    }
+  }
+
+  createPlatformSeven(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(2.8);
+      wid += w * Math.random() * 340;
+    }
+  }
+
+  createFireballs(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.fireballGroup.create(wid, y, texture).setScale(2.8);
+      wid += w * Math.random() * 20;
     }
   }
 
@@ -115,35 +237,211 @@ export default class LvlThreeScene extends Phaser.Scene {
     this.groundGroup = this.physics.add.staticGroup({ classType: Ground });
     this.createGround(0, 570, 40, "ground");
 
-    ///// SPRITES
+    //PLATFORMS1
+    this.platformGroupOne = this.physics.add.staticGroup({
+      classType: PlatformOne,
+    });
+    this.sushi = this.createPlatformOne(320, 370, 25, "sushi");
 
-    // this.player = new Player(this, 100, 200, "bubble").setScale(2);
-    // this.enemy = new Enemy(this, 600, 400, "brandon").setScale(0.25);
-    this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
-    this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
-    this.end = new End(this, 700, 200, "end");
-    this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
-    this.baby = new Baby(this, 30, 200, "baby").setScale(2);
-    this.end = new End(this, 700, 200, "end");
+    // this.cokeSign = new PlatformTwo(this, 300, 200, "coke");
+
+    this.platformGroupTwo = this.physics.add.staticGroup({
+      classType: PlatformTwo,
+    });
+
+    this.cokeArray = this.createPlatformTwo(300, 200, 10, "coke1");
+
+    this.platformGroupThree = this.physics.add.staticGroup({
+      classType: PlatformThree,
+    });
+
+    this.playThree = this.createPlatformThree(740, 200, 10, "bannerside");
+
+    this.platformGroupFour = this.physics.add.staticGroup({
+      classType: PlatformFour,
+    });
+
+    this.playFour = this.createPlatformFour(2500, 200, 10, "police");
+
+    this.platformGroupFive = this.physics.add.staticGroup({
+      classType: PlatformFive,
+    });
+
+    this.playFive = this.createPlatformFive(3000, 200, 10, "bannerneon");
+
+    this.platformGroupSix = this.physics.add.staticGroup({
+      classType: PlatformSix,
+    });
+
+    this.playSix = this.createPlatformSix(4000, 200, 10, "bannerchar");
+
+    this.platformGroupSeven = this.physics.add.staticGroup({
+      classType: PlatformSeven,
+    });
+
+    this.playSeven = this.createPlatformSeven(4000, 200, 10, "bannerblue");
+
+    // this.platformGroupTwo.getChildren().forEach(function (two) {
+    //   two.body.setAllowGravity(false);
+    // }, this);
+    // this.platformGroupTwo.callAll("play", null, "coke");
+    // this.platformGroupTwo.children.iterate(function (child) {
+    //   child.play("coke");
+    // });
+
+    //TEXT
+    this.pointText = this.add.text(20, 20, `points: ${game.config.points}`, {
+      fontSize: 32,
+      fontFamily: "Orbitron, sans-serif",
+      fill: "#39ff14",
+    });
+    this.pointText.setScrollFactor(0);
+
+    this.healthText = this.add.text(
+      20,
+      60,
+      `health: ${Math.round(game.config.health)}`,
+      {
+        fontSize: 32,
+        fontFamily: "Audiowide, cursive",
+        fill: "#39ff14",
+      }
+    );
+    this.healthText.setScrollFactor(0);
 
     //HEARTS
     this.hearts = this.physics.add.group({
       key: "heart",
-      repeat: 11,
-      setXY: { x: 2000, y: 0, stepX: 1500 },
+      repeat: 4000,
+      setXY: { x: 900, y: 0, stepX: 60 },
     });
 
     this.hearts.children.iterate(function (child) {
       child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
       child.setScale(0.06);
     });
+    ///// SPRITES
+    // this.player = new Player(this, 100, 200, "bubble").setScale(2);
+    this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
+    this.baby = new Baby(this, 30, 200, "baby").setScale(2);
+    this.end = new End(this, width * 19.75, 400, "end").setScale(5.0);
+
+    //GROUPS
+
+    this.mushroomGroup = this.physics.add.group({ classType: Mushroom });
+    this.floateyeGroup = this.physics.add.group({ classType: Floateye });
+    this.fireballGroup = this.physics.add.group({
+      classType: Fireball,
+      runChildUpdate: true,
+    });
+    this.fireballGroup.createMultiple({
+      key: "fireball",
+      repeat: 40,
+    });
+    this.fireballGroup.children.iterate((child) => {
+      let y = Phaser.Math.Between(-200, -2000);
+      let x = Phaser.Math.Between(0, width * 20);
+
+      child.setY(y);
+      child.setX(x);
+      child.setMaxVelocity(200);
+      child.setScale(2);
+
+      child.update = function () {
+        if (this.y > 600) {
+          this.y = 0;
+        }
+      };
+    });
+
+    // this.createFireballs(200, 200, 10, "fireball");
+    // this.timer = this.time.addEvent({
+    //   delay: 5,
+    //   callback: this.createFireballs(200, 100, 300, "fireball"),
+    //   callbackScope: this,
+    //   loop: true,
+    // });
+
+    this.mushroom = this.mushroomGroup
+      .create(650, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom2 = this.mushroomGroup
+      .create(1510, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom3 = this.mushroomGroup
+      .create(3000, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom4 = this.mushroomGroup
+      .create(4130, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom5 = this.mushroomGroup
+      .create(6280, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom6 = this.mushroomGroup
+      .create(8009, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom7 = this.mushroomGroup
+      .create(9400, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom8 = this.mushroomGroup
+      .create(10990, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom9 = this.mushroomGroup
+      .create(12500, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom10 = this.mushroomGroup
+      .create(14500, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom11 = this.mushroomGroup
+      .create(15900, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom12 = this.mushroomGroup
+      .create(19345, 200, "mushroom")
+      .setScale(2.3);
+    this.floateye = this.floateyeGroup
+      .create(900, 50, "floateye")
+      .setScale(2.3);
+    this.floateye2 = this.floateyeGroup
+      .create(1230, 50, "floateye")
+      .setScale(2.3);
+    this.floateye3 = this.floateyeGroup
+      .create(3950, 50, "floateye")
+      .setScale(2.3);
+    this.floateye4 = this.floateyeGroup
+      .create(4800, 50, "floateye")
+      .setScale(2.3);
+    this.floateye5 = this.floateyeGroup
+      .create(6700, 50, "floateye")
+      .setScale(2.3);
+    this.floateye6 = this.floateyeGroup
+      .create(9300, 50, "floateye")
+      .setScale(2.3);
+    this.floateye7 = this.floateyeGroup
+      .create(11111, 50, "floateye")
+      .setScale(2.3);
+    this.floateye8 = this.floateyeGroup
+      .create(12363, 50, "floateye")
+      .setScale(2.3);
+    this.floateye9 = this.floateyeGroup
+      .create(14083, 50, "floateye")
+      .setScale(2.3);
+    this.floateye10 = this.floateyeGroup
+      .create(17402, 50, "floateye")
+      .setScale(2.3);
+    this.floateye11 = this.floateyeGroup
+      .create(19404, 50, "floateye")
+      .setScale(2.3);
+    this.floateye12 = this.floateyeGroup
+      .create(20392, 50, "floateye")
+      .setScale(2.3);
 
     //PHYSICS
+    // this.physics.add.collider(this.player, this.groundGroup);
     this.physics.add.collider(this.baby, this.groundGroup);
     this.physics.add.collider(this.gun, this.groundGroup);
-    this.physics.add.collider(this.mushroom, this.groundGroup);
-    this.physics.add.collider(this.floateye, this.groundGroup);
-    this.physics.add.collider(this.hearts, this.groundGroup);
+    this.physics.add.collider(this.mushroomGroup, this.groundGroup);
+    this.physics.add.collider(this.floateyeGroup, this.groundGroup);
+    // this.physics.add.collider(this.hearts, this.groundGroup);
     this.physics.add.collider(this.end, this.groundGroup);
     // this.physics.add.collider(this.mushroom, this.player);
     // this.physics.add.collider(this.floateye, this.player);
@@ -151,18 +449,95 @@ export default class LvlThreeScene extends Phaser.Scene {
     this.physics.add.collider(this.hearts, this.platformGroupOne);
     this.physics.add.collider(this.baby, this.platformGroupOne);
 
-    this.physics.add.collider(this.mushroom, this.baby);
-    this.physics.add.collider(this.floateye, this.baby);
+    this.physics.add.collider(this.hearts, this.platformGroupTwo);
+    this.physics.add.collider(this.baby, this.platformGroupTwo);
+
+    this.physics.add.collider(this.hearts, this.platformGroupThree);
+    this.physics.add.collider(this.baby, this.platformGroupThree);
+
+    this.physics.add.collider(this.hearts, this.platformGroupFour);
+    this.physics.add.collider(this.baby, this.platformGroupFour);
+
+    this.physics.add.collider(this.hearts, this.platformGroupFive);
+    this.physics.add.collider(this.baby, this.platformGroupFive);
+
+    this.physics.add.overlap(
+      this.floateyeGroup,
+      this.baby,
+      this.monsterHit,
+      null,
+      this
+    );
+    // this.physics.add.collider(
+    //   this.mushroomGroup,
+    //   this.player,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+    // this.physics.add.collider(
+    //   this.mushroomGroup,
+    //   this.baby,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+    // this.physics.add.collider(
+    //   this.floateyeGroup,
+    //   this.player,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+    // this.physics.add.collider(
+    //   this.floateyeGroup,
+    //   this.baby,
+    //   // monsterHit,
+    //   null,
+    //   this
+    // );
+
     this.lasers = this.physics.add.group({
       classType: Laser,
       runChildUpdate: true,
       allowGravity: false,
+      maxSize: 40,
     });
 
     //COLLISIONS
     this.physics.add.overlap(this.baby, this.gun, this.collectGun, null, this);
     // When the laser collides with the enemy
-    this.physics.add.overlap(this.mushroom, this.lasers, this.hit, null, this);
+    this.physics.add.overlap(
+      this.mushroomGroup,
+      this.lasers,
+      this.hit,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      this.floateyeGroup,
+      this.lasers,
+      this.hit,
+      null,
+      this
+    );
+
+    this.physics.add.overlap(
+      this.mushroomGroup,
+      this.baby,
+      this.monsterHit,
+      null,
+      this
+    );
+
+    this.physics.add.overlap(
+      this.fireballGroup,
+      this.baby,
+      this.monsterHit,
+      null,
+      this
+    );
+
     this.physics.add.overlap(
       this.baby,
       this.hearts,
@@ -195,8 +570,26 @@ export default class LvlThreeScene extends Phaser.Scene {
     this.heartSound = this.sound.add("achieve");
     this.laserSound = this.sound.add("laser");
     this.killSound = this.sound.add("kill");
+    this.hurtSound = this.sound.add("hurt");
     // Create collisions for all entities
     // << CREATE COLLISIONS HERE >>
+  }
+  monsterHit(baby, monster) {
+    baby.anims.play("babyjump");
+    this.hurtSound.play();
+    game.config.health -= 0.07;
+    this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
+    // baby.setTint(0xff000);
+    // let timer = this.time.delayedCall(2000, this.clearRed(baby));
+
+    // this.physics.world.removeCollider(this.overlapCollider);
+    console.log("health", game.config.health);
+
+    if (game.config.health < 1) {
+      this.gameOver = true;
+      this.baby.setTint(0xff0000);
+      this.physics.pause();
+    }
   }
 
   // time: total time elapsed (ms)
@@ -204,10 +597,38 @@ export default class LvlThreeScene extends Phaser.Scene {
   update(time, delta) {
     // << DO UPDATE LOGIC HERE >>
 
+    // this.platformGroupTwo.getChildren().forEach(function (two) {
+    //   two.update();
+    // }, this);
+    // this.cokeSign.update();
+
     this.baby.update(this.cursors, this.jumpSound);
+
     this.mushroom.update();
+    this.mushroom2.update();
+    this.mushroom3.update();
+    this.mushroom4.update();
+    this.mushroom5.update();
+    this.mushroom6.update();
+    this.mushroom7.update();
+    this.mushroom8.update();
+    this.mushroom9.update();
+    this.mushroom10.update();
+    this.mushroom11.update();
+    this.mushroom12.update();
 
     this.floateye.update();
+    this.floateye2.update();
+    this.floateye3.update();
+    this.floateye4.update();
+    this.floateye5.update();
+    this.floateye6.update();
+    this.floateye7.update();
+    this.floateye8.update();
+    this.floateye9.update();
+    this.floateye10.update();
+    this.floateye11.update();
+    this.floateye12.update();
     this.gun.update(
       time,
       this.baby,
@@ -220,6 +641,8 @@ export default class LvlThreeScene extends Phaser.Scene {
 
   collectHeart(baby, heart) {
     heart.disableBody(true, true);
+    game.config.health = game.config.health + 1;
+    this.healthText.setText(`health: ${Math.round(game.config.health)}`);
     this.heartSound.play();
   }
 
@@ -231,24 +654,32 @@ export default class LvlThreeScene extends Phaser.Scene {
     const laserX = this.baby.x + (this.baby.facingLeft ? -offsetX : offsetX);
     const laserY = this.baby.y + offsetY;
     this.laserSound.play();
-    // Create a laser bullet and scale the sprite down
-    const laser = new Laser(
-      this,
-      laserX,
-      laserY,
-      "laser",
-      this.baby.facingLeft
-    ).setScale(0.25);
-    // Add our newly created to the group
-    this.lasers.add(laser);
+
+    let laser = this.lasers.getFirstDead();
+
+    if (!laser) {
+      laser = new Laser(
+        this,
+        laserX,
+        laserY,
+        "laser",
+        this.baby.facingLeft
+      ).setScale(0.25);
+      // Add our newly created to the group
+      this.lasers.add(laser);
+    }
+    laser.reset(laserX, laserY, this.baby.facingLeft);
   }
 
   // make the laser inactive and insivible when it hits the enemy
-  hit(mushroom, laser) {
+  // ENEMY LASER INTERACTIONS
+  hit(monster, laser) {
     laser.setActive(false);
     laser.setVisible(false);
-    mushroom.disableBody(true, true);
+    monster.disableBody(true, true);
     this.killSound.play();
+    game.config.points++;
+    this.pointText.setText(`points: ${game.config.points}`);
   }
   //animations for player and baby sprites
   createAnimations() {
@@ -330,6 +761,19 @@ export default class LvlThreeScene extends Phaser.Scene {
       frames: [{ key: "floateye", frame: 1 }],
       frameRate: 20,
     });
+
+    //animations for coke
+    // this.anims.create({
+    //   key: "coke",
+    //   frames: this.anims.generateFrameNumbers("coke", {
+    //     start: 1,
+    //     end: 3,
+    //   }),
+    //   // frames: [{ key: "coke", frame: 1 }],
+    //   frameRate: 20,
+    //   repeat: -1,
+    // });
+    //animations for sushi
   }
 
   collectGun(baby, gun) {
