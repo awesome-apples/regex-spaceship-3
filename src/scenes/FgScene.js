@@ -190,15 +190,85 @@ export default class FgScene extends Phaser.Scene {
     // this.player = new Player(this, 100, 200, "bubble").setScale(2);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
-    // this.mushroom = new Mushroom(this, 650, 200, "mushroom").setScale(2.3);
-    this.floateye = new Floateye(this, 650, 50, "floateye").setScale(2.3);
     this.end = new End(this, 700, 200, "end");
 
     //GROUPS
 
     this.mushroomGroup = this.physics.add.group({ classType: Mushroom });
+    this.floateyeGroup = this.physics.add.group({ classType: Floateye });
     this.mushroom = this.mushroomGroup
       .create(650, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom2 = this.mushroomGroup
+      .create(1510, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom3 = this.mushroomGroup
+      .create(3000, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom4 = this.mushroomGroup
+      .create(4130, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom5 = this.mushroomGroup
+      .create(6280, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom6 = this.mushroomGroup
+      .create(8009, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom7 = this.mushroomGroup
+      .create(9400, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom8 = this.mushroomGroup
+      .create(10990, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom9 = this.mushroomGroup
+      .create(12500, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom10 = this.mushroomGroup
+      .create(14500, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom11 = this.mushroomGroup
+      .create(15900, 200, "mushroom")
+      .setScale(2.3);
+    this.mushroom12 = this.mushroomGroup
+      .create(19345, 200, "mushroom")
+      .setScale(2.3);
+
+    this.floateye = this.floateyeGroup
+      .create(900, 50, "floateye")
+      .setScale(2.3);
+
+    this.floateye2 = this.floateyeGroup
+      .create(1230, 50, "floateye")
+      .setScale(2.3);
+    this.floateye3 = this.floateyeGroup
+      .create(3950, 50, "floateye")
+      .setScale(2.3);
+    this.floateye4 = this.floateyeGroup
+      .create(4800, 50, "floateye")
+      .setScale(2.3);
+    this.floateye5 = this.floateyeGroup
+      .create(6700, 50, "floateye")
+      .setScale(2.3);
+    this.floateye6 = this.floateyeGroup
+      .create(9300, 50, "floateye")
+      .setScale(2.3);
+    this.floateye7 = this.floateyeGroup
+      .create(11111, 50, "floateye")
+      .setScale(2.3);
+    this.floateye8 = this.floateyeGroup
+      .create(12363, 50, "floateye")
+      .setScale(2.3);
+    this.floateye9 = this.floateyeGroup
+      .create(14083, 50, "floateye")
+      .setScale(2.3);
+    this.floateye10 = this.floateyeGroup
+      .create(17402, 50, "floateye")
+      .setScale(2.3);
+    this.floateye11 = this.floateyeGroup
+      .create(19404, 50, "floateye")
+      .setScale(2.3);
+    this.floateye12 = this.floateyeGroup
+      .create(20392, 50, "floateye")
       .setScale(2.3);
 
     //PHYSICS
@@ -206,7 +276,7 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.collider(this.baby, this.groundGroup);
     this.physics.add.collider(this.gun, this.groundGroup);
     this.physics.add.collider(this.mushroomGroup, this.groundGroup);
-    this.physics.add.collider(this.floateye, this.groundGroup);
+    this.physics.add.collider(this.floateyeGroup, this.groundGroup);
     this.physics.add.collider(this.hearts, this.groundGroup);
     this.physics.add.collider(this.end, this.groundGroup);
     // this.physics.add.collider(this.mushroom, this.player);
@@ -215,7 +285,13 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.collider(this.hearts, this.platformGroupOne);
     this.physics.add.collider(this.baby, this.platformGroupOne);
 
-    this.physics.add.collider(this.floateye, this.baby);
+    this.physics.add.overlap(
+      this.floateyeGroup,
+      this.baby,
+      this.monsterHit,
+      null,
+      this
+    );
     // this.physics.add.collider(
     //   this.mushroomGroup,
     //   this.player,
@@ -256,6 +332,13 @@ export default class FgScene extends Phaser.Scene {
     // When the laser collides with the enemy
     this.physics.add.overlap(
       this.mushroomGroup,
+      this.lasers,
+      this.hit,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      this.floateyeGroup,
       this.lasers,
       this.hit,
       null,
@@ -328,9 +411,32 @@ export default class FgScene extends Phaser.Scene {
     // << DO UPDATE LOGIC HERE >>
 
     this.baby.update(this.cursors, this.jumpSound);
+
     this.mushroom.update();
+    this.mushroom2.update();
+    this.mushroom3.update();
+    this.mushroom4.update();
+    this.mushroom5.update();
+    this.mushroom6.update();
+    this.mushroom7.update();
+    this.mushroom8.update();
+    this.mushroom9.update();
+    this.mushroom10.update();
+    this.mushroom11.update();
+    this.mushroom12.update();
 
     this.floateye.update();
+    this.floateye2.update();
+    this.floateye3.update();
+    this.floateye4.update();
+    this.floateye5.update();
+    this.floateye6.update();
+    this.floateye7.update();
+    this.floateye8.update();
+    this.floateye9.update();
+    this.floateye10.update();
+    this.floateye11.update();
+    this.floateye12.update();
     this.gun.update(
       time,
       this.baby,
