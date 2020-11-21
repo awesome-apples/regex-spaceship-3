@@ -9,9 +9,10 @@ export default class Fireball extends Phaser.Physics.Arcade.Sprite {
     this.scene.add.existing(this);
     this.scene.physics.world.enable(this);
     this.movementInt = 1;
+    this.angle = 30;
   }
-  updateMovement(movementInt) {
-    //move left
+  updateMovement() {
+    // this.play("fireballanime", true);
   }
 
   update() {

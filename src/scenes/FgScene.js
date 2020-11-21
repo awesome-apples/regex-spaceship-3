@@ -63,6 +63,16 @@ export default class FgScene extends Phaser.Scene {
         frameHeight: 78,
       }
     );
+
+    this.load.spritesheet(
+      "fireballspritesheet",
+      "assets/spriteSheets/fireball/fireball.png",
+      {
+        frameWidth: 64,
+        frameHeight: 32,
+      }
+    );
+
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laser", "assets/sprites/laserBolt.png");
     this.load.image("heart", "assets/sprites/heart.png");
@@ -391,6 +401,8 @@ export default class FgScene extends Phaser.Scene {
 
     this.mushroomGroup = this.physics.add.group({ classType: Mushroom });
     this.floateyeGroup = this.physics.add.group({ classType: Floateye });
+
+    //FIREBALLS
     this.fireballGroup = this.physics.add.group({
       classType: Fireball,
       runChildUpdate: true,
@@ -409,6 +421,8 @@ export default class FgScene extends Phaser.Scene {
       child.setScale(2);
 
       child.update = function () {
+        child.play("fireballanime", true);
+        child.setVelocityX(100);
         if (this.y > 600) {
           this.y = 0;
         }
@@ -814,6 +828,16 @@ export default class FgScene extends Phaser.Scene {
       key: "floatidle",
       frames: [{ key: "floateye", frame: 1 }],
       frameRate: 20,
+    });
+
+    this.anims.create({
+      key: "fireballanime",
+      frames: this.anims.generateFrameNumbers("fireballspritesheet", {
+        start: 1,
+        end: 5,
+      }),
+      frameRate: 20,
+      repeat: -1,
     });
 
     //animations for coke
