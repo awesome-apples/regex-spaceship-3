@@ -238,6 +238,7 @@ export default class FgScene extends Phaser.Scene {
 
   advanceLevel() {
     console.log("points from inside advance level", game.config.points);
+
     this.scene.start("InterludeOne");
   }
 
@@ -310,6 +311,8 @@ export default class FgScene extends Phaser.Scene {
     //   child.play("coke");
     // });
 
+    //TIMER/CLOCK
+
     //TEXT
     this.pointText = this.add.text(
       20,
@@ -330,15 +333,38 @@ export default class FgScene extends Phaser.Scene {
     });
     this.healthText.setScrollFactor(0);
 
-    this.beginTime = Date.now();
-    this.currentTime = 0;
-
-    this.timeText = this.add.text(20, 90, `time: ${this.currentTime}`, {
+    this.timeText = this.add.text(20, 90, `time: ${game.config.playerTime}`, {
       fontSize: 32,
       fontFamily: "Audiowide, cursive",
       fill: "#39ff14",
     });
     this.timeText.setScrollFactor(0);
+
+    this.gameOverText = this.add.text(400, 300, `Game Over`, {
+      fontSize: 48,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.gameOverText.setOrigin(0.5);
+    this.gameOverText.setScrollFactor(0);
+    this.gameOverText.visible = false;
+
+    this.startOverButton = this.add.text(400, 400, "Retry", {
+      fontSize: 36,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.startOverButton.setOrigin(0.5);
+    this.startOverButton.setScrollFactor(0);
+    this.startOverButton.setInteractive();
+    this.startOverButton.on("pointerover", () =>
+      this.startOverButton.setStyle({ fill: "#ff69b4" })
+    );
+    this.startOverButton.on("pointerout", () =>
+      this.startOverButton.setStyle({ fill: "#39ff14" })
+    );
+    this.startOverButton.on("pointerdown", () => this.scene.start("MainScene"));
+    this.startOverButton.visible = false;
 
     //HEARTS
     this.hearts = this.physics.add.group({
@@ -355,6 +381,7 @@ export default class FgScene extends Phaser.Scene {
     // this.player = new Player(this, 100, 200, "bubble").setScale(2);
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
+    // this.end = new End(this, width * 19.75, 400, "end").setScale(5.0);
     this.end = new End(this, width * 19.75, 400, "end").setScale(5.0);
 
     //GROUPS
@@ -371,7 +398,7 @@ export default class FgScene extends Phaser.Scene {
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
-      let x = Phaser.Math.Between(0, width * 200);
+      let x = Phaser.Math.Between(0, width * 20);
 
       child.setY(y);
       child.setX(x);
@@ -384,14 +411,6 @@ export default class FgScene extends Phaser.Scene {
         }
       };
     });
-
-    // this.createFireballs(200, 200, 10, "fireball");
-    // this.timer = this.time.addEvent({
-    //   delay: 5,
-    //   callback: this.createFireballs(200, 100, 300, "fireball"),
-    //   callbackScope: this,
-    //   loop: true,
-    // });
 
     this.mushroom = this.mushroomGroup
       .create(650, 200, "mushroom")
@@ -612,14 +631,15 @@ export default class FgScene extends Phaser.Scene {
     this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
     // baby.setTint(0xff000);
     // let timer = this.time.delayedCall(2000, this.clearRed(baby));
-
     // this.physics.world.removeCollider(this.overlapCollider);
-    console.log("health", game.config.health);
+    // console.log("health", game.config.health);
 
     if (game.config.health < 1) {
-      this.gameOver = true;
-      this.baby.setTint(0xff0000);
       this.physics.pause();
+      this.baby.setTint(0xff0000);
+      this.gameOver = true;
+      this.gameOverText.visible = true;
+      this.startOverButton.visible = true;
     }
   }
 
@@ -633,7 +653,7 @@ export default class FgScene extends Phaser.Scene {
     // }, this);
     // this.cokeSign.update();
 
-    this.getTime();
+    this.updateTime();
     this.baby.update(this.cursors, this.jumpSound);
 
     this.mushroom.update();
@@ -811,9 +831,10 @@ export default class FgScene extends Phaser.Scene {
     gun.disableBody(true, true);
     this.baby.armed = true;
   }
-  getTime() {
-    const newtime = Date.now - this.beginTime;
-    this.currentTime = newtime;
-    this.timeText.setText(`time: ${this.currentTime}`);
+
+  updateTime() {
+    const time = new Date().getTime() / 1000;
+    game.config.playerTime = time - game.config.beginTime;
+    this.timeText.text = `time: ${game.config.playerTime.toFixed(2)}`;
   }
 }

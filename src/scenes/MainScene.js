@@ -23,10 +23,12 @@ export default class MainScene extends Phaser.Scene {
   create() {
     game.config.health = 5;
     game.config.points = 0;
-    game.config.time = 0;
+    game.config.beginTime = new Date().getTime() / 1000;
+    game.config.playerTime = 0;
     this.add.image(400, 300, "splash").setScale(2.5);
     const helloButton = this.add.image(400, 300, "button").setScale(0.25);
     helloButton.setInteractive();
+    // helloButton.on("pointerdown", () => this.scene.start("FgScene"));
     helloButton.on("pointerdown", () => this.scene.start("FgScene"));
   }
 }
