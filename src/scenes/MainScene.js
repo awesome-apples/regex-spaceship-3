@@ -1,4 +1,4 @@
-import "phaser";
+import Phaser from "phaser";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -7,7 +7,9 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     this.load.image("splash", "assets/splash.png");
+    this.load.image("button", "assets/buttons/1.png");
   }
+
   // handleLevels() {
   //   if (game.config.level === 2) {
   //     this.scene.launch("LvlTwoScene");
@@ -22,9 +24,8 @@ export default class MainScene extends Phaser.Scene {
     game.config.health = 10;
     game.config.points = 5;
     this.add.image(400, 300, "splash").setScale(2.5);
-    this.input.on("pointerdown", () => this.scene.start("FgScene"));
-    // << LOAD BACKGROUND AND FOREGROUND SCENES IN PARALLEL HERE >>
-    // this.scene.launch("BgScene");
-    // this.scene.launch("FgScene");
+    const helloButton = this.add.image(400, 300, "button").setScale(0.25);
+    helloButton.setInteractive();
+    helloButton.on("pointerdown", () => this.scene.start("FgScene"));
   }
 }

@@ -1,3 +1,7 @@
+// import FgScene from "../scenes/FgScene";
+
+// import FgScene from "../scenes/FgScene";
+
 export default {
   type: Phaser.AUTO, // Specify the underlying browser rendering engine (AUTO, CANVAS, WEBGL)
   // AUTO will attempt to use WEBGL, but if not available it'll default to CANVAS
@@ -16,6 +20,7 @@ export default {
       debug: false, // Whether physics engine should run in debug mode
     },
   },
+  scene: [],
   points: 0,
   health: 0,
   pointsText: 0,
