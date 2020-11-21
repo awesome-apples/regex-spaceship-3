@@ -11,6 +11,9 @@ export default class InterludeTwo extends Phaser.Scene {
 
   create() {
     this.add.image(400, 300, "lvl3").setScale(2.5);
-    this.input.on("pointerdown", () => this.scene.start("LvlThreeScene"));
+    this.input.on("pointerdown", () => {
+      this.scene.start("LvlThreeScene");
+      this.scene.stop("InterludeTwo");
+    });
   }
 }

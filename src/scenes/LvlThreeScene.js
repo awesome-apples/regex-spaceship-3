@@ -219,6 +219,7 @@ export default class LvlThreeScene extends Phaser.Scene {
 
   advanceLevel() {
     this.scene.start("InterludeThree");
+    this.scene.stop("LvlThreeScene");
   }
 
   create() {

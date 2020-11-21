@@ -230,6 +230,7 @@ export default class LvlFourScene extends Phaser.Scene {
 
   advanceLevel() {
     this.scene.start("FinishTitle");
+    this.scene.stop("LvlFourScene");
   }
 
   create() {

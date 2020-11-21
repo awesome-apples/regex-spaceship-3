@@ -240,6 +240,7 @@ export default class FgScene extends Phaser.Scene {
     console.log("points from inside advance level", game.config.points);
 
     this.scene.start("InterludeOne");
+    this.scene.stop("FgScene");
   }
 
   create() {
@@ -383,6 +384,7 @@ export default class FgScene extends Phaser.Scene {
     this.baby = new Baby(this, 30, 200, "baby").setScale(2);
     // this.end = new End(this, width * 19.75, 400, "end").setScale(5.0);
     this.end = new End(this, width * 19.75, 400, "end").setScale(5.0);
+    // this.end = new End(this, 800, 400, "end").setScale(5.0);
 
     //GROUPS
 
