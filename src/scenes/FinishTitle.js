@@ -1,8 +1,11 @@
 import "phaser";
+import axios from "axios";
 
 export default class FinishTitle extends Phaser.Scene {
   constructor() {
     super("FinishTitle");
+    this.charts = [];
+
     this.firstPlace = { name: "gamergirl12345", time: "500", points: "200" };
     this.secondPlace = { name: "gamertalk12345", time: "600", points: "190" };
     this.thirdPlace = { name: "leetcode12345", time: "720", points: "180" };
@@ -15,7 +18,31 @@ export default class FinishTitle extends Phaser.Scene {
     this.load.image("finish", "assets/titleScreens/finish.png");
   }
 
+  async getCharts() {
+    try {
+      await this.sendChart();
+      this.charts = await axios.get("/api/topcharts/single");
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async sendChart() {
+    try {
+      await axios.post("/api/topcharts", {
+        name: game.config.name,
+        points: game.config.points,
+        time: game.config.playerTime,
+        style: "single",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   create() {
+    this.getCharts();
+
     this.add.image(400, 300, "finish").setScale(0.9);
 
     this.wonText = this.add.text(400, 150, `Winner!`, {

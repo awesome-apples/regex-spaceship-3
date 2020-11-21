@@ -4,14 +4,43 @@
   "description": "A workshop for getting started with Phaser",
   "main": "src/index.js",
   "scripts": {
-    "start": "webpack-dev-server"
+    "build-client": "webpack",
+    "build-client-watch": "webpack -w",
+    "deploy": "script/deploy",
+    "heroku-token": "script/encrypt-heroku-auth-token.js",
+    "lint": "eslint ./ --ignore-path .gitignore",
+    "lint-fix": "npm run lint -- --fix",
+    "prepare": "if [ -d .git ]; then npm-merge-driver install; fi",
+    "prettify": "prettier --write \"**/*.{js,jsx,json,css,scss,md}\"",
+    "postinstall": "touch secrets.js",
+    "seed": "node script/seed.js",
+    "start": "node server",
+    "start-dev": "NODE_ENV='development' npm run build-client-watch & NODE_ENV='development' npm run start-server",
+    "start-server": "nodemon server -e html,js,scss --ignore public --ignore client",
+    "test": "NODE_ENV='test' mocha \"./server/**/*.spec.js\" \"./client/**/*.spec.js\" \"./script/**/*.spec.js\" --require @babel/polyfill --require @babel/register"
   },
   "dependencies": {
-    "phaser": "^3.15.1"
+    "axios": "^0.21.0",
+    "compression": "^1.7.4",
+    "connect-session-sequelize": "^7.0.4",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "morgan": "^1.10.0",
+    "passport": "^0.4.1",
+    "passport-google-oauth": "^2.0.0",
+    "pg": "^8.5.1",
+    "pg-hstore": "^2.3.3",
+    "phaser": "^3.15.1",
+    "prop-types": "^15.7.2",
+    "sequelize": "^6.3.5",
+    "socket.io": "^3.0.3"
   },
   "devDependencies": {
+    "axios-mock-adapter": "^1.19.0",
+    "nodemon": "^2.0.6",
     "raw-loader": "^0.5.1",
     "webpack": "^3.4.1",
+    "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^2.11.0"
   }
 }
