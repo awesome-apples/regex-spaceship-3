@@ -309,6 +309,39 @@ export default class LvlThreeScene extends Phaser.Scene {
     );
     this.healthText.setScrollFactor(0);
 
+    this.timeText = this.add.text(20, 90, `time: ${game.config.playerTime}`, {
+      fontSize: 32,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.timeText.setScrollFactor(0);
+
+    this.gameOverText = this.add.text(400, 300, `Game Over`, {
+      fontSize: 48,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.gameOverText.setOrigin(0.5);
+    this.gameOverText.setScrollFactor(0);
+    this.gameOverText.visible = false;
+
+    this.startOverButton = this.add.text(400, 400, "Retry", {
+      fontSize: 36,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.startOverButton.setOrigin(0.5);
+    this.startOverButton.setScrollFactor(0);
+    this.startOverButton.setInteractive();
+    this.startOverButton.on("pointerover", () =>
+      this.startOverButton.setStyle({ fill: "#ff69b4" })
+    );
+    this.startOverButton.on("pointerout", () =>
+      this.startOverButton.setStyle({ fill: "#39ff14" })
+    );
+    this.startOverButton.on("pointerdown", () => this.scene.start("MainScene"));
+    this.startOverButton.visible = false;
+
     //HEARTS
     this.hearts = this.physics.add.group({
       key: "heart",
@@ -336,7 +369,7 @@ export default class LvlThreeScene extends Phaser.Scene {
     });
     this.fireballGroup.createMultiple({
       key: "fireball",
-      repeat: 40,
+      repeat: 20,
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
@@ -581,14 +614,15 @@ export default class LvlThreeScene extends Phaser.Scene {
     this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
     // baby.setTint(0xff000);
     // let timer = this.time.delayedCall(2000, this.clearRed(baby));
-
     // this.physics.world.removeCollider(this.overlapCollider);
-    console.log("health", game.config.health);
+    // console.log("health", game.config.health);
 
     if (game.config.health < 1) {
-      this.gameOver = true;
-      this.baby.setTint(0xff0000);
       this.physics.pause();
+      this.baby.setTint(0xff0000);
+      this.gameOver = true;
+      this.gameOverText.visible = true;
+      this.startOverButton.visible = true;
     }
   }
 
@@ -601,7 +635,7 @@ export default class LvlThreeScene extends Phaser.Scene {
     //   two.update();
     // }, this);
     // this.cokeSign.update();
-
+    this.updateTime();
     this.baby.update(this.cursors, this.jumpSound);
 
     this.mushroom.update();
@@ -779,5 +813,10 @@ export default class LvlThreeScene extends Phaser.Scene {
   collectGun(baby, gun) {
     gun.disableBody(true, true);
     this.baby.armed = true;
+  }
+  updateTime() {
+    const time = new Date().getTime() / 1000;
+    game.config.playerTime = time - game.config.beginTime;
+    this.timeText.text = `time: ${game.config.playerTime.toFixed(2)}`;
   }
 }

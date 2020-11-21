@@ -22,6 +22,7 @@ import LvlFourScene from "./scenes/LvlFourScene";
 import InterludeOne from "./scenes/InterludeOne";
 import InterludeTwo from "./scenes/InterludeTwo";
 import InterludeThree from "./scenes/InterludeThree";
+import FinishTitle from "./scenes/FinishTitle";
 import config from "./config/config";
 
 class Game extends Phaser.Game {
@@ -37,7 +38,7 @@ class Game extends Phaser.Game {
     this.scene.add("InterludeOne", InterludeOne);
     this.scene.add("InterludeTwo", InterludeTwo);
     this.scene.add("InterludeThree", InterludeThree);
-
+    this.scene.add("FinishTitle", FinishTitle);
     // Add all the scenes
     // << ADD ALL SCENES HERE >>
     // this.scene.add("BgScene", BgScene);
