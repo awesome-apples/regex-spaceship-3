@@ -20,6 +20,10 @@ export default {
       debug: false, // Whether physics engine should run in debug mode
     },
   },
+  parent: "nameform",
+  dom: {
+    createContainer: true,
+  },
   scene: [],
   points: 0,
   health: 0,
@@ -27,4 +31,5 @@ export default {
   healthText: 0,
   playerTime: "",
   beginTime: 0,
+  playerNameOne: "",
 };

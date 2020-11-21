@@ -238,9 +238,10 @@ export default class FgScene extends Phaser.Scene {
 
   advanceLevel() {
     console.log("points from inside advance level", game.config.points);
-
     this.scene.start("InterludeOne");
     this.scene.stop("FgScene");
+    // this.scene.start("InterludeOne");
+    // this.scene.stop("FgScene");
   }
 
   create() {
