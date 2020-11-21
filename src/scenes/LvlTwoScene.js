@@ -230,6 +230,7 @@ export default class LvlTwoScene extends Phaser.Scene {
 
   advanceLevel() {
     this.scene.start("InterludeTwo");
+    this.scene.stop("LvlTwoScene");
   }
 
   create() {

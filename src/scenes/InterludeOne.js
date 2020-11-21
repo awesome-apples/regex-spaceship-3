@@ -13,6 +13,9 @@ export default class InterludeOne extends Phaser.Scene {
     console.log("config points", game.config.points);
     console.log("config health", game.config.health);
     this.add.image(400, 300, "lvl2").setScale(2.5);
-    this.input.on("pointerdown", () => this.scene.start("LvlTwoScene"));
+    this.input.on("pointerdown", () => {
+      this.scene.start("LvlTwoScene");
+      this.scene.stop("InterludeOne");
+    });
   }
 }
