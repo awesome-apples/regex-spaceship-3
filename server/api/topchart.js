@@ -13,9 +13,7 @@ router.get("/single", async (req, res, next) => {
       },
     });
     topcharts.sort((a, b) => {
-      const aScore = a.time - a.points;
-      const bScore = b.time - b.points;
-      return aScore - bScore;
+      return a.score - b.score;
     });
     res.json(topcharts);
   } catch (error) {
@@ -31,9 +29,7 @@ router.get("/multi", async (req, res, next) => {
       },
     });
     topcharts.sort((a, b) => {
-      const aScore = a.time - a.points;
-      const bScore = b.time - b.points;
-      return aScore - bScore;
+      return a.score - b.score;
     });
     res.json(topcharts);
   } catch (error) {
@@ -43,9 +39,14 @@ router.get("/multi", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { name, points, time, style } = req.body;
-    // const userId = req.user.dataValues.id;
-    const newchart = await TopChart.create({ name, points, time, style });
+    const { name, points, time, style, score } = req.body;
+    const newchart = await TopChart.create({
+      name,
+      points,
+      time,
+      style,
+      score,
+    });
     res.sendStatus(201);
   } catch (err) {
     next(err);

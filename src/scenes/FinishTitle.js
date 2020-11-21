@@ -15,13 +15,15 @@ export default class FinishTitle extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("finish", "assets/titleScreens/finish.png");
+    this.load.image("finished", "assets/titleScreens/finish.png");
   }
 
   async getCharts() {
     try {
       await this.sendChart();
-      this.charts = await axios.get("/api/topcharts/single");
+      const { data } = await axios.get("/api/topchart/single");
+      this.charts = data;
+      console.log("got charts ----->", this.charts);
     } catch (err) {
       console.error(err);
     }
@@ -29,11 +31,12 @@ export default class FinishTitle extends Phaser.Scene {
 
   async sendChart() {
     try {
-      await axios.post("/api/topcharts", {
-        name: game.config.name,
+      await axios.post("/api/topchart", {
+        name: game.config.playerNameOne,
         points: game.config.points,
-        time: game.config.playerTime,
+        time: Math.round(game.config.playerTime),
         style: "single",
+        score: Math.round(game.config.playerTime) - game.config.points,
       });
     } catch (err) {
       console.error(err);
@@ -43,7 +46,7 @@ export default class FinishTitle extends Phaser.Scene {
   create() {
     this.getCharts();
 
-    this.add.image(400, 300, "finish").setScale(0.9);
+    this.add.image(400, 300, "finished").setScale(0.9);
 
     this.wonText = this.add.text(400, 150, `Winner!`, {
       fontSize: 56,

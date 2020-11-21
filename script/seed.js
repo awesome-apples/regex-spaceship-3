@@ -9,30 +9,35 @@ const topchartdata = [
     points: 150,
     time: 400,
     style: "single",
+    score: 250,
   },
   {
     name: "blue",
     points: 170,
     time: 500,
     style: "single",
+    score: 330,
   },
   {
     name: "red",
     points: 45,
-    time: 60.35,
+    time: 60,
     style: "single",
+    score: 15,
   },
   {
     name: "green",
     points: 578,
-    time: 87.35,
+    time: 87,
     style: "single",
+    score: -490,
   },
   {
     name: "pink",
     points: 560,
-    time: 13.35,
+    time: 13,
     style: "single",
+    score: 546,
   },
 ];
 

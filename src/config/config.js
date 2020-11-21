@@ -27,5 +27,5 @@ export default {
   healthText: 0,
   playerTime: "",
   beginTime: 0,
-  name: "",
+  playerNameOne: "",
 };

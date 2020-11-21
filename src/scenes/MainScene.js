@@ -23,7 +23,7 @@ export default class MainScene extends Phaser.Scene {
   create() {
     game.config.health = 5;
     game.config.points = 0;
-    game.config.name = "babydfjshodf";
+    game.config.playerNameOne = "bghdfghd";
     game.config.beginTime = new Date().getTime() / 1000;
     game.config.playerTime = 0;
     this.add.image(400, 300, "splash").setScale(2.5);
