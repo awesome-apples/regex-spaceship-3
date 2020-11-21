@@ -6,12 +6,12 @@ export default class FinishTitle extends Phaser.Scene {
     super("FinishTitle");
     this.charts = [];
 
-    this.firstPlace = { name: "gamergirl12345", time: "500", points: "200" };
-    this.secondPlace = { name: "gamertalk12345", time: "600", points: "190" };
-    this.thirdPlace = { name: "leetcode12345", time: "720", points: "180" };
-    this.fourthPlace = { name: "dgdfg12345", time: "740", points: "120" };
-    this.fifthPlace = { name: "ddfjydrt2345", time: "730", points: "110" };
-    this.sixthPlace = { name: "ddfdgsfgsfg", time: "740", points: "100" };
+    // this.firstPlace = { name: "gamergirl12345", time: "500", points: "200" };
+    // this.secondPlace = { name: "gamertalk12345", time: "600", points: "190" };
+    // this.thirdPlace = { name: "leetcode12345", time: "720", points: "180" };
+    // this.fourthPlace = { name: "dgdfg12345", time: "740", points: "120" };
+    // this.fifthPlace = { name: "ddfjydrt2345", time: "730", points: "110" };
+    // this.sixthPlace = { name: "ddfdgsfgsfg", time: "740", points: "100" };
   }
 
   preload() {
@@ -43,8 +43,23 @@ export default class FinishTitle extends Phaser.Scene {
     }
   }
 
-  create() {
-    this.getCharts();
+  // createChart(yaxis) {
+  //   let y = yaxis;
+  //   this.charts.forEach((chart, i) => {
+  //     this.add.text(
+  //       400,
+  //       y,
+  //       `${i + 1}: ${chart.name}, time: ${chart.time}, points: ${chart.points}`,
+  //       { fontSize: 20, fontFamily: "Audiowide, cursive", fill: "#39ff14" }
+  //     );
+  //     // newchart.setOrigin(0.5);
+  //     // newchart.setScrollFactor(0);
+  //     y += 20;
+  //   });
+  // }
+
+  async create() {
+    await this.getCharts();
 
     this.add.image(400, 300, "finished").setScale(0.9);
 
@@ -72,7 +87,7 @@ export default class FinishTitle extends Phaser.Scene {
     );
     this.playAgainButton.on("pointerdown", () => this.scene.start("MainScene"));
 
-    this.topCharts = this.add.text(400, 210, `TOP CHARTS`, {
+    this.topCharts = this.add.text(400, 240, `TOP CHARTS`, {
       fontSize: 28,
       fontFamily: "Audiowide, cursive",
       fill: "#39ff14",
@@ -80,10 +95,13 @@ export default class FinishTitle extends Phaser.Scene {
     this.topCharts.setOrigin(0.5);
     this.topCharts.setScrollFactor(0);
 
+    //method
+    // this.createChart();
+
     this.topChartOne = this.add.text(
       400,
-      245,
-      `1st: ${this.firstPlace.name}, time: ${this.firstPlace.time}, points: ${this.firstPlace.points}`,
+      285,
+      `1st: ${this.charts[0].name}, time: ${this.charts[0].time}, points: ${this.charts[0].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -95,8 +113,8 @@ export default class FinishTitle extends Phaser.Scene {
 
     this.topChartTwo = this.add.text(
       400,
-      265,
-      `2nd: ${this.secondPlace.name}, time: ${this.secondPlace.time}, points: ${this.secondPlace.points}`,
+      315,
+      `2nd: ${this.charts[1].name}, time: ${this.charts[1].time}, points: ${this.charts[1].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -108,8 +126,8 @@ export default class FinishTitle extends Phaser.Scene {
 
     this.TopChartThree = this.add.text(
       400,
-      285,
-      `2nd: ${this.thirdPlace.name}, time: ${this.thirdPlace.time}, points: ${this.thirdPlace.points}`,
+      345,
+      `3rd: ${this.charts[2].name}, time: ${this.charts[2].time}, points: ${this.charts[2].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -121,8 +139,8 @@ export default class FinishTitle extends Phaser.Scene {
 
     this.TopChartFour = this.add.text(
       400,
-      305,
-      `2nd: ${this.fourthPlace.name}, time: ${this.fourthPlace.time}, points: ${this.fourthPlace.points}`,
+      375,
+      `4th: ${this.charts[3].name}, time: ${this.charts[3].time}, points: ${this.charts[3].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -134,8 +152,8 @@ export default class FinishTitle extends Phaser.Scene {
 
     this.TopChartFive = this.add.text(
       400,
-      325,
-      `2nd: ${this.fifthPlace.name}, time: ${this.fifthPlace.time}, points: ${this.fifthPlace.points}`,
+      405,
+      `5th: ${this.charts[4].name}, time: ${this.charts[4].time}, points: ${this.charts[4].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
