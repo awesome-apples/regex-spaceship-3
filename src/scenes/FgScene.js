@@ -1,4 +1,3 @@
-import Player from "../entity/Player";
 import Ground from "../entity/Ground";
 import PlatformOne from "../entity/PlatformOne";
 import PlatformTwo from "../entity/PlatformTwo";
@@ -34,7 +33,6 @@ export default class FgScene extends Phaser.Scene {
     this.fireLaser = this.fireLaser.bind(this);
     this.hit = this.hit.bind(this);
     this.gameOver = false;
-    this.overlapCollider = 0;
   }
 
   preload() {
@@ -313,11 +311,16 @@ export default class FgScene extends Phaser.Scene {
     // });
 
     //TEXT
-    this.pointText = this.add.text(20, 20, `points: ${game.config.points}`, {
-      fontSize: 32,
-      fontFamily: "Orbitron, sans-serif",
-      fill: "#39ff14",
-    });
+    this.pointText = this.add.text(
+      20,
+      20,
+      `points: ${Math.round(game.config.points)}`,
+      {
+        fontSize: 32,
+        fontFamily: "Orbitron, sans-serif",
+        fill: "#39ff14",
+      }
+    );
     this.pointText.setScrollFactor(0);
 
     this.healthText = this.add.text(20, 60, `health: ${game.config.health}`, {
@@ -326,6 +329,16 @@ export default class FgScene extends Phaser.Scene {
       fill: "#39ff14",
     });
     this.healthText.setScrollFactor(0);
+
+    this.beginTime = Date.now();
+    this.currentTime = 0;
+
+    this.timeText = this.add.text(20, 90, `time: ${this.currentTime}`, {
+      fontSize: 32,
+      fontFamily: "Audiowide, cursive",
+      fill: "#39ff14",
+    });
+    this.timeText.setScrollFactor(0);
 
     //HEARTS
     this.hearts = this.physics.add.group({
@@ -358,7 +371,7 @@ export default class FgScene extends Phaser.Scene {
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
-      let x = Phaser.Math.Between(0, width * 20);
+      let x = Phaser.Math.Between(0, width * 200);
 
       child.setY(y);
       child.setX(x);
@@ -620,6 +633,7 @@ export default class FgScene extends Phaser.Scene {
     // }, this);
     // this.cokeSign.update();
 
+    this.getTime();
     this.baby.update(this.cursors, this.jumpSound);
 
     this.mushroom.update();
@@ -659,11 +673,10 @@ export default class FgScene extends Phaser.Scene {
 
   collectHeart(baby, heart) {
     heart.disableBody(true, true);
-    game.config.health = Math.round(game.config.health + 1);
-    this.healthText.setText(`health: ${game.config.health}`);
+    game.config.health = game.config.health + 1;
+    this.healthText.setText(`health: ${Math.round(game.config.health)}`);
     this.heartSound.play();
   }
-
   fireLaser(x, y, left) {
     // These are the offsets from the player's position that make it look like
     // the laser starts from the gun in the player's hand
@@ -797,5 +810,10 @@ export default class FgScene extends Phaser.Scene {
   collectGun(baby, gun) {
     gun.disableBody(true, true);
     this.baby.armed = true;
+  }
+  getTime() {
+    const newtime = Date.now - this.beginTime;
+    this.currentTime = newtime;
+    this.timeText.setText(`time: ${this.currentTime}`);
   }
 }
