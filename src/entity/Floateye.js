@@ -21,6 +21,8 @@ export default class Floateye extends Phaser.Physics.Arcade.Sprite {
         this.facingLeft = true;
       }
       this.setVelocityX(-50);
+      this.body.setBounce(1);
+
       if (this.body.touching.down) {
         this.play("floatfly", true);
       }
