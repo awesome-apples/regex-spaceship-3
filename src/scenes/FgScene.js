@@ -1,6 +1,7 @@
 import Player from "../entity/Player";
 import Ground from "../entity/Ground";
 import PlatformOne from "../entity/PlatformOne";
+import PlatformTwo from "../entity/PlatformTwo";
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
@@ -49,6 +50,15 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 38,
       frameHeight: 35,
     });
+
+    this.load.spritesheet(
+      "coke",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-sheet.png",
+      {
+        frameWidth: 27,
+        frameHeight: 78,
+      }
+    );
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laser", "assets/sprites/laserBolt.png");
     this.load.image("heart", "assets/sprites/heart.png");
@@ -69,6 +79,19 @@ export default class FgScene extends Phaser.Scene {
     this.load.image(
       "sushi",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-sushi/banner-sushi-1.png"
+    );
+    this.load.image(
+      "coke1",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-1.png"
+    );
+    this.load.image(
+      "coke2",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-2.png"
+    );
+
+    this.load.image(
+      "coke3",
+      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-3.png"
     );
     this.load.image(
       "end",
@@ -95,8 +118,17 @@ export default class FgScene extends Phaser.Scene {
     const w = this.textures.get(texture).getSourceImage().width;
     let wid = x;
     for (let i = 0; i < count; i++) {
-      this.platformGroupOne.create(wid, y, texture).setScale(3.1).alpha = 0;
-      wid += w;
+      this.platformGroupOne.create(wid, y, texture).setScale(3.1);
+      wid += w * Math.random() * 200;
+    }
+  }
+
+  createPlatformTwo(x, y, count, texture) {
+    const w = this.textures.get(texture).getSourceImage().width;
+    let wid = x;
+    for (let i = 0; i < count; i++) {
+      this.platformGroupTwo.create(wid, y, texture).setScale(3.1);
+      wid += w * Math.random() * 200;
     }
   }
 
@@ -155,10 +187,25 @@ export default class FgScene extends Phaser.Scene {
     // this.createMonster(floatX, floatY, "floateye");
 
     //PLATFORMS1
-    // this.platformGroupOne = this.physics.add.staticGroup({
-    //   classType: PlatformOne,
+    this.platformGroupOne = this.physics.add.staticGroup({
+      classType: PlatformOne,
+    });
+    this.sushi = this.createPlatformOne(300, 370, 10, "sushi");
+
+    // this.cokeSign = new PlatformTwo(this, 300, 200, "coke");
+
+    this.platformGroupTwo = this.physics.add.staticGroup({
+      classType: PlatformTwo,
+    });
+    this.cokeArray = this.createPlatformTwo(300, 200, 10, "coke1");
+
+    // this.platformGroupTwo.getChildren().forEach(function (two) {
+    //   two.body.setAllowGravity(false);
+    // }, this);
+    // this.platformGroupTwo.callAll("play", null, "coke");
+    // this.platformGroupTwo.children.iterate(function (child) {
+    //   child.play("coke");
     // });
-    // this.createPlatformOne(400, 570, 40, "sushi");
 
     //TEXT
     this.pointText = this.add.text(20, 20, `points: ${game.config.points}`, {
@@ -327,6 +374,10 @@ export default class FgScene extends Phaser.Scene {
   update(time, delta) {
     // << DO UPDATE LOGIC HERE >>
 
+    // this.platformGroupTwo.getChildren().forEach(function (two) {
+    //   two.update();
+    // }, this);
+    // this.cokeSign.update();
     this.baby.update(this.cursors, this.jumpSound);
     this.mushroom.update();
 
@@ -343,7 +394,7 @@ export default class FgScene extends Phaser.Scene {
 
   collectHeart(baby, heart) {
     heart.disableBody(true, true);
-    game.config.health++;
+    game.config.health = Math.round(game.config.health + 1);
     this.healthText.setText(`health: ${game.config.health}`);
     this.heartSound.play();
   }
@@ -458,6 +509,19 @@ export default class FgScene extends Phaser.Scene {
       frames: [{ key: "floateye", frame: 1 }],
       frameRate: 20,
     });
+
+    //animations for coke
+    // this.anims.create({
+    //   key: "coke",
+    //   frames: this.anims.generateFrameNumbers("coke", {
+    //     start: 1,
+    //     end: 3,
+    //   }),
+    //   // frames: [{ key: "coke", frame: 1 }],
+    //   frameRate: 20,
+    //   repeat: -1,
+    // });
+    //animations for sushi
   }
 
   collectGun(baby, gun) {
