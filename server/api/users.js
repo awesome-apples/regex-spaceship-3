@@ -15,3 +15,16 @@ router.get("/", async (req, res, next) => {
     next(err);
   }
 });
+
+router.post("/signup", async (req, res, next) => {
+  try {
+    const { username, password } = req.body;
+    const newUser = await User.create({
+      username,
+      password,
+    });
+    res.json(newUser);
+  } catch (err) {
+    next(err);
+  }
+});
