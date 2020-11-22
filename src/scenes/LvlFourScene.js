@@ -119,22 +119,27 @@ export default class LvlFourScene extends Phaser.Scene {
     this.load.image("gun", "assets/sprites/gun.png");
     this.load.image("laser", "assets/sprites/laserBolt.png");
     this.load.image("heart", "assets/sprites/heart.png");
+    // this.load.image(
+    //   "sky6",
+    //   "assets/backgrounds/stringstarfields/background_0.png"
+    // );
     this.load.image(
       "sky6",
-      "assets/backgrounds/stringstarfields/background_0.png"
+      "assets/backgrounds/warpedcity/ENVIRONMENT/background/skyline-a.png"
     );
+
     this.load.image(
       "sky7",
-      "assets/backgrounds/stringstarfields/background_1.png"
+      "assets/backgrounds/warpedcity/ENVIRONMENT/background/buildings-bg.png"
     );
     this.load.image(
       "sky8",
-      "assets/backgrounds/stringstarfields/background_2.png"
+      "assets/backgrounds/warpedcity/ENVIRONMENT/background/near-buildings-bg.png"
     );
-    this.load.image(
-      "tileset",
-      "assets/backgrounds/stringstarfields/tileset.png"
-    );
+    // this.load.image(
+    //   "tileset",
+    //   "assets/backgrounds/stringstarfields/tileset.png"
+    // );
 
     this.load.image("ground", "assets/backgrounds/cyberpunk/long/ground.png");
 
@@ -228,7 +233,7 @@ export default class LvlFourScene extends Phaser.Scene {
     this.createLooped(totalWidth, "sky6", 0.08);
     this.createLooped(totalWidth, "sky7", 0.18);
     this.createLooped(totalWidth, "sky8", 0.22);
-    this.createLooped(totalWidth, "tileset", 0.26);
+    // this.createLooped(totalWidth, "tileset", 0.26);
 
     //GROUND
     this.groundGroup = this.physics.add.staticGroup({ classType: Ground });

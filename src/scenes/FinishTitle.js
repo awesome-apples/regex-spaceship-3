@@ -20,7 +20,9 @@ export default class FinishTitle extends Phaser.Scene {
 
   async getCharts() {
     try {
-      await this.sendChart();
+      if (game.config.playerNameOne) {
+        await this.sendChart();
+      }
       const { data } = await axios.get("/api/topchart/single");
       this.charts = data;
       console.log("got charts ----->", this.charts);
@@ -43,31 +45,34 @@ export default class FinishTitle extends Phaser.Scene {
     }
   }
 
-  // createChart(yaxis) {
-  //   let y = yaxis;
-  //   this.charts.forEach((chart, i) => {
-  //     this.add.text(
-  //       400,
-  //       y,
-  //       `${i + 1}: ${chart.name}, time: ${chart.time}, points: ${chart.points}`,
-  //       { fontSize: 20, fontFamily: "Audiowide, cursive", fill: "#39ff14" }
-  //     );
-  //     // newchart.setOrigin(0.5);
-  //     // newchart.setScrollFactor(0);
-  //     y += 20;
-  //   });
-  // }
-
   async create() {
     await this.getCharts();
 
     this.add.image(400, 300, "finished").setScale(0.9);
 
-    this.wonText = this.add.text(400, 150, `Winner!`, {
+    this.wonText = this.add.text(400, 75, `Winner!`, {
       fontSize: 56,
       fontFamily: "Audiowide, cursive",
       fill: "#39ff14",
     });
+    this.wonText.setOrigin(0.5);
+    this.wonText.setScrollFactor(0);
+
+    this.finalScore = this.add.text(
+      400,
+      170,
+      `Final score: points: ${game.config.points}, time: ${Math.round(
+        game.config.playerTime
+      )}`,
+      {
+        fontSize: 36,
+        fontFamily: "Audiowide, cursive",
+        fill: "#39ff14",
+      }
+    );
+    this.finalScore.setOrigin(0.5);
+    this.finalScore.setScrollFactor(0);
+
     this.wonText.setOrigin(0.5);
     this.wonText.setScrollFactor(0);
 
