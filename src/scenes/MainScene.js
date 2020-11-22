@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import axios from "axios";
+import io from "socket.io-client";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -64,6 +65,12 @@ export default class MainScene extends Phaser.Scene {
 
   create() {
     const scene = this;
+    // this.socket = io("http://localhost:8080");
+
+    // this.socket.on("connect", function () {
+    //   console.log("Connected!");
+    // });
+
     game.config.health = 100;
     game.config.points = 0;
     game.config.beginTime = new Date().getTime() / 1000;
@@ -88,7 +95,7 @@ export default class MainScene extends Phaser.Scene {
     // });
 
     // if (game.config.login !== true) {
-    if (localStorage.loggedInUser.length < 2) {
+    if (!localStorage.loggedInUser || localStorage.loggedInUser.length < 2) {
       var text = this.add.text(300, 10, "Please enter your name", {
         color: "white",
         fontSize: "20px ",
