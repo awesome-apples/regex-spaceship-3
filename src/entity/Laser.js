@@ -11,7 +11,7 @@ export default class Laser extends Phaser.Physics.Arcade.Sprite {
     this.facingLeft = facingLeft;
     this.speed = Phaser.Math.GetSpeed(800, 1); // (distance in pixels, time (ms))
     // How long the laser will live (ms). Hard coded here for simplicity
-    this.lifespan = 900;
+    this.lifespan = 600;
     // Important to not apply gravity to the laser bolt!
     this.body.setAllowGravity(false);
     this.reset(x, y, facingLeft);

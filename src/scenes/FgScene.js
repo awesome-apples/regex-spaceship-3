@@ -294,8 +294,8 @@ export default class FgScene extends Phaser.Scene {
     //HEARTS
     this.hearts = this.physics.add.group({
       key: "heart",
-      repeat: 4000,
-      setXY: { x: 900, y: 0, stepX: 60 },
+      repeat: 100,
+      setXY: { x: 900, y: 0, stepX: 250 },
     });
 
     this.hearts.children.iterate(function (child) {
@@ -599,31 +599,31 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.overlap(this.baby, this.gun, this.collectGun, null, this);
 
     this.physics.add.overlap(
-      this.mushroomGroup,
       this.lasers,
+      this.mushroomGroup,
       this.hit,
       null,
       this
     );
     this.physics.add.overlap(
-      this.floateyeGroup,
       this.lasers,
+      this.floateyeGroup,
       this.hit,
       null,
       this
     );
 
     this.physics.add.overlap(
-      this.mushroomGroup,
       this.baby,
+      this.mushroomGroup,
       this.monsterHit,
       null,
       this
     );
 
     this.physics.add.overlap(
-      this.fireballGroup,
       this.baby,
+      this.fireballGroup,
       this.monsterHit,
       null,
       this
@@ -668,10 +668,6 @@ export default class FgScene extends Phaser.Scene {
     this.hurtSound.play();
     game.config.health -= 0.07;
     this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
-    // baby.setTint(0xff000);
-    // let timer = this.time.delayedCall(2000, this.clearRed(baby));
-    // this.physics.world.removeCollider(this.overlapCollider);
-    // console.log("health", game.config.health);
 
     if (game.config.health < 1) {
       this.physics.pause();
@@ -716,7 +712,7 @@ export default class FgScene extends Phaser.Scene {
 
   // make the laser inactive and insivible when it hits the enemy
   // ENEMY LASER INTERACTIONS
-  hit(monster, laser) {
+  hit(laser, monster) {
     laser.setActive(false);
     laser.setVisible(false);
     monster.disableBody(true, true);
