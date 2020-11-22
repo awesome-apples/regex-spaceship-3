@@ -25,9 +25,14 @@ export default class MainScene extends Phaser.Scene {
 
     helloButton.on("pointerover", () => (helloButtonTwo.visible = true));
     helloButton.on("pointerout", () => (helloButtonTwo.visible = false));
-    // helloButton.on("pointerdown", () => this.scene.start("FgScene"));
+
+    // helloButton.on("pointerdown", () => {
+    //   this.scene.start("FgScene");
+    //   this.scene.stop("MainScene");
+    // });
+
     helloButton.on("pointerdown", () => {
-      this.scene.start("FgScene");
+      this.scene.start("LvlThreeScene");
       this.scene.stop("MainScene");
     });
 

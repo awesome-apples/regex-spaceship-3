@@ -153,6 +153,8 @@ export default class LvlThreeScene extends Phaser.Scene {
     );
     this.load.image("fireball", "assets/spriteSheets/fireball/FB002.png");
 
+    this.load.image("earth", "assets/Planets/Terran.png");
+
     this.load.image(
       "end",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-arrow.png"
@@ -279,6 +281,20 @@ export default class LvlThreeScene extends Phaser.Scene {
       key: "heart",
       repeat: 100,
       setXY: { x: 900, y: 0, stepX: 250 },
+    });
+
+    //EARTH
+    this.earth = this.physics.add.group({
+      key: "earth",
+      repeat: 1,
+      setXY: { x: 400, y: 250 },
+    });
+
+    this.earth.children.iterate((child) => {
+      child.setScale(3.1);
+      child.body.allowGravity = false;
+      child.setScrollFactor(0);
+      child.update = function () {};
     });
 
     this.hearts.children.iterate(function (child) {
