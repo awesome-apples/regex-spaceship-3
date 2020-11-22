@@ -25,10 +25,10 @@ if (process.env.NODE_ENV === "test") {
  * or show up on Github. On your production server, you can add these
  * keys as environment variables, so that they can still be read by the
  * Node process on process.env
-//  */
-// if (process.env.NODE_ENV !== 'production') require('../secrets')
+ */
+if (process.env.NODE_ENV !== "production") require("../secrets");
 
-// // passport registration
+// passport registration
 passport.serializeUser((user, done) => done(null, user.id));
 
 passport.deserializeUser(async (id, done) => {
@@ -63,8 +63,8 @@ const createApp = () => {
   app.use(passport.initialize());
   app.use(passport.session());
 
-  // // auth and api routes
-  // app.use('/auth', require('./auth'))
+  // auth and api routes
+  app.use("/auth", require("./auth"));
   app.use("/api", require("./api"));
 
   // static file-serving middleware

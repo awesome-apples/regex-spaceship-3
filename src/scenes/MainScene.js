@@ -7,6 +7,7 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     this.load.html("nameform", "assets/text/nameform.html");
+    this.load.html("loginform", "assets/text/loginform.html");
     this.load.image("splash", "assets/splash.png");
     this.load.image("button", "assets/buttons/1.png");
     this.load.image("button22", "assets/buttons/22.png");
@@ -32,7 +33,7 @@ export default class MainScene extends Phaser.Scene {
     // });
 
     helloButton.on("pointerdown", () => {
-      this.scene.start("LvlThreeScene");
+      this.scene.start("FinishTitle");
       this.scene.stop("MainScene");
     });
 
@@ -55,7 +56,7 @@ export default class MainScene extends Phaser.Scene {
 
         //  Have they entered anything?
         if (inputText.value !== "") {
-          game.config.playerNameOne = inputText.value;
+          game.config.usernameOne = inputText.value;
 
           //  Turn off the click events
           this.removeListener("click");
