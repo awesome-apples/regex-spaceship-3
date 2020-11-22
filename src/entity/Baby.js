@@ -48,7 +48,7 @@ export default class Baby extends Phaser.Physics.Arcade.Sprite {
   }
   updateJump(cursors, jumpSound) {
     if (cursors.up.isDown && this.body.touching.down) {
-      this.setVelocityY(-800);
+      this.setVelocityY(-850);
       jumpSound.play();
     }
   }
