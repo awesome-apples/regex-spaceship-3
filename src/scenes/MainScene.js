@@ -18,11 +18,14 @@ export default class MainScene extends Phaser.Scene {
 
   async login(username, password) {
     try {
-      const user = await axios.post("/auth/login", {
+      const { data } = await axios.post("/auth/login", {
         username: username,
         password: password,
       });
-      return user;
+
+      localStorage.setItem("loggedInUser", data.username);
+
+      return data;
     } catch (err) {
       console.error(err);
     }
@@ -30,15 +33,20 @@ export default class MainScene extends Phaser.Scene {
 
   async signup(username, password) {
     try {
-      await axios.post("/api/users/signup", {
+      const { data } = await axios.post("/api/users/signup", {
         username: username,
         password: password,
       });
-      const user = await axios.post("/auth/login", {
-        username: username,
-        password: password,
-      });
-      return user;
+      // const { data } = await axios.post("/auth/login", {
+      //   username: username,
+      //   password: password,
+      // });
+      if (data.username) {
+        this.login(username, password);
+        localStorage.setItem("loggedInUser", data.username);
+      }
+
+      return data;
     } catch (err) {
       console.log(err);
     }
@@ -47,6 +55,8 @@ export default class MainScene extends Phaser.Scene {
   async logout() {
     try {
       await axios.post("/auth/logout");
+      var userArray = [{ username: "" }];
+      localStorage.loggedInUser = 0;
     } catch (err) {
       console.error(err);
     }
@@ -77,7 +87,8 @@ export default class MainScene extends Phaser.Scene {
     //   this.scene.stop("MainScene");
     // });
 
-    if (game.config.login !== true) {
+    // if (game.config.login !== true) {
+    if (localStorage.loggedInUser.length < 2) {
       var text = this.add.text(300, 10, "Please enter your name", {
         color: "white",
         fontSize: "20px ",
@@ -95,10 +106,10 @@ export default class MainScene extends Phaser.Scene {
           var username = this.getChildByName("username");
           var password = this.getChildByName("password");
 
-          const { data } = await scene.login(username.value, password.value);
-          console.log("USER ---->", data);
+          const user = await scene.login(username.value, password.value);
+          console.log("USER ---->", user);
           //  Have they entered anything?
-          if (username.value !== "" && password.value !== "" && data.username) {
+          if (username.value !== "" && password.value !== "" && user.username) {
             //axios requests
             //auth/login
             console.log("INSIDE IF STATEMENT");
@@ -111,7 +122,7 @@ export default class MainScene extends Phaser.Scene {
             this.setVisible(false);
 
             //  Populate the text with whatever they typed in
-            text.setText("welcome " + username.value);
+            text.setText("welcome " + localStorage.loggedInUser);
 
             var begintext = scene.add.text(410, 340, "Godspeed...", {
               color: "white",
@@ -155,10 +166,10 @@ export default class MainScene extends Phaser.Scene {
           var username = this.getChildByName("username2");
           var password = this.getChildByName("password2");
 
-          const { data } = await scene.signup(username.value, password.value);
-          console.log("USER ---->", data);
+          const user = await scene.signup(username.value, password.value);
+          console.log("USER ---->", user);
           //  Have they entered anything?
-          if (username.value !== "" && password.value !== "" && data.username) {
+          if (username.value !== "" && password.value !== "" && user.username) {
             //axios requests
             //auth/login
             console.log("INSIDE IF STATEMENT");
@@ -218,7 +229,7 @@ export default class MainScene extends Phaser.Scene {
       var textwelcome = this.add.text(
         300,
         10,
-        "welcome " + game.config.usernameOne,
+        "welcome " + localStorage.loggedInUser,
         {
           color: "white",
           fontSize: "20px ",
