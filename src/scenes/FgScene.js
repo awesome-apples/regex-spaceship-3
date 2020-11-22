@@ -143,15 +143,6 @@ export default class FgScene extends Phaser.Scene {
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-1.png"
     );
     this.load.image(
-      "coke2",
-      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-2.png"
-    );
-
-    this.load.image(
-      "coke3",
-      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-3.png"
-    );
-    this.load.image(
       "bannerside",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-side/banner-side-2.png"
     );
@@ -239,23 +230,23 @@ export default class FgScene extends Phaser.Scene {
     this.createGround(0, 570, 40, "ground");
 
     //TEXT
-    this.pointText = this.add.text(
+    this.pointText = this.add.text(20, 20, `points: ${game.config.points}`, {
+      fontSize: 32,
+      fontFamily: "Orbitron, sans-serif",
+      fill: "#39ff14",
+    });
+    this.pointText.setScrollFactor(0);
+
+    this.healthText = this.add.text(
       20,
-      20,
-      `points: ${Math.round(game.config.points)}`,
+      60,
+      `health: ${Math.round(game.config.health)}`,
       {
         fontSize: 32,
-        fontFamily: "Orbitron, sans-serif",
+        fontFamily: "Audiowide, cursive",
         fill: "#39ff14",
       }
     );
-    this.pointText.setScrollFactor(0);
-
-    this.healthText = this.add.text(20, 60, `health: ${game.config.health}`, {
-      fontSize: 32,
-      fontFamily: "Audiowide, cursive",
-      fill: "#39ff14",
-    });
     this.healthText.setScrollFactor(0);
 
     this.timeText = this.add.text(20, 90, `time: ${game.config.playerTime}`, {
@@ -294,8 +285,8 @@ export default class FgScene extends Phaser.Scene {
     //HEARTS
     this.hearts = this.physics.add.group({
       key: "heart",
-      repeat: 4000,
-      setXY: { x: 900, y: 0, stepX: 60 },
+      repeat: 100,
+      setXY: { x: 900, y: 0, stepX: 250 },
     });
 
     this.hearts.children.iterate(function (child) {
@@ -599,31 +590,31 @@ export default class FgScene extends Phaser.Scene {
     this.physics.add.overlap(this.baby, this.gun, this.collectGun, null, this);
 
     this.physics.add.overlap(
-      this.mushroomGroup,
       this.lasers,
+      this.mushroomGroup,
       this.hit,
       null,
       this
     );
     this.physics.add.overlap(
-      this.floateyeGroup,
       this.lasers,
+      this.floateyeGroup,
       this.hit,
       null,
       this
     );
 
     this.physics.add.overlap(
-      this.mushroomGroup,
       this.baby,
+      this.mushroomGroup,
       this.monsterHit,
       null,
       this
     );
 
     this.physics.add.overlap(
-      this.fireballGroup,
       this.baby,
+      this.fireballGroup,
       this.monsterHit,
       null,
       this
@@ -668,10 +659,6 @@ export default class FgScene extends Phaser.Scene {
     this.hurtSound.play();
     game.config.health -= 0.07;
     this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
-    // baby.setTint(0xff000);
-    // let timer = this.time.delayedCall(2000, this.clearRed(baby));
-    // this.physics.world.removeCollider(this.overlapCollider);
-    // console.log("health", game.config.health);
 
     if (game.config.health < 1) {
       this.physics.pause();
@@ -716,7 +703,7 @@ export default class FgScene extends Phaser.Scene {
 
   // make the laser inactive and insivible when it hits the enemy
   // ENEMY LASER INTERACTIONS
-  hit(monster, laser) {
+  hit(laser, monster) {
     laser.setActive(false);
     laser.setVisible(false);
     monster.disableBody(true, true);

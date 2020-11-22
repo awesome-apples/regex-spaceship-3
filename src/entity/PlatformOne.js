@@ -8,7 +8,6 @@ export default class PlatformOne extends Phaser.Physics.Arcade.Sprite {
     this.scene = scene;
     this.scene.physics.world.enable(this);
     this.scene.add.existing(this);
-    this.body.allowGravity = false;
   }
 
   // Check which controller button is being pushed and execute movement & animation
