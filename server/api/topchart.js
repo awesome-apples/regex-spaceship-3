@@ -1,13 +1,12 @@
 const router = require("express").Router();
-const { TopChart } = require("../db/models");
+const { TopChart, User } = require("../db/models");
 const Sequelize = require("sequelize");
 module.exports = router;
 
-// GET /api/orders/cart
-// this is to return a cart of products that belongs to one user in cart component
 router.get("/single", async (req, res, next) => {
   try {
     const topcharts = await TopChart.findAll({
+      include: [{ model: User }],
       where: {
         style: "single",
       },
@@ -39,13 +38,20 @@ router.get("/multi", async (req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { name, points, time, style, score } = req.body;
+    const { username, points, time, style, score } = req.body;
+
+    const user = await User.findOne({
+      where: {
+        username: username,
+      },
+    });
+
     const newchart = await TopChart.create({
-      name,
       points,
       time,
       style,
       score,
+      userId: user.id,
     });
     res.sendStatus(201);
   } catch (err) {

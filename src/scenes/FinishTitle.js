@@ -20,7 +20,7 @@ export default class FinishTitle extends Phaser.Scene {
 
   async getCharts() {
     try {
-      if (game.config.playerNameOne) {
+      if (game.config.usernameOne) {
         await this.sendChart();
       }
       const { data } = await axios.get("/api/topchart/single");
@@ -34,7 +34,7 @@ export default class FinishTitle extends Phaser.Scene {
   async sendChart() {
     try {
       await axios.post("/api/topchart", {
-        name: game.config.playerNameOne,
+        username: game.config.usernameOne,
         points: game.config.points,
         time: Math.round(game.config.playerTime),
         style: "single",
@@ -100,13 +100,10 @@ export default class FinishTitle extends Phaser.Scene {
     this.topCharts.setOrigin(0.5);
     this.topCharts.setScrollFactor(0);
 
-    //method
-    // this.createChart();
-
     this.topChartOne = this.add.text(
       400,
       285,
-      `1st: ${this.charts[0].name}, time: ${this.charts[0].time}, points: ${this.charts[0].points}`,
+      `1st: ${this.charts[0].user.username}, time: ${this.charts[0].time}, points: ${this.charts[0].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -119,7 +116,7 @@ export default class FinishTitle extends Phaser.Scene {
     this.topChartTwo = this.add.text(
       400,
       315,
-      `2nd: ${this.charts[1].name}, time: ${this.charts[1].time}, points: ${this.charts[1].points}`,
+      `2nd: ${this.charts[1].user.username}, time: ${this.charts[1].time}, points: ${this.charts[1].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -132,7 +129,7 @@ export default class FinishTitle extends Phaser.Scene {
     this.TopChartThree = this.add.text(
       400,
       345,
-      `3rd: ${this.charts[2].name}, time: ${this.charts[2].time}, points: ${this.charts[2].points}`,
+      `3rd: ${this.charts[2].user.username}, time: ${this.charts[2].time}, points: ${this.charts[2].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -145,7 +142,7 @@ export default class FinishTitle extends Phaser.Scene {
     this.TopChartFour = this.add.text(
       400,
       375,
-      `4th: ${this.charts[3].name}, time: ${this.charts[3].time}, points: ${this.charts[3].points}`,
+      `4th: ${this.charts[3].user.username}, time: ${this.charts[3].time}, points: ${this.charts[3].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
@@ -158,7 +155,7 @@ export default class FinishTitle extends Phaser.Scene {
     this.TopChartFive = this.add.text(
       400,
       405,
-      `5th: ${this.charts[4].name}, time: ${this.charts[4].time}, points: ${this.charts[4].points}`,
+      `5th: ${this.charts[4].user.username}, time: ${this.charts[4].time}, points: ${this.charts[4].points}`,
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",

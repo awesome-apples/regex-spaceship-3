@@ -31,5 +31,5 @@ export default {
   healthText: 0,
   playerTime: "",
   beginTime: 0,
-  playerNameOne: "",
+  usernameOne: "",
 };

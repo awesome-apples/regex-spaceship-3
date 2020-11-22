@@ -1,49 +1,54 @@
 "use strict";
 
 const db = require("../server/db");
-const { TopChart } = require("../server/db/models");
+const { TopChart, User } = require("../server/db/models");
 
 const topchartdata = [
   {
-    name: "angel",
     points: 150,
     time: 400,
     style: "single",
     score: 250,
+    userId: 1,
   },
   {
-    name: "blue",
     points: 170,
     time: 500,
     style: "single",
     score: 330,
+    userId: 1,
   },
   {
-    name: "red",
     points: 45,
     time: 60,
     style: "single",
     score: 15,
+    userId: 1,
   },
   {
-    name: "green",
     points: 578,
     time: 87,
     style: "single",
     score: -490,
+    userId: 2,
   },
   {
-    name: "pink",
     points: 560,
     time: 13,
     style: "single",
     score: 546,
+    userId: 2,
   },
 ];
 
 async function seed() {
   await db.sync({ force: true });
   console.log("db synced!");
+
+  const users = await Promise.all([
+    User.create({ username: "cyberpunkkkk", password: "123" }),
+    User.create({ username: "eboy38904", password: "123" }),
+  ]);
 
   const charts = await Promise.all(
     topchartdata.map((chart) => {
@@ -52,6 +57,7 @@ async function seed() {
   );
 
   console.log(`seeded ${charts.length} charts`);
+  console.log(`seeded ${users.length} users`);
 }
 
 // We've separated the `seed` function from the `runSeed` function.

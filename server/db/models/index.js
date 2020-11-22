@@ -1,4 +1,5 @@
 const TopChart = require("./topChart");
+const User = require("./user");
 
 /**
  * If we had any associations to make, this would be a great place to put them!
@@ -6,6 +7,8 @@ const TopChart = require("./topChart");
  *
  *    BlogPost.belongsTo(User)
  */
+
+TopChart.belongsTo(User);
 
 /**
  * We'll export all of our models here, so that any time a module needs a model,
@@ -15,4 +18,5 @@ const TopChart = require("./topChart");
  */
 module.exports = {
   TopChart,
+  User,
 };
