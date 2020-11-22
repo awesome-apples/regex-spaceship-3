@@ -140,7 +140,7 @@ export default class MainScene extends Phaser.Scene {
 
             //you may enter
             helloButton.on("pointerdown", () => {
-              scene.scene.start("FinishTitle");
+              scene.scene.start("FgScene");
               scene.scene.stop("MainScene");
             });
 
@@ -200,7 +200,7 @@ export default class MainScene extends Phaser.Scene {
 
             //you may enter
             helloButton.on("pointerdown", () => {
-              scene.scene.start("FinishTitle");
+              scene.scene.start("FgScene");
               scene.scene.stop("MainScene");
             });
 
@@ -250,7 +250,7 @@ export default class MainScene extends Phaser.Scene {
 
       //you may enter
       helloButton.on("pointerdown", () => {
-        scene.scene.start("FinishTitle");
+        scene.scene.start("FgScene");
         scene.scene.stop("MainScene");
       });
 
