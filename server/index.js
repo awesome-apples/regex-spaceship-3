@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 8080;
 const app = express();
 const socketio = require("socket.io");
 module.exports = app;
+let players = [];
 
 // This is a global Mocha hook, used for resource cleanup.
 // Otherwise, Mocha v4+ never quits after tests.
@@ -100,10 +101,25 @@ const startListening = () => {
     console.log(`Mixing it up on port ${PORT}`)
   );
 
-  // set up our socket control center
   const io = socketio(server);
   require("./socket")(io);
+
+  io.on("connection", (socket) => {
+    console.log(
+      `A socket connection to the server has been made: ${socket.id}`
+    );
+
+    players.push(socket.id);
+
+    console.log("socketid-->", socket.id);
+
+    socket.on("disconnect", () => {
+      console.log(`Connection ${socket.id} has left the building`);
+      players = players.filter((player) => player !== socket.id);
+    });
+  });
 };
+// set up our socket control center
 
 const syncDb = () => db.sync();
 
