@@ -29,6 +29,7 @@ class Game extends Phaser.Game {
   constructor() {
     // Add the config file to the game
     super(config);
+
     //LEVELS
     this.scene.add("FgScene", FgScene);
     this.scene.add("LvlTwoScene", LvlTwoScene);

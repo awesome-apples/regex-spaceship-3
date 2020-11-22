@@ -10,6 +10,10 @@ export default {
   render: {
     pixelArt: true,
   },
+  scale: {
+    parent: "mygame",
+    autoCenter: true,
+  },
   //  We will be expanding physics later
   physics: {
     default: "arcade",
@@ -32,4 +36,5 @@ export default {
   playerTime: "",
   beginTime: 0,
   usernameOne: "",
+  login: false,
 };

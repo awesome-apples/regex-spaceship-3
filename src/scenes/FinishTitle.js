@@ -90,7 +90,10 @@ export default class FinishTitle extends Phaser.Scene {
     this.playAgainButton.on("pointerout", () =>
       this.playAgainButton.setStyle({ fill: "#39ff14" })
     );
-    this.playAgainButton.on("pointerdown", () => this.scene.start("MainScene"));
+    this.playAgainButton.on("pointerdown", () => {
+      this.scene.start("MainScene");
+      this.scene.stop("FinishTitle");
+    });
 
     this.topCharts = this.add.text(400, 240, `TOP CHARTS`, {
       fontSize: 28,
