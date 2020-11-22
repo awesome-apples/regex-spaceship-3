@@ -143,15 +143,6 @@ export default class FgScene extends Phaser.Scene {
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-1.png"
     );
     this.load.image(
-      "coke2",
-      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-2.png"
-    );
-
-    this.load.image(
-      "coke3",
-      "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-coke/banner-coke-3.png"
-    );
-    this.load.image(
       "bannerside",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-side/banner-side-2.png"
     );
@@ -239,23 +230,23 @@ export default class FgScene extends Phaser.Scene {
     this.createGround(0, 570, 40, "ground");
 
     //TEXT
-    this.pointText = this.add.text(
+    this.pointText = this.add.text(20, 20, `points: ${game.config.points}`, {
+      fontSize: 32,
+      fontFamily: "Orbitron, sans-serif",
+      fill: "#39ff14",
+    });
+    this.pointText.setScrollFactor(0);
+
+    this.healthText = this.add.text(
       20,
-      20,
-      `points: ${Math.round(game.config.points)}`,
+      60,
+      `health: ${Math.round(game.config.health)}`,
       {
         fontSize: 32,
-        fontFamily: "Orbitron, sans-serif",
+        fontFamily: "Audiowide, cursive",
         fill: "#39ff14",
       }
     );
-    this.pointText.setScrollFactor(0);
-
-    this.healthText = this.add.text(20, 60, `health: ${game.config.health}`, {
-      fontSize: 32,
-      fontFamily: "Audiowide, cursive",
-      fill: "#39ff14",
-    });
     this.healthText.setScrollFactor(0);
 
     this.timeText = this.add.text(20, 90, `time: ${game.config.playerTime}`, {

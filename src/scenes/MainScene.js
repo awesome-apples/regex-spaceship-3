@@ -13,7 +13,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   create() {
-    game.config.health = 5;
+    game.config.health = 100;
     game.config.points = 0;
     game.config.beginTime = new Date().getTime() / 1000;
     game.config.playerTime = 0;
