@@ -104,7 +104,7 @@ export default class MainScene extends Phaser.Scene {
     const scene = this;
 
     //  Initialize config file for the game
-    game.config.health = 5;
+    game.config.health = 500;
     game.config.points = 0;
     game.config.beginTime = new Date().getTime() / 1000;
     game.config.playerTime = 0;

@@ -307,8 +307,8 @@ export default class LvlFourScene extends Phaser.Scene {
     //HEARTS
     this.hearts = this.physics.add.group({
       key: "heart",
-      repeat: 100,
-      setXY: { x: 900, y: 0, stepX: 250 },
+      repeat: 160,
+      setXY: { x: 900, y: 0, stepX: 190 },
     });
 
     this.hearts.children.iterate(function (child) {
@@ -507,7 +507,7 @@ export default class LvlFourScene extends Phaser.Scene {
     });
     this.slimeGroup.children.iterate((child) => {
       let y = 200;
-      let x = Phaser.Math.Between(0, width * 20);
+      let x = Phaser.Math.Between(400, width * 20);
       child.flipX = !child.flipX;
       child.setY(y);
       child.setX(x);
@@ -529,7 +529,7 @@ export default class LvlFourScene extends Phaser.Scene {
     });
     this.guardianGroup.children.iterate((child) => {
       let y = 200;
-      let x = Phaser.Math.Between(0, width * 20);
+      let x = Phaser.Math.Between(400, width * 20);
       child.flipX = !child.flipX;
       child.setY(y);
       child.setX(x);
@@ -548,7 +548,7 @@ export default class LvlFourScene extends Phaser.Scene {
     });
     this.fireballGroup.createMultiple({
       key: "fireball",
-      repeat: 40,
+      repeat: 100,
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
@@ -598,15 +598,15 @@ export default class LvlFourScene extends Phaser.Scene {
     this.physics.add.collider(this.baby, this.platformGroupSeven);
 
     this.physics.add.overlap(
-      this.guardianGroup,
       this.baby,
+      this.guardianGroup,
       this.monsterHit,
       null,
       this
     );
     this.physics.add.overlap(
-      this.slimeGroup,
       this.baby,
+      this.slimeGroup,
       this.monsterHit,
       null,
       this
@@ -694,7 +694,7 @@ export default class LvlFourScene extends Phaser.Scene {
   }
 
   monsterHit(baby, monster) {
-    baby.anims.play("babyjump");
+    // baby.anims.play("babyjump");
     this.hurtSound.play();
     game.config.health -= 0.07;
     this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
@@ -767,10 +767,11 @@ export default class LvlFourScene extends Phaser.Scene {
     this.anims.create({
       key: "babyjump",
       frames: this.anims.generateFrameNumbers("girljump", { start: 1, end: 4 }),
-      frameRate: 20,
+      frameRate: 10,
+      repeat: -1,
     });
     this.anims.create({
-      key: "babyIdleArmed",
+      key: "babyidleArmed",
       frames: [{ key: "shoot", frame: 1 }],
       frameRate: 20,
     });
@@ -783,7 +784,7 @@ export default class LvlFourScene extends Phaser.Scene {
 
     this.anims.create({
       key: "babyidleUnarmed",
-      frames: [{ key: "baby", frame: 1 }],
+      frames: [{ key: "girlidle", frame: 1 }],
       frameRate: 20,
     });
     //animations for droid
