@@ -477,7 +477,7 @@ export default class FgScene extends Phaser.Scene {
     });
     this.mushroomGroup.children.iterate((child) => {
       let y = 200;
-      let x = Phaser.Math.Between(0, width * 20);
+      let x = Phaser.Math.Between(400, width * 20);
       child.flipX = !child.flipX;
       child.setY(y);
       child.setX(x);
@@ -500,7 +500,7 @@ export default class FgScene extends Phaser.Scene {
     });
     this.floateyeGroup.children.iterate((child) => {
       let y = 200;
-      let x = Phaser.Math.Between(0, width * 20);
+      let x = Phaser.Math.Between(400, width * 20);
       child.flipX = !child.flipX;
       child.setY(y);
       child.setX(x);
@@ -652,7 +652,7 @@ export default class FgScene extends Phaser.Scene {
   }
 
   monsterHit(baby, monster) {
-    baby.anims.play("babyjump");
+    // baby.anims.play("babyjump");
     this.hurtSound.play();
     game.config.health -= 0.07;
     this.healthText.setText(`health: ${Math.floor(game.config.health)}`);
@@ -725,11 +725,12 @@ export default class FgScene extends Phaser.Scene {
     this.anims.create({
       key: "babyjump",
       frames: this.anims.generateFrameNumbers("girljump", { start: 1, end: 4 }),
-      frameRate: 50,
+      frameRate: 10,
+      repeat: -1,
     });
     this.anims.create({
-      key: "babyIdleArmed",
-      frames: this.anims.generateFrameNumbers("shoot", { start: 1, end: 1 }),
+      key: "babyidleArmed",
+      frames: [{ key: "shoot", frame: 1 }],
       frameRate: 20,
     });
     this.anims.create({

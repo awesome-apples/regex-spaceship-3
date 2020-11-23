@@ -54,7 +54,7 @@ export default class Baby extends Phaser.Physics.Arcade.Sprite {
   }
   updateInAir() {
     if (!this.body.touching.down) {
-      this.play("babyjump");
+      this.play("babyjump", true);
     }
   }
   // Check which controller button is being pushed and execute movement & animation

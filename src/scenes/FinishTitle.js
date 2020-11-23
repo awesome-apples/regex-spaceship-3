@@ -103,7 +103,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "##362DEC",
+        fill: "#362DEC",
       }
     );
     this.topChartOne.setOrigin(0.5);
@@ -116,7 +116,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "##362DEC",
+        fill: "#362DEC",
       }
     );
     this.topChartTwo.setOrigin(0.5);
@@ -129,7 +129,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "##362DEC",
+        fill: "#362DEC",
       }
     );
     this.TopChartThree.setOrigin(0.5);
@@ -142,7 +142,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "##362DEC",
+        fill: "#362DEC",
       }
     );
     this.TopChartFour.setOrigin(0.5);
@@ -155,7 +155,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "##362DEC",
+        fill: "#362DEC",
       }
     );
     this.TopChartFive.setOrigin(0.5);
