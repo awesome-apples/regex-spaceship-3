@@ -39,6 +39,13 @@ const topchartdata = [
     score: 546,
     userId: 2,
   },
+  {
+    points: 424,
+    time: 1,
+    style: "single",
+    score: -423,
+    userId: 3,
+  },
 ];
 
 async function seed() {
@@ -48,6 +55,7 @@ async function seed() {
   const users = await Promise.all([
     User.create({ username: "cyberpunkkkk", password: "123" }),
     User.create({ username: "eboy38904", password: "123" }),
+    User.create({ username: "sadly", password: "12321" }),
   ]);
 
   const charts = await Promise.all(

@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import axios from "axios";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
