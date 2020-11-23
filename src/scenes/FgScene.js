@@ -41,9 +41,21 @@ export default class FgScene extends Phaser.Scene {
       frameWidth: 35,
       frameHeight: 45,
     });
-    this.load.spritesheet("baby", "assets/spriteSheets/baby_run.png", {
-      frameWidth: 18,
-      frameHeight: 32,
+    this.load.spritesheet("baby", "assets/spriteSheets/girl.png", {
+      frameWidth: 71,
+      frameHeight: 67,
+    });
+    this.load.spritesheet("girljump", "assets/spriteSheets/girljump.png", {
+      frameWidth: 71,
+      frameHeight: 67,
+    });
+    this.load.spritesheet("shoot", "assets/spriteSheets/shoot.png", {
+      frameWidth: 71,
+      frameHeight: 67,
+    });
+    this.load.spritesheet("girlidle", "assets/spriteSheets/idle-1.png", {
+      frameWidth: 71,
+      frameHeight: 67,
     });
     this.load.spritesheet("mushroom", "assets/spriteSheets/mushroom.png", {
       frameWidth: 35,
@@ -72,6 +84,7 @@ export default class FgScene extends Phaser.Scene {
         frameHeight: 32,
       }
     );
+
     this.load.spritesheet(
       "sushispritesheet",
       "assets/backgrounds/warpedcity/ENVIRONMENT/props/banner-sushi/sushianime.png",
@@ -477,44 +490,28 @@ export default class FgScene extends Phaser.Scene {
     });
 
     //FLOATEYE
-    this.floateyeGroup = this.physics.add.group({ classType: Floateye });
+    this.floateyeGroup = this.physics.add.group({
+      classType: Floateye,
+      runChildUpdate: true,
+    });
+    this.floateyeGroup.createMultiple({
+      key: "floateye",
+      repeat: 12,
+    });
+    this.floateyeGroup.children.iterate((child) => {
+      let y = 200;
+      let x = Phaser.Math.Between(0, width * 20);
+      child.flipX = !child.flipX;
+      child.setY(y);
+      child.setX(x);
+      child.setScale(2.3);
+      child.body.setBounce(1);
 
-    this.floateye = this.floateyeGroup
-      .create(900, 50, "floateye")
-      .setScale(2.3);
-    this.floateye2 = this.floateyeGroup
-      .create(1230, 50, "floateye")
-      .setScale(2.3);
-    this.floateye3 = this.floateyeGroup
-      .create(3950, 50, "floateye")
-      .setScale(2.3);
-    this.floateye4 = this.floateyeGroup
-      .create(4800, 50, "floateye")
-      .setScale(2.3);
-    this.floateye5 = this.floateyeGroup
-      .create(6700, 50, "floateye")
-      .setScale(2.3);
-    this.floateye6 = this.floateyeGroup
-      .create(9300, 50, "floateye")
-      .setScale(2.3);
-    this.floateye7 = this.floateyeGroup
-      .create(11111, 50, "floateye")
-      .setScale(2.3);
-    this.floateye8 = this.floateyeGroup
-      .create(12363, 50, "floateye")
-      .setScale(2.3);
-    this.floateye9 = this.floateyeGroup
-      .create(14083, 50, "floateye")
-      .setScale(2.3);
-    this.floateye10 = this.floateyeGroup
-      .create(17402, 50, "floateye")
-      .setScale(2.3);
-    this.floateye11 = this.floateyeGroup
-      .create(19404, 50, "floateye")
-      .setScale(2.3);
-    this.floateye12 = this.floateyeGroup
-      .create(20392, 50, "floateye")
-      .setScale(2.3);
+      child.update = function () {
+        child.play("floatfly", true);
+        child.setVelocityX(-100);
+      };
+    });
 
     //FIREBALLS
     this.fireballGroup = this.physics.add.group({
@@ -726,47 +723,28 @@ export default class FgScene extends Phaser.Scene {
 
   createAnimations() {
     this.anims.create({
-      key: "run",
-      frames: this.anims.generateFrameNumbers("bubble", { start: 1, end: 5 }),
-      frameRate: 10,
-      repeat: -1,
+      key: "babyjump",
+      frames: this.anims.generateFrameNumbers("girljump", { start: 1, end: 4 }),
+      frameRate: 50,
     });
     this.anims.create({
-      key: "jump",
-      frames: [{ key: "bubble", frame: 6 }],
-      frameRate: 20,
-    });
-    this.anims.create({
-      key: "idleUnarmed",
-      frames: [{ key: "bubble", frame: 1 }],
-      frameRate: 20,
-    });
-    this.anims.create({
-      key: "idleArmed",
-      frames: [{ key: "bubble", frame: 2 }],
+      key: "babyIdleArmed",
+      frames: this.anims.generateFrameNumbers("shoot", { start: 1, end: 1 }),
       frameRate: 20,
     });
     this.anims.create({
       key: "babyrun",
-      frames: this.anims.generateFrameNumbers("baby", { start: 1, end: 6 }),
+      frames: this.anims.generateFrameNumbers("baby", { start: 1, end: 8 }),
       frameRate: 10,
       repeat: -1,
     });
-    this.anims.create({
-      key: "babyjump",
-      frames: [{ key: "baby", frame: 2 }],
-      frameRate: 20,
-    });
+
     this.anims.create({
       key: "babyidleUnarmed",
-      frames: [{ key: "baby", frame: 1 }],
+      frames: [{ key: "girlidle", frame: 1 }],
       frameRate: 20,
     });
-    this.anims.create({
-      key: "babyidleArmed",
-      frames: [{ key: "baby", frame: 6 }],
-      frameRate: 20,
-    });
+
     //animations for mushroom
     this.anims.create({
       key: "mushroomrun",
@@ -882,18 +860,6 @@ export default class FgScene extends Phaser.Scene {
     this.updateTime();
     this.baby.update(this.cursors, this.jumpSound);
 
-    this.floateye.update();
-    this.floateye2.update();
-    this.floateye3.update();
-    this.floateye4.update();
-    this.floateye5.update();
-    this.floateye6.update();
-    this.floateye7.update();
-    this.floateye8.update();
-    this.floateye9.update();
-    this.floateye10.update();
-    this.floateye11.update();
-    this.floateye12.update();
     this.gun.update(
       time,
       this.baby,

@@ -9,11 +9,10 @@ import PlatformSeven from "../entity/PlatformSeven";
 import Gun from "../entity/Gun";
 import Laser from "../entity/Laser";
 import Baby from "../entity/Baby";
-import Mushroom from "../entity/Mushroom";
-import Floateye from "../entity/Floateye";
 import End from "../entity/End";
 import Fireball from "../entity/Fireball";
-
+import Alien from "../entity/Alien";
+import Boxer from "../entity/Boxer.js";
 /**
  *
  * @param {Phaser.Scene} scene
@@ -40,18 +39,26 @@ export default class LvlThreeScene extends Phaser.Scene {
       frameWidth: 35,
       frameHeight: 45,
     });
-    this.load.spritesheet("baby", "assets/spriteSheets/baby_run.png", {
-      frameWidth: 18,
-      frameHeight: 32,
+    this.load.spritesheet("baby", "assets/spriteSheets/girl.png", {
+      frameWidth: 71,
+      frameHeight: 67,
     });
-    this.load.spritesheet("mushroom", "assets/spriteSheets/mushroom.png", {
+    this.load.spritesheet("girljump", "assets/spriteSheets/girljump.png", {
+      frameWidth: 71,
+      frameHeight: 67,
+    });
+    this.load.spritesheet("shoot", "assets/spriteSheets/shoot.png", {
+      frameWidth: 71,
+      frameHeight: 67,
+    });
+    this.load.spritesheet("alien", "assets/spriteSheets/alien.png", {
       frameWidth: 35,
       frameHeight: 45,
     });
 
-    this.load.spritesheet("floateye", "assets/spriteSheets/floateye.png", {
-      frameWidth: 38,
-      frameHeight: 35,
+    this.load.spritesheet("boxer", "assets/spriteSheets/boxer.png", {
+      frameWidth: 10,
+      frameHeight: 10,
     });
 
     this.load.spritesheet(
@@ -460,17 +467,17 @@ export default class LvlThreeScene extends Phaser.Scene {
       };
     });
 
-    //MUSHROOMS
-    // this.mushroomGroup = this.physics.add.group({ classType: Mushroom });
-    this.mushroomGroup = this.physics.add.group({
-      classType: Mushroom,
+    //alienS
+    // this.alienGroup = this.physics.add.group({ classType: alien });
+    this.alienGroup = this.physics.add.group({
+      classType: Alien,
       runChildUpdate: true,
     });
-    this.mushroomGroup.createMultiple({
-      key: "mushroom",
+    this.alienGroup.createMultiple({
+      key: "alien",
       repeat: 12,
     });
-    this.mushroomGroup.children.iterate((child) => {
+    this.alienGroup.children.iterate((child) => {
       let y = 200;
       let x = Phaser.Math.Between(0, width * 20);
       child.flipX = !child.flipX;
@@ -479,50 +486,34 @@ export default class LvlThreeScene extends Phaser.Scene {
       child.setScale(2.3);
 
       child.update = function () {
-        child.play("mushroomrun", true);
+        child.play("alienrun", true);
         child.setVelocityX(-100);
       };
     });
 
-    //FLOATEYE
-    this.floateyeGroup = this.physics.add.group({ classType: Floateye });
+    //BOXER
+    this.boxerGroup = this.physics.add.group({
+      classType: Boxer,
+      runChildUpdate: true,
+    });
+    this.boxerGroup.createMultiple({
+      key: "boxer",
+      repeat: 12,
+    });
+    this.boxerGroup.children.iterate((child) => {
+      let y = 200;
+      let x = Phaser.Math.Between(0, width * 20);
+      child.flipX = !child.flipX;
+      child.setY(y);
+      child.setX(x);
+      child.setScale(5.3);
+      child.body.setBounce(1);
 
-    this.floateye = this.floateyeGroup
-      .create(900, 50, "floateye")
-      .setScale(2.3);
-    this.floateye2 = this.floateyeGroup
-      .create(1230, 50, "floateye")
-      .setScale(2.3);
-    this.floateye3 = this.floateyeGroup
-      .create(3950, 50, "floateye")
-      .setScale(2.3);
-    this.floateye4 = this.floateyeGroup
-      .create(4800, 50, "floateye")
-      .setScale(2.3);
-    this.floateye5 = this.floateyeGroup
-      .create(6700, 50, "floateye")
-      .setScale(2.3);
-    this.floateye6 = this.floateyeGroup
-      .create(9300, 50, "floateye")
-      .setScale(2.3);
-    this.floateye7 = this.floateyeGroup
-      .create(11111, 50, "floateye")
-      .setScale(2.3);
-    this.floateye8 = this.floateyeGroup
-      .create(12363, 50, "floateye")
-      .setScale(2.3);
-    this.floateye9 = this.floateyeGroup
-      .create(14083, 50, "floateye")
-      .setScale(2.3);
-    this.floateye10 = this.floateyeGroup
-      .create(17402, 50, "floateye")
-      .setScale(2.3);
-    this.floateye11 = this.floateyeGroup
-      .create(19404, 50, "floateye")
-      .setScale(2.3);
-    this.floateye12 = this.floateyeGroup
-      .create(20392, 50, "floateye")
-      .setScale(2.3);
+      child.update = function () {
+        child.play("boxerfly", true);
+        child.setVelocityX(-100);
+      };
+    });
 
     //FIREBALLS
     this.fireballGroup = this.physics.add.group({
@@ -554,8 +545,8 @@ export default class LvlThreeScene extends Phaser.Scene {
     //PHYSICS
     this.physics.add.collider(this.baby, this.groundGroup);
     this.physics.add.collider(this.gun, this.groundGroup);
-    this.physics.add.collider(this.mushroomGroup, this.groundGroup);
-    this.physics.add.collider(this.floateyeGroup, this.groundGroup);
+    this.physics.add.collider(this.alienGroup, this.groundGroup);
+    this.physics.add.collider(this.boxerGroup, this.groundGroup);
     this.physics.add.collider(this.end, this.groundGroup);
 
     this.physics.add.collider(this.hearts, this.platformGroupOne);
@@ -580,7 +571,7 @@ export default class LvlThreeScene extends Phaser.Scene {
     this.physics.add.collider(this.baby, this.platformGroupSeven);
 
     this.physics.add.overlap(
-      this.floateyeGroup,
+      this.boxerGroup,
       this.baby,
       this.monsterHit,
       null,
@@ -599,14 +590,14 @@ export default class LvlThreeScene extends Phaser.Scene {
 
     this.physics.add.overlap(
       this.lasers,
-      this.mushroomGroup,
+      this.alienGroup,
       this.hit,
       null,
       this
     );
     this.physics.add.overlap(
       this.lasers,
-      this.floateyeGroup,
+      this.boxerGroup,
       this.hit,
       null,
       this
@@ -614,7 +605,7 @@ export default class LvlThreeScene extends Phaser.Scene {
 
     this.physics.add.overlap(
       this.baby,
-      this.mushroomGroup,
+      this.alienGroup,
       this.monsterHit,
       null,
       this
@@ -734,72 +725,52 @@ export default class LvlThreeScene extends Phaser.Scene {
 
   createAnimations() {
     this.anims.create({
-      key: "run",
-      frames: this.anims.generateFrameNumbers("bubble", { start: 1, end: 5 }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    this.anims.create({
-      key: "jump",
-      frames: [{ key: "bubble", frame: 6 }],
+      key: "babyjump",
+      frames: this.anims.generateFrameNumbers("girljump", { start: 1, end: 4 }),
       frameRate: 20,
     });
     this.anims.create({
-      key: "idleUnarmed",
-      frames: [{ key: "bubble", frame: 1 }],
-      frameRate: 20,
-    });
-    this.anims.create({
-      key: "idleArmed",
-      frames: [{ key: "bubble", frame: 2 }],
+      key: "babyIdleArmed",
+      frames: [{ key: "shoot", frame: 1 }],
       frameRate: 20,
     });
     this.anims.create({
       key: "babyrun",
-      frames: this.anims.generateFrameNumbers("baby", { start: 1, end: 6 }),
+      frames: this.anims.generateFrameNumbers("baby", { start: 1, end: 8 }),
       frameRate: 10,
       repeat: -1,
     });
-    this.anims.create({
-      key: "babyjump",
-      frames: [{ key: "baby", frame: 2 }],
-      frameRate: 20,
-    });
+
     this.anims.create({
       key: "babyidleUnarmed",
       frames: [{ key: "baby", frame: 1 }],
       frameRate: 20,
     });
+    //animations for alien
     this.anims.create({
-      key: "babyidleArmed",
-      frames: [{ key: "baby", frame: 6 }],
-      frameRate: 20,
-    });
-    //animations for mushroom
-    this.anims.create({
-      key: "mushroomrun",
-      frames: this.anims.generateFrameNumbers("mushroom", {
+      key: "alienrun",
+      frames: this.anims.generateFrameNumbers("alien", {
         start: 1,
-        end: 6,
+        end: 5,
       }),
       frameRate: 10,
       repeat: -1,
     });
     this.anims.create({
-      key: "mushroomidle",
-      frames: [{ key: "mushroom", frame: 1 }],
+      key: "alienidle",
+      frames: [{ key: "alien", frame: 1 }],
       frameRate: 20,
     });
     this.anims.create({
-      key: "mushroomjump",
-      frames: [{ key: "mushroom", frame: 6 }],
+      key: "alienjump",
+      frames: [{ key: "alien", frame: 5 }],
       frameRate: 20,
     });
 
-    //animations for floateye
+    //animations for boxer
     this.anims.create({
-      key: "floatfly",
-      frames: this.anims.generateFrameNumbers("floateye", {
+      key: "boxerfly",
+      frames: this.anims.generateFrameNumbers("boxer", {
         start: 1,
         end: 6,
       }),
@@ -807,8 +778,8 @@ export default class LvlThreeScene extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "floatidle",
-      frames: [{ key: "floateye", frame: 1 }],
+      key: "boxeridle",
+      frames: [{ key: "boxer", frame: 1 }],
       frameRate: 20,
     });
 
@@ -890,18 +861,6 @@ export default class LvlThreeScene extends Phaser.Scene {
     this.updateTime();
     this.baby.update(this.cursors, this.jumpSound);
 
-    this.floateye.update();
-    this.floateye2.update();
-    this.floateye3.update();
-    this.floateye4.update();
-    this.floateye5.update();
-    this.floateye6.update();
-    this.floateye7.update();
-    this.floateye8.update();
-    this.floateye9.update();
-    this.floateye10.update();
-    this.floateye11.update();
-    this.floateye12.update();
     this.gun.update(
       time,
       this.baby,
