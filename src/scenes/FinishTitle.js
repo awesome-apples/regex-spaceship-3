@@ -5,13 +5,6 @@ export default class FinishTitle extends Phaser.Scene {
   constructor() {
     super("FinishTitle");
     this.charts = [];
-
-    // this.firstPlace = { name: "gamergirl12345", time: "500", points: "200" };
-    // this.secondPlace = { name: "gamertalk12345", time: "600", points: "190" };
-    // this.thirdPlace = { name: "leetcode12345", time: "720", points: "180" };
-    // this.fourthPlace = { name: "dgdfg12345", time: "740", points: "120" };
-    // this.fifthPlace = { name: "ddfjydrt2345", time: "730", points: "110" };
-    // this.sixthPlace = { name: "ddfdgsfgsfg", time: "740", points: "100" };
   }
 
   preload() {
@@ -61,7 +54,7 @@ export default class FinishTitle extends Phaser.Scene {
     this.finalScore = this.add.text(
       400,
       170,
-      `Final score: points: ${game.config.points}, time: ${Math.round(
+      `Final score! points: ${game.config.points}, time: ${Math.round(
         game.config.playerTime
       )}`,
       {
@@ -110,7 +103,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "#39ff14",
+        fill: "##362DEC",
       }
     );
     this.topChartOne.setOrigin(0.5);
@@ -123,7 +116,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "#39ff14",
+        fill: "##362DEC",
       }
     );
     this.topChartTwo.setOrigin(0.5);
@@ -136,7 +129,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "#39ff14",
+        fill: "##362DEC",
       }
     );
     this.TopChartThree.setOrigin(0.5);
@@ -149,7 +142,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "#39ff14",
+        fill: "##362DEC",
       }
     );
     this.TopChartFour.setOrigin(0.5);
@@ -162,7 +155,7 @@ export default class FinishTitle extends Phaser.Scene {
       {
         fontSize: 20,
         fontFamily: "Audiowide, cursive",
-        fill: "#39ff14",
+        fill: "##362DEC",
       }
     );
     this.TopChartFive.setOrigin(0.5);

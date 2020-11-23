@@ -1,6 +1,6 @@
 import Phaser from "phaser";
 import axios from "axios";
-// import io from "socket.io-client";
+import io from "socket.io-client";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -9,8 +9,6 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    // this.load.html("nameform", "assets/text/nameform.html");
-    // this.load.html("loginform", "assets/text/loginform.html");
     this.load.html("loginform2", "assets/text/loginform2.html");
     this.load.image("splash", "assets/splash.png");
     this.load.image("button", "assets/buttons/1.png");
@@ -23,9 +21,7 @@ export default class MainScene extends Phaser.Scene {
         username: username,
         password: password,
       });
-
       localStorage.setItem("loggedInUser", data.username);
-
       return data;
     } catch (err) {
       console.error(err);
@@ -38,15 +34,10 @@ export default class MainScene extends Phaser.Scene {
         username: username,
         password: password,
       });
-      // const { data } = await axios.post("/auth/login", {
-      //   username: username,
-      //   password: password,
-      // });
       if (data.username) {
         this.login(username, password);
         localStorage.setItem("loggedInUser", data.username);
       }
-
       return data;
     } catch (err) {
       console.log(err);
@@ -56,228 +47,146 @@ export default class MainScene extends Phaser.Scene {
   async logout() {
     try {
       await axios.post("/auth/logout");
-      var userArray = [{ username: "" }];
-      localStorage.loggedInUser = 0;
+      localStorage.loggedInUser = "";
     } catch (err) {
       console.error(err);
     }
   }
 
-  create() {
-    const scene = this;
-    // this.socket = io("http://localhost:8080");
+  handleLoggedInScreen(scene) {
+    //  Populate the welcome text with their username
+    scene.inText.setText("welcome " + localStorage.loggedInUser);
+    scene.inText.setVisible(true);
+    //  Add a message to highlight enter button
+    scene.begintext = scene.add.text(410, 340, "Godspeed...", {
+      color: "white",
+      fontSize: "20px ",
+    });
+    scene.begintext.setInteractive();
+    scene.begintext.on("pointerover", () =>
+      scene.begintext.setStyle({ fill: "#ff69b4" })
+    );
+    scene.begintext.on("pointerout", () =>
+      scene.begintext.setStyle({ fill: "#ffffff" })
+    );
+    //  Activate login button
+    scene.helloButton.on("pointerdown", () => {
+      scene.scene.start("FgScene");
+      scene.scene.stop("MainScene");
+    });
+    //  Create logout button
+    scene.logouttext = scene.add.text(400, 550, "logout", {
+      color: "white",
+      fontSize: "20px ",
+    });
+    scene.logouttext.setOrigin(0.5);
+    scene.logouttext.setInteractive();
+    scene.logouttext.on("pointerover", () =>
+      scene.logouttext.setStyle({ fill: "#ff69b4" })
+    );
+    scene.logouttext.on("pointerout", () =>
+      scene.logouttext.setStyle({ fill: "#ffffff" })
+    );
+    scene.logouttext.on("pointerdown", async () => {
+      await scene.logout();
+      game.config.login = false;
+      scene.scene.restart();
+    });
+  }
 
+  create() {
+    // this.socket = io("http://localhost:8080");
     // this.socket.on("connect", function () {
     //   console.log("Connected!");
     // });
 
-    game.config.health = 100;
+    // Initialize this
+    const scene = this;
+
+    //  Initialize config file for the game
+    game.config.health = 5;
     game.config.points = 0;
     game.config.beginTime = new Date().getTime() / 1000;
     game.config.playerTime = 0;
-    this.add.image(400, 300, "splash").setScale(2.5);
-    const helloButton = this.add.image(400, 300, "button").setScale(0.25);
-    helloButton.setInteractive();
-    const helloButtonTwo = this.add.image(400, 300, "button22").setScale(0.25);
-    helloButtonTwo.visible = false;
 
-    helloButton.on("pointerover", () => (helloButtonTwo.visible = true));
-    helloButton.on("pointerout", () => (helloButtonTwo.visible = false));
+    // Initialize enter button, stays inactive until login
+    scene.add.image(400, 300, "splash").setScale(2.5);
+    scene.helloButton = scene.add.image(400, 300, "button").setScale(0.25);
+    scene.helloButton.setInteractive();
+    scene.helloButtonTwo = scene.add.image(400, 300, "button22").setScale(0.25);
+    scene.helloButtonTwo.visible = false;
+    scene.helloButton.on(
+      "pointerover",
+      () => (scene.helloButtonTwo.visible = true)
+    );
+    scene.helloButton.on(
+      "pointerout",
+      () => (scene.helloButtonTwo.visible = false)
+    );
 
-    // helloButton.on("pointerdown", () => {
-    //   this.scene.start("FgScene");
-    //   this.scene.stop("MainScene");
-    // });
+    //  Initialize intro text
+    scene.inText = scene.add.text(300, 10, "welcome", {
+      color: "white",
+      fontSize: "20px ",
+    });
+    scene.inText.setVisible(false);
 
-    // helloButton.on("pointerdown", () => {
-    //   this.scene.start("FinishTitle");
-    //   this.scene.stop("MainScene");
-    // });
+    // If the user is not logged in, present login / signup
+    if (!localStorage.loggedInUser || !localStorage.loggedInUser.length) {
+      scene.inText.setVisible(true);
+      scene.inText.setText("Please enter your name");
 
-    // if (game.config.login !== true) {
-    if (!localStorage.loggedInUser || localStorage.loggedInUser.length < 2) {
-      var text = this.add.text(300, 10, "Please enter your name", {
-        color: "white",
-        fontSize: "20px ",
-      });
-
-      var element = this.add
+      // Create login / signup form
+      scene.element = scene.add
         .dom(400, 115)
         .createFromCache("loginform2")
         .setScale(0.75);
-      // element.setOrigin(0.45);
-      element.addListener("click");
+      scene.element.addListener("click");
 
-      element.on("click", async function (event) {
+      // When user tries to login
+      scene.element.on("click", async function (event) {
         if (event.target.name === "loginButton") {
-          var username = this.getChildByName("username");
-          var password = this.getChildByName("password");
-
+          var username = scene.element.getChildByName("username");
+          var password = scene.element.getChildByName("password");
           const user = await scene.login(username.value, password.value);
           console.log("USER ---->", user);
-          //  Have they entered anything?
+          //  Have they entered anything when they clicked submit? Did the login succeed?
           if (username.value !== "" && password.value !== "" && user.username) {
-            //axios requests
-            //auth/login
             console.log("INSIDE IF STATEMENT");
+            //  Set config for the game
             game.config.usernameOne = username.value;
             game.config.login = true;
             //  Turn off the click events
-            this.removeListener("click");
-
+            scene.element.removeListener("click");
             //  Hide the login element
-            this.setVisible(false);
-
-            //  Populate the text with whatever they typed in
-            text.setText("welcome " + localStorage.loggedInUser);
-
-            var begintext = scene.add.text(410, 340, "Godspeed...", {
-              color: "white",
-              fontSize: "20px ",
-            });
-
-            begintext.setInteractive();
-            begintext.on("pointerover", () =>
-              begintext.setStyle({ fill: "#ff69b4" })
-            );
-
-            begintext.on("pointerout", () =>
-              begintext.setStyle({ fill: "#ffffff" })
-            );
-
-            //you may enter
-            helloButton.on("pointerdown", () => {
-              scene.scene.start("FgScene");
-              scene.scene.stop("MainScene");
-            });
-
-            var logouttext = scene.add.text(400, 550, "logout", {
-              color: "white",
-              fontSize: "20px ",
-            });
-            logouttext.setOrigin(0.5);
-            logouttext.setInteractive();
-            logouttext.on("pointerover", () =>
-              logouttext.setStyle({ fill: "#ff69b4" })
-            );
-            logouttext.on("pointerout", () =>
-              logouttext.setStyle({ fill: "#ffffff" })
-            );
-            logouttext.on("pointerdown", async () => {
-              await scene.logout();
-              game.config.login = false;
-              scene.scene.start("MainScene");
-            });
+            scene.element.setVisible(false);
+            //  Switch to login screen
+            scene.handleLoggedInScreen(scene);
           }
+          // When user tries to sign up
         } else if (event.target.name === "signupButton") {
-          var username = this.getChildByName("username2");
-          var password = this.getChildByName("password2");
-
+          var username = scene.element.getChildByName("username2");
+          var password = scene.element.getChildByName("password2");
           const user = await scene.signup(username.value, password.value);
           console.log("USER ---->", user);
-          //  Have they entered anything?
+          //  Have they entered anything? Was signup and auto login successful?
           if (username.value !== "" && password.value !== "" && user.username) {
-            //axios requests
-            //auth/login
             console.log("INSIDE IF STATEMENT");
+            //  Set config for the game
             game.config.usernameOne = username.value;
             game.config.login = true;
             //  Turn off the click events
-            this.removeListener("click");
-
+            scene.element.removeListener("click");
             //  Hide the login element
-            this.setVisible(false);
-
-            //  Populate the text with whatever they typed in
-            text.setText("welcome " + username.value);
-
-            var begintext = scene.add.text(410, 340, "Godspeed...", {
-              color: "white",
-              fontSize: "20px ",
-            });
-
-            begintext.setInteractive();
-            begintext.on("pointerover", () =>
-              begintext.setStyle({ fill: "#ff69b4" })
-            );
-
-            begintext.on("pointerout", () =>
-              begintext.setStyle({ fill: "#ffffff" })
-            );
-
-            //you may enter
-            helloButton.on("pointerdown", () => {
-              scene.scene.start("FgScene");
-              scene.scene.stop("MainScene");
-            });
-
-            var logouttext = scene.add.text(400, 550, "logout", {
-              color: "white",
-              fontSize: "20px ",
-            });
-            logouttext.setOrigin(0.5);
-            logouttext.setInteractive();
-            logouttext.on("pointerover", () =>
-              logouttext.setStyle({ fill: "#ff69b4" })
-            );
-            logouttext.on("pointerout", () =>
-              logouttext.setStyle({ fill: "#ffffff" })
-            );
-            logouttext.on("pointerdown", async () => {
-              await scene.logout();
-              game.config.login = false;
-              scene.scene.start("MainScene");
-            });
+            scene.element.setVisible(false);
+            //  Switch to login screen
+            scene.handleLoggedInScreen(scene);
           }
         }
       });
+      // User is already persistantly logged in
     } else {
-      //  Populate the text with whatever they typed in
-      var textwelcome = this.add.text(
-        300,
-        10,
-        "welcome " + localStorage.loggedInUser,
-        {
-          color: "white",
-          fontSize: "20px ",
-        }
-      );
-
-      var begintext = scene.add.text(410, 340, "Godspeed...", {
-        color: "white",
-        fontSize: "20px ",
-      });
-
-      begintext.setInteractive();
-      begintext.on("pointerover", () =>
-        begintext.setStyle({ fill: "#ff69b4" })
-      );
-
-      begintext.on("pointerout", () => begintext.setStyle({ fill: "#ffffff" }));
-
-      //you may enter
-      helloButton.on("pointerdown", () => {
-        scene.scene.start("FgScene");
-        scene.scene.stop("MainScene");
-      });
-
-      var logouttext = this.add.text(400, 550, "logout", {
-        color: "white",
-        fontSize: "20px ",
-      });
-      logouttext.setOrigin(0.5);
-      logouttext.setInteractive();
-      logouttext.on("pointerover", () =>
-        logouttext.setStyle({ fill: "#ff69b4" })
-      );
-      logouttext.on("pointerout", () =>
-        logouttext.setStyle({ fill: "#ffffff" })
-      );
-      logouttext.on("pointerdown", async () => {
-        await scene.logout();
-        game.config.login = false;
-        scene.scene.start("MainScene");
-      });
+      scene.handleLoggedInScreen(scene);
     }
   }
 }
