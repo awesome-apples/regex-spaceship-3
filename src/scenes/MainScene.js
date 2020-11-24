@@ -148,39 +148,56 @@ export default class MainScene extends Phaser.Scene {
         if (event.target.name === "loginButton") {
           var username = scene.element.getChildByName("username");
           var password = scene.element.getChildByName("password");
-          const user = await scene.login(username.value, password.value);
-          console.log("USER ---->", user);
-          //  Have they entered anything when they clicked submit? Did the login succeed?
-          if (username.value !== "" && password.value !== "" && user.username) {
-            console.log("INSIDE IF STATEMENT");
-            //  Set config for the game
-            game.config.usernameOne = username.value;
-            game.config.login = true;
-            //  Turn off the click events
-            scene.element.removeListener("click");
-            //  Hide the login element
-            scene.element.setVisible(false);
-            //  Switch to login screen
-            scene.handleLoggedInScreen(scene);
+          try {
+            const user = await scene.login(username.value, password.value);
+
+            console.log("USER ---->", user);
+            //  Have they entered anything when they clicked submit? Did the login succeed?
+            if (
+              username.value !== "" &&
+              password.value !== "" &&
+              user.username
+            ) {
+              console.log("INSIDE IF STATEMENT");
+              //  Set config for the game
+              game.config.usernameOne = username.value;
+              game.config.login = true;
+              //  Turn off the click events
+              scene.element.removeListener("click");
+              //  Hide the login element
+              scene.element.setVisible(false);
+              //  Switch to login screen
+              scene.handleLoggedInScreen(scene);
+            }
+          } catch (err) {
+            console.log(err);
           }
           // When user tries to sign up
         } else if (event.target.name === "signupButton") {
           var username = scene.element.getChildByName("username2");
           var password = scene.element.getChildByName("password2");
-          const user = await scene.signup(username.value, password.value);
-          console.log("USER ---->", user);
-          //  Have they entered anything? Was signup and auto login successful?
-          if (username.value !== "" && password.value !== "" && user.username) {
-            console.log("INSIDE IF STATEMENT");
-            //  Set config for the game
-            game.config.usernameOne = username.value;
-            game.config.login = true;
-            //  Turn off the click events
-            scene.element.removeListener("click");
-            //  Hide the login element
-            scene.element.setVisible(false);
-            //  Switch to login screen
-            scene.handleLoggedInScreen(scene);
+          try {
+            const user = await scene.signup(username.value, password.value);
+            console.log("USER ---->", user);
+            //  Have they entered anything? Was signup and auto login successful?
+            if (
+              username.value !== "" &&
+              password.value !== "" &&
+              user.username
+            ) {
+              console.log("INSIDE IF STATEMENT");
+              //  Set config for the game
+              game.config.usernameOne = username.value;
+              game.config.login = true;
+              //  Turn off the click events
+              scene.element.removeListener("click");
+              //  Hide the login element
+              scene.element.setVisible(false);
+              //  Switch to login screen
+              scene.handleLoggedInScreen(scene);
+            }
+          } catch (err) {
+            console.error(err);
           }
         }
       });
