@@ -5,46 +5,30 @@ const path = require("path");
 
 module.exports = {
   entry: ["@babel/polyfill", "./src/index.js"],
-
-  // devServer: {
-  //   contentBase: './public',
-  //   inline: true,
-  //   hot: true
-  // },
   output: {
     path: path.resolve(__dirname, "public"),
     publicPath: "/public/",
     filename: "bundle.js",
   },
-
+  resolve: {
+    extensions: [".js", ".jsx"],
+  },
+  devtool: "source-map",
+  watchOptions: {
+    ignored: /node_modules/,
+  },
   module: {
     // rules: [
     //   //   {
     //   //     test: [ /\.vert$/, /\.frag$/ ],
     //   //     use: 'raw-loader'
     //   //   }
-    //   {
-    //     test: /\.m?js$/,
-    //     exclude: /(node_modules|bower_components)/,
-    //     use: {
-    //       loader: "babel-loader",
-    //       options: {
-    //         presets: ["@babel/preset-env"],
-    //       },
-    //     },
-    //   },
     // ],
     rules: [
       {
-        test: /\.m?js$/,
-        exclude: /(node_modules|bower_components)/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: ["@babel/preset-env"],
-            plugins: ["@babel/plugin-proposal-object-rest-spread"],
-          },
-        },
+        test: /\.jsx?$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
       },
     ],
   },
