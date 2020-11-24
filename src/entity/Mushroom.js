@@ -42,7 +42,6 @@ export default class Mushroom extends Phaser.Physics.Arcade.Sprite {
       this.flipX = !this.flipX;
       this.facingLeft = true;
     }
-    console.log("move left mushroom");
     this.setVelocityX(-5);
     if (this.body.touching.down) {
       this.play("mushroomrun", true);
