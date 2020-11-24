@@ -88,9 +88,13 @@ export default class MainScene extends Phaser.Scene {
       scene.logouttext.setStyle({ fill: "#ffffff" })
     );
     scene.logouttext.on("pointerdown", async () => {
-      await scene.logout();
-      game.config.login = false;
-      scene.scene.restart();
+      try {
+        await scene.logout();
+        game.config.login = false;
+        scene.scene.restart();
+      } catch (err) {
+        console.error(err);
+      }
     });
   }
 
@@ -151,14 +155,14 @@ export default class MainScene extends Phaser.Scene {
           try {
             const user = await scene.login(username.value, password.value);
 
-            console.log("USER ---->", user);
+            // console.log("USER ---->", user);
             //  Have they entered anything when they clicked submit? Did the login succeed?
             if (
               username.value !== "" &&
               password.value !== "" &&
               user.username
             ) {
-              console.log("INSIDE IF STATEMENT");
+              // console.log("INSIDE IF STATEMENT");
               //  Set config for the game
               game.config.usernameOne = username.value;
               game.config.login = true;
@@ -178,14 +182,14 @@ export default class MainScene extends Phaser.Scene {
           var password = scene.element.getChildByName("password2");
           try {
             const user = await scene.signup(username.value, password.value);
-            console.log("USER ---->", user);
+            // console.log("USER ---->", user);
             //  Have they entered anything? Was signup and auto login successful?
             if (
               username.value !== "" &&
               password.value !== "" &&
               user.username
             ) {
-              console.log("INSIDE IF STATEMENT");
+              // console.log("INSIDE IF STATEMENT");
               //  Set config for the game
               game.config.usernameOne = username.value;
               game.config.login = true;

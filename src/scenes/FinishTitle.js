@@ -18,7 +18,7 @@ export default class FinishTitle extends Phaser.Scene {
       }
       const { data } = await axios.get("/api/topchart/single");
       this.charts = data;
-      console.log("got charts ----->", this.charts);
+      // console.log("got charts ----->", this.charts);
     } catch (err) {
       console.error(err);
     }
