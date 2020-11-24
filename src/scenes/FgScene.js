@@ -180,6 +180,11 @@ export default class FgScene extends Phaser.Scene {
 
     this.load.image("police", "assets/backgrounds/warpedcity/police.png");
 
+    this.load.image(
+      "babystill",
+      "assets/backgrounds/warpedcity/SPRITES/player/idle/idle-2.png"
+    );
+
     //SOUNDS
     this.load.audio("jump", "assets/audio/jump.wav");
     this.load.audio("achieve", "assets/audio/SOPHIE_snap_02.wav");
@@ -308,7 +313,7 @@ export default class FgScene extends Phaser.Scene {
     });
     // SPRITES
     this.gun = new Gun(this, 300, 400, "gun").setScale(0.25);
-    this.baby = new Baby(this, 30, 200, "baby").setScale(2);
+    this.baby = new Baby(this, 30, 200, "babystill").setScale(2);
     this.end = new End(this, width * 19.75, 400, "end").setScale(5.0);
 
     //PLATFORMS
