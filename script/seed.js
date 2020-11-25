@@ -5,17 +5,17 @@ const { TopChart, User } = require("../server/db/models");
 
 const topchartdata = [
   {
-    points: 150,
-    time: 400,
+    points: 139,
+    time: 390,
     style: "single",
-    score: 250,
+    score: 251,
     userId: 1,
   },
   {
-    points: 170,
+    points: 125,
     time: 500,
     style: "single",
-    score: 330,
+    score: 337,
     userId: 1,
   },
   {
@@ -26,24 +26,24 @@ const topchartdata = [
     userId: 1,
   },
   {
-    points: 200,
+    points: 66,
     time: 600,
     style: "single",
-    score: 400,
+    score: 534,
     userId: 2,
   },
   {
-    points: 560,
-    time: 13,
+    points: 99,
+    time: 450,
     style: "single",
-    score: 546,
+    score: 351,
     userId: 2,
   },
   {
-    points: 100,
+    points: 121,
     time: 800,
     style: "single",
-    score: 700,
+    score: 679,
     userId: 3,
   },
 ];
