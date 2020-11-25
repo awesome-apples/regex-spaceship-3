@@ -113,6 +113,10 @@ export default class MainScene extends Phaser.Scene {
     game.config.beginTime = new Date().getTime() / 1000;
     game.config.playerTime = 0;
 
+    if (localStorage.loggedInUser) {
+      game.config.usernameOne = localStorage.loggedInUser;
+    }
+
     // Initialize enter button, stays inactive until login
     scene.add.image(400, 300, "splash").setScale(2.5);
     scene.helloButton = scene.add.image(400, 300, "button").setScale(0.25);
