@@ -503,7 +503,7 @@ export default class LvlFourScene extends Phaser.Scene {
     });
     this.slimeGroup.createMultiple({
       key: "slime",
-      repeat: 25,
+      repeat: 40,
     });
     this.slimeGroup.children.iterate((child) => {
       let y = 200;
@@ -525,7 +525,7 @@ export default class LvlFourScene extends Phaser.Scene {
     });
     this.guardianGroup.createMultiple({
       key: "guardian",
-      repeat: 25,
+      repeat: 30,
     });
     this.guardianGroup.children.iterate((child) => {
       let y = 200;
@@ -548,7 +548,7 @@ export default class LvlFourScene extends Phaser.Scene {
     });
     this.fireballGroup.createMultiple({
       key: "fireball",
-      repeat: 70,
+      repeat: 30,
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
