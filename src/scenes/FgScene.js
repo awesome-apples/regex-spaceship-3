@@ -525,7 +525,7 @@ export default class FgScene extends Phaser.Scene {
     });
     this.fireballGroup.createMultiple({
       key: "fireball",
-      repeat: 40,
+      repeat: 20,
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);

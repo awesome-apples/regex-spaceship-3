@@ -475,7 +475,7 @@ export default class LvlThreeScene extends Phaser.Scene {
     });
     this.alienGroup.createMultiple({
       key: "alien",
-      repeat: 12,
+      repeat: 40,
     });
     this.alienGroup.children.iterate((child) => {
       let y = 200;
@@ -498,7 +498,7 @@ export default class LvlThreeScene extends Phaser.Scene {
     });
     this.boxerGroup.createMultiple({
       key: "boxer",
-      repeat: 12,
+      repeat: 40,
     });
     this.boxerGroup.children.iterate((child) => {
       let y = 200;
@@ -522,7 +522,7 @@ export default class LvlThreeScene extends Phaser.Scene {
     });
     this.fireballGroup.createMultiple({
       key: "fireball",
-      repeat: 80,
+      repeat: 20,
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
