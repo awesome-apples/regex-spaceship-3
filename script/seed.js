@@ -20,16 +20,16 @@ const topchartdata = [
   },
   {
     points: 45,
-    time: 60,
+    time: 700,
     style: "single",
-    score: 15,
+    score: 655,
     userId: 1,
   },
   {
-    points: 578,
-    time: 87,
+    points: 200,
+    time: 600,
     style: "single",
-    score: -490,
+    score: 400,
     userId: 2,
   },
   {
@@ -40,10 +40,10 @@ const topchartdata = [
     userId: 2,
   },
   {
-    points: 424,
-    time: 1,
+    points: 100,
+    time: 800,
     style: "single",
-    score: -423,
+    score: 700,
     userId: 3,
   },
 ];
