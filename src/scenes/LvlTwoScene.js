@@ -468,7 +468,7 @@ export default class LvlTwoScene extends Phaser.Scene {
     });
     this.plantyGroup.createMultiple({
       key: "planty",
-      repeat: 12,
+      repeat: 20,
     });
     this.plantyGroup.children.iterate((child) => {
       let y = 200;
@@ -491,7 +491,7 @@ export default class LvlTwoScene extends Phaser.Scene {
     });
     this.batGroup.createMultiple({
       key: "bat",
-      repeat: 12,
+      repeat: 20,
     });
     this.batGroup.children.iterate((child) => {
       let y = 200;
@@ -514,7 +514,7 @@ export default class LvlTwoScene extends Phaser.Scene {
     });
     this.fireballGroup.createMultiple({
       key: "fireball",
-      repeat: 60,
+      repeat: 35,
     });
     this.fireballGroup.children.iterate((child) => {
       let y = Phaser.Math.Between(-200, -2000);
