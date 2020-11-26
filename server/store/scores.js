@@ -1,18 +1,18 @@
 import axios from "axios";
 
 //ACTION TYPES
-const GET_TASKS = "GET_TASKS";
+const GET_SCORES = "GET_SCORES";
 
 //INITIAL STATE
 const initialState = [];
 
 //ACTION CREATORS
-const getTasks = (tasks) => ({ type: GET_TASKS, tasks });
+const getScores = (scores) => ({ type: GET_SCORES, scores });
 
 //THUNK CREATORS
-export const fetchTasks = () => async (dispatch) => {
+export const fetchScore = () => async (dispatch) => {
   try {
-    const { data } = await axios.get("/api/tasks");
+    const { data } = await axios.get("/api/scores");
     console.log("data", data);
     dispatch(getPlayers(data));
   } catch (err) {

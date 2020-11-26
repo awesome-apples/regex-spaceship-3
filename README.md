@@ -2,6 +2,13 @@
 
 Hi Everyone!
 
+the boilerplate is setup
+we've got socket.io connection
+socket runs from its own folder and is imported into server where its hooked up
+on the clientside, socket is running from our mainscene
+we can add socket connection to any scene
+there is a redux store folder setup on the server side, i decided to put it on the server side because thats where we will be accessing it, but let me know if you think we should have different logic for this
+
 ## Adria - server & socket info -
 
 - the server is in server/index.js

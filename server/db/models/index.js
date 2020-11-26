@@ -1,4 +1,3 @@
-const TopChart = require("./topChart");
 const User = require("./user");
 
 /**
@@ -8,8 +7,6 @@ const User = require("./user");
  *    BlogPost.belongsTo(User)
  */
 
-TopChart.belongsTo(User);
-
 /**
  * We'll export all of our models here, so that any time a module needs a model,
  * we can just require it from 'db/models'
@@ -17,6 +14,5 @@ TopChart.belongsTo(User);
  * instead of: const User = require('../db/models/user')
  */
 module.exports = {
-  TopChart,
   User,
 };
