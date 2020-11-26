@@ -33,7 +33,7 @@
     "pg-hstore": "^2.3.3",
     "phaser": "^3.15.1",
     "prop-types": "^15.7.2",
-    "redux": "^4.0.1",
+    "redux": "^4.0.5",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
     "sequelize": "^6.3.5",
@@ -59,8 +59,8 @@
     "axios-mock-adapter": "^1.19.0",
     "babel-loader": "^8.2.1",
     "nodemon": "^2.0.6",
-    "redux-devtools-extension": "^2.13.5",
     "raw-loader": "^0.5.1",
+    "redux-devtools-extension": "^2.13.8",
     "webpack": "^4.16.4",
     "webpack-cli": "^3.1.0",
     "webpack-dev-server": "^2.11.0"
