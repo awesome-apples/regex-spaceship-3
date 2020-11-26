@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 
-const databaseName = "cyberpunk";
+const databaseName = "regex-spaceship";
 
 const db = new Sequelize(
   process.env.DATABASE_URL || `postgres://localhost:5432/${databaseName}`,

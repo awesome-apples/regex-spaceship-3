@@ -1,52 +1,7 @@
 "use strict";
 
 const db = require("../server/db");
-const { TopChart, User } = require("../server/db/models");
-
-const topchartdata = [
-  {
-    points: 139,
-    time: 390,
-    style: "single",
-    score: 251,
-    userId: 1,
-  },
-  {
-    points: 125,
-    time: 500,
-    style: "single",
-    score: 337,
-    userId: 1,
-  },
-  {
-    points: 45,
-    time: 700,
-    style: "single",
-    score: 655,
-    userId: 1,
-  },
-  {
-    points: 66,
-    time: 600,
-    style: "single",
-    score: 534,
-    userId: 2,
-  },
-  {
-    points: 99,
-    time: 450,
-    style: "single",
-    score: 351,
-    userId: 2,
-  },
-  {
-    points: 121,
-    time: 800,
-    style: "single",
-    score: 679,
-    userId: 3,
-  },
-];
+const { User } = require("../server/db/models");
 
 async function seed() {
   await db.sync({ force: true });
@@ -58,13 +13,6 @@ async function seed() {
     User.create({ username: "sadly", password: "12321" }),
   ]);
 
-  const charts = await Promise.all(
-    topchartdata.map((chart) => {
-      return TopChart.create(chart);
-    })
-  );
-
-  console.log(`seeded ${charts.length} charts`);
   console.log(`seeded ${users.length} users`);
 }
 

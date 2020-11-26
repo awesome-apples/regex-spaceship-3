@@ -1,7 +1,6 @@
 const router = require("express").Router();
 module.exports = router;
 
-router.use("/topchart", require("./topchart"));
 router.use("/users", require("./users"));
 
 router.use((req, res, next) => {
