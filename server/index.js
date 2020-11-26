@@ -101,23 +101,8 @@ const startListening = () => {
     console.log(`Mixing it up on port ${PORT}`)
   );
 
-  // const io = socketio(server);
-  // require("./socket")(io);
-
-  // io.on("connection", (socket) => {
-  //   console.log(
-  //     `A socket connection to the server has been made: ${socket.id}`
-  //   );
-
-  //   players.push(socket.id);
-
-  //   console.log("socketid-->", socket.id);
-
-  //   socket.on("disconnect", () => {
-  //     console.log(`Connection ${socket.id} has left the building`);
-  //     players = players.filter((player) => player !== socket.id);
-  //   });
-  // });
+  const io = socketio(server);
+  require("./socket")(io);
 };
 // set up our socket control center
 
