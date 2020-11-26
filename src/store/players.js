@@ -19,3 +19,13 @@ export const fetchPlayers = () => async (dispatch) => {
     console.error(err);
   }
 };
+
+//REDUCER
+export default function (state = initialState, action) {
+  switch (action.type) {
+    case GET_PLAYERS:
+      return action.players;
+    default:
+      return state;
+  }
+}

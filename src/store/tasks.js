@@ -19,3 +19,13 @@ export const fetchTasks = () => async (dispatch) => {
     console.error(err);
   }
 };
+
+//REDUCER
+export default function (state = initialState, action) {
+  switch (action.type) {
+    case GET_TASKS:
+      return action.tasks;
+    default:
+      return state;
+  }
+}

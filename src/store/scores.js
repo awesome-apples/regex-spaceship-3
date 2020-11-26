@@ -10,12 +10,22 @@ const initialState = [];
 const getScores = (scores) => ({ type: GET_SCORES, scores });
 
 //THUNK CREATORS
-export const fetchScore = () => async (dispatch) => {
+export const fetchScores = () => async (dispatch) => {
   try {
     const { data } = await axios.get("/api/scores");
     console.log("data", data);
-    dispatch(getPlayers(data));
+    dispatch(getScores(data));
   } catch (err) {
     console.error(err);
   }
 };
+
+//REDUCER
+export default function (state = initialState, action) {
+  switch (action.type) {
+    case GET_SCORES:
+      return action.scores;
+    default:
+      return state;
+  }
+}
