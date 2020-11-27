@@ -1,10 +1,10 @@
-import { createStore, combineReducers, applyMiddleware } from "redux";
-import { createLogger } from "redux-logger";
-import thunkMiddleware from "redux-thunk";
-import { composeWithDevTools } from "redux-devtools-extension";
-import players from "./players";
-import scores from "./scores";
-import tasks from "./tasks";
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createLogger } from 'redux-logger';
+import thunkMiddleware from 'redux-thunk';
+import { composeWithDevTools } from 'redux-devtools-extension';
+import players from './players';
+import scores from './scores';
+import tasks from './tasks';
 
 const reducer = combineReducers({
   players,

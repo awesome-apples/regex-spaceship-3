@@ -1,14 +1,15 @@
-const router = require("express").Router();
-const { User } = require("../db/models");
+const router = require('express').Router();
+const { User } = require('../db/models');
 module.exports = router;
 
-router.get("/", async (req, res, next) => {
+//GET /api/users
+router.get('/', async (req, res, next) => {
   try {
     const users = await User.findAll({
       // explicitly select only the id and email fields - even though
       // users' passwords are encrypted, it won't help if we just
       // send everything to anyone who asks!
-      attributes: ["id", "username"],
+      attributes: ['id', 'username'],
     });
     res.json(users);
   } catch (err) {
@@ -16,7 +17,8 @@ router.get("/", async (req, res, next) => {
   }
 });
 
-router.post("/signup", async (req, res, next) => {
+//POST /api/users/signup
+router.post('/signup', async (req, res, next) => {
   try {
     const { username, password } = req.body;
     const newUser = await User.create({
@@ -24,6 +26,21 @@ router.post("/signup", async (req, res, next) => {
       password,
     });
     res.json(newUser);
+  } catch (err) {
+    next(err);
+  }
+});
+
+//GET /api/users/:gameId
+router.get('/', async (req, res, next) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        gameId: req.params.gameId,
+      },
+      attributes: ['id', 'username'],
+    });
+    res.json(users);
   } catch (err) {
     next(err);
   }
