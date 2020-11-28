@@ -3,6 +3,7 @@ import axios from 'axios';
 import store from '../store';
 import ProgressBar from '../entity/progressBar';
 import Timer from '../entity/Timer';
+import ControlPanel from '../entity/ControlPanel';
 // import io from "socket.io-client";
 
 export default class MainScene extends Phaser.Scene {
@@ -19,8 +20,12 @@ export default class MainScene extends Phaser.Scene {
         frameHeight: 100,
       }
     );
-    this.load.image('ship', 'assets/spaceShips_001.png');
-    this.load.image('otherPlayer', 'assets/enemyBlack5.png');
+    this.load.spritesheet('astronaut', 'assets/spritesheets/astronaut3.png', {
+      frameWidth: 29,
+      frameHeight: 37,
+    });
+    this.load.image('controlPanelLeft', 'assets/sprites/console_s.png');
+    this.load.image('controlPanelRight', 'assets/sprites/console_w.png');
     this.load.image('star', 'assets/star_gold.png');
     this.load.image('mainroom', 'assets/backgrounds/mainroom.png');
   }
@@ -28,6 +33,20 @@ export default class MainScene extends Phaser.Scene {
   create() {
     var self = this;
     this.add.image(0, 0, 'mainroom').setOrigin(0);
+
+    //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
+    this.controlPanelLeft = new ControlPanel(
+      this,
+      200,
+      200,
+      'controlPanelLeft'
+    );
+    this.controlPanelRight = new ControlPanel(
+      this,
+      580,
+      400,
+      'controlPanelRight'
+    );
 
     //Progress Bar
     this.progressText = this.add.text(30, 16, 'Tasks Completed', {
@@ -110,7 +129,7 @@ export default class MainScene extends Phaser.Scene {
         'star'
       );
       self.physics.add.overlap(
-        self.ship,
+        self.astronaut,
         self.star,
         function () {
           this.socket.emit('starCollected');
@@ -120,6 +139,7 @@ export default class MainScene extends Phaser.Scene {
       );
     });
 
+    //TIMER
     this.timerLabel = this.add.text(680, 16, '120s', {
       fontSize: '32px',
       fill: '#ffffff',
@@ -132,67 +152,68 @@ export default class MainScene extends Phaser.Scene {
 
   update(time) {
     this.socket.emit('countdown', time);
-    if (this.ship) {
+    if (this.astronaut) {
       if (this.cursors.left.isDown) {
-        this.ship.setVelocityX(-150);
+        this.astronaut.setVelocityX(-150);
       } else if (this.cursors.right.isDown) {
-        this.ship.setVelocityX(150);
+        this.astronaut.setVelocityX(150);
       } else if (this.cursors.up.isDown) {
-        this.ship.setVelocityY(-150);
+        this.astronaut.setVelocityY(-150);
       } else if (this.cursors.down.isDown) {
-        this.ship.setVelocityY(150);
+        this.astronaut.setVelocityY(150);
       } else {
-        this.ship.setVelocity(0);
+        this.astronaut.setVelocity(0);
       }
 
-      this.physics.world.wrap(this.ship, 5);
+      this.physics.world.wrap(this.astronaut, 5);
 
       // emit player movement
-      var x = this.ship.x;
-      var y = this.ship.y;
+      var x = this.astronaut.x;
+      var y = this.astronaut.y;
       if (
-        this.ship.oldPosition &&
-        (x !== this.ship.oldPosition.x || y !== this.ship.oldPosition.y)
+        this.astronaut.oldPosition &&
+        (x !== this.astronaut.oldPosition.x ||
+          y !== this.astronaut.oldPosition.y)
       ) {
         this.socket.emit('playerMovement', {
-          x: this.ship.x,
-          y: this.ship.y,
+          x: this.astronaut.x,
+          y: this.astronaut.y,
         });
       }
 
       // save old position data
-      this.ship.oldPosition = {
-        x: this.ship.x,
-        y: this.ship.y,
-        rotation: this.ship.rotation,
+      this.astronaut.oldPosition = {
+        x: this.astronaut.x,
+        y: this.astronaut.y,
+        rotation: this.astronaut.rotation,
       };
     }
   }
 
   addPlayer(self, playerInfo) {
-    self.ship = self.physics.add
-      .image(playerInfo.x, playerInfo.y, 'ship')
+    self.astronaut = self.physics.add
+      .image(playerInfo.x, playerInfo.y, 'astronaut')
       .setOrigin(0.5, 0.5)
-      .setDisplaySize(53, 40);
+      .setDisplaySize(43.5, 55.5);
     if (playerInfo.team === 'blue') {
-      self.ship.setTint(0x0000ff);
+      self.astronaut.setTint(0x2796a5);
     } else {
-      self.ship.setTint(0xff0000);
+      self.astronaut.setTint(0xd86969);
     }
-    self.ship.setDrag(100);
-    self.ship.setAngularDrag(100);
-    self.ship.setMaxVelocity(200);
+    self.astronaut.setDrag(100);
+    self.astronaut.setAngularDrag(100);
+    self.astronaut.setMaxVelocity(200);
   }
 
   addOtherPlayers(self, playerInfo) {
     const otherPlayer = self.add
-      .sprite(playerInfo.x, playerInfo.y, 'otherPlayer')
+      .sprite(playerInfo.x, playerInfo.y, 'astronaut')
       .setOrigin(0.5, 0.5)
-      .setDisplaySize(53, 40);
+      .setDisplaySize(43.5, 55.5);
     if (playerInfo.team === 'blue') {
-      otherPlayer.setTint(0x0000ff);
+      otherPlayer.setTint(0x2796a5);
     } else {
-      otherPlayer.setTint(0xff0000);
+      otherPlayer.setTint(0xd86969);
     }
     otherPlayer.playerId = playerInfo.playerId;
     self.otherPlayers.add(otherPlayer);
