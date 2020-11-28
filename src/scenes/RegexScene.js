@@ -48,7 +48,6 @@ export default class RegexScene extends Phaser.Scene {
         const exit = this.add.text(55, 525, 'Return', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
         exit.setInteractive();
         exit.on('pointerdown', () => {
-            console.log("You returned to main room!");
             this.scene.sleep("RegexScene");
         });
         
