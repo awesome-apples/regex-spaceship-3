@@ -78,6 +78,11 @@ export default class MainScene extends Phaser.Scene {
         self
       );
     });
+
+    const button = this.add.text(400, 300, 'Click Me!!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    button.setInteractive();
+
+    button.on('pointerdown', this.actionOnClick );
   }
 
   update() {
@@ -155,5 +160,9 @@ export default class MainScene extends Phaser.Scene {
     }
     otherPlayer.playerId = playerInfo.playerId;
     self.otherPlayers.add(otherPlayer);
+  }
+
+  actionOnClick() {
+    console.log('u clicked the button!');
   }
 }
