@@ -8,12 +8,6 @@ const Game = db.define('game', {
   socketId: {
     type: Sequelize.STRING,
   },
-  numOfTasks: {
-    type: Sequelize.INTEGER,
-    validate: {
-      min: 1,
-    },
-  },
 });
 
 module.exports = Game;

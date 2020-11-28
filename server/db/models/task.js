@@ -14,6 +14,10 @@ const Task = db.define('task', {
   category: {
     type: Sequelize.STRING,
   },
+  completed: {
+    type: Sequelize.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Task;

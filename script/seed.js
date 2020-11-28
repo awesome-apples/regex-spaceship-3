@@ -1,16 +1,21 @@
 'use strict';
 
 const db = require('../server/db');
-const { User, Task } = require('../server/db/models');
+const { User, Task, Game } = require('../server/db/models');
 
 async function seed() {
   await db.sync({ force: true });
   console.log('db synced!');
 
+  const games = await Promise.all([
+    Game.create({ code: '389573', socketId: 'jdghjkdhkd' }),
+    Game.create({ code: '284759', socketId: 'gfjdykhgkd' }),
+  ]);
+
   const users = await Promise.all([
-    User.create({ username: 'cyberpunkkkk', password: '123' }),
-    User.create({ username: 'eboy38904', password: '123' }),
-    User.create({ username: 'sadly', password: '12321' }),
+    User.create({ username: 'cyberpunkkkk', password: '123', gameId: 1 }),
+    User.create({ username: 'eboy38904', password: '123', gameId: 1 }),
+    User.create({ username: 'sadly', password: '12321', gameId: 2 }),
   ]);
 
   const tasks = await Promise.all([

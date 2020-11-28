@@ -8,10 +8,6 @@ import Timer from '../entity/Timer';
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super('MainScene');
-    this.state = {
-      tasks: ['task1', 'task2'],
-      tasksCompleted: 0,
-    };
   }
 
   preload() {
@@ -39,9 +35,22 @@ export default class MainScene extends Phaser.Scene {
       fill: '#ffffff',
     });
 
+    this.tasks = [
+      { problem: 'beep', solution: 'bop', completed: false },
+      { problem: 'beep', solution: 'bop', completed: false },
+    ];
+    this.tasksCompleted = 0;
+    //hey Adria :))
+    //call store.dispatch(fetchTasks) to populate this array
+    //write a func for when a task is completed that changes that tasks 'completed' property to true and increments the this.tasksCompleted, should also socket.emit('taskCompleted')
+    //write a socket that listens for 'taskCompleted' and updates the progress tracker for all players
+
+    //I wrote a progress tracker entity and got an asset that has empty and green bars
+    //my intention was to change one bar to green each time a task was completed
+    //You can implement whatever you want feel free to scrap the asset and the entity i think its kinda ugly anyway
     this.progressBar = this.physics.add.staticGroup({ classType: ProgressBar });
 
-    for (var i = 0; i < this.state.tasks.length; i++) {
+    for (var i = 0; i < this.tasks.length; i++) {
       let x = 100 + i * 130;
       let y = 50;
 
@@ -111,7 +120,7 @@ export default class MainScene extends Phaser.Scene {
       );
     });
 
-    this.timerLabel = this.add.text(584, 16, '', {
+    this.timerLabel = this.add.text(680, 16, '120s', {
       fontSize: '32px',
       fill: '#ffffff',
     });
