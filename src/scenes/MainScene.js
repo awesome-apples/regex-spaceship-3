@@ -48,15 +48,6 @@ export default class MainScene extends Phaser.Scene {
       'controlPanelRight'
     );
 
-    //Control Panel Overlap
-    this.physics.add.overlap(
-      this.player,
-      this.wand,
-      this.collectWand,
-      null,
-      this
-    );
-
     //Progress Bar
     this.progressText = this.add.text(30, 16, 'Tasks Completed', {
       fontSize: '20px',
