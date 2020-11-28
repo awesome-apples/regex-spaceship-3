@@ -139,6 +139,16 @@ export default class MainScene extends Phaser.Scene {
       );
     });
 
+    const goToTask = this.add.text(400, 300, 'Click Me!!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    goToTask.setInteractive();
+
+    goToTask.on('pointerdown', () => {
+      console.log('u clicked the button!');
+
+      // if launched before, wake up, otherwise: launch
+      this.scene.launch("RegexScene");
+    });
+    
     //TIMER
     this.timerLabel = this.add.text(680, 16, '120s', {
       fontSize: '32px',
