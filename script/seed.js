@@ -1,16 +1,36 @@
-"use strict";
+'use strict';
 
-const db = require("../server/db");
-const { User } = require("../server/db/models");
+const db = require('../server/db');
+const { User, Task, Game } = require('../server/db/models');
 
 async function seed() {
   await db.sync({ force: true });
-  console.log("db synced!");
+  console.log('db synced!');
+
+  const games = await Promise.all([
+    Game.create({ code: '389573', socketId: 'jdghjkdhkd' }),
+    Game.create({ code: '284759', socketId: 'gfjdykhgkd' }),
+  ]);
 
   const users = await Promise.all([
-    User.create({ username: "cyberpunkkkk", password: "123" }),
-    User.create({ username: "eboy38904", password: "123" }),
-    User.create({ username: "sadly", password: "12321" }),
+    User.create({ username: 'cyberpunkkkk', password: '123', gameId: 1 }),
+    User.create({ username: 'eboy38904', password: '123', gameId: 1 }),
+    User.create({ username: 'sadly', password: '12321', gameId: 2 }),
+  ]);
+
+  const tasks = await Promise.all([
+    Task.create({
+      problem: 'extract xyz from the string agubfpuvba',
+      solution: '/*',
+    }),
+    Task.create({
+      problem: 'extract abc from the string rbtqifsg',
+      solution: '/*',
+    }),
+    Task.create({
+      problem: 'extract hrg from the string gafvbaiudr',
+      solution: '/*',
+    }),
   ]);
 
   console.log(`seeded ${users.length} users`);
@@ -20,16 +40,16 @@ async function seed() {
 // This way we can isolate the error handling and exit trapping.
 // The `seed` function is concerned only with modifying the database.
 async function runSeed() {
-  console.log("seeding...");
+  console.log('seeding...');
   try {
     await seed();
   } catch (err) {
     console.error(err);
     process.exitCode = 1;
   } finally {
-    console.log("closing db connection");
+    console.log('closing db connection');
     await db.close();
-    console.log("db connection closed");
+    console.log('db connection closed');
   }
 }
 

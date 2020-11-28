@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios';
 
 //ACTION TYPES
-const GET_TASKS = "GET_TASKS";
+const GET_TASKS = 'GET_TASKS';
 
 //INITIAL STATE
 const initialState = [];
@@ -10,11 +10,12 @@ const initialState = [];
 const getTasks = (tasks) => ({ type: GET_TASKS, tasks });
 
 //THUNK CREATORS
-export const fetchTasks = () => async (dispatch) => {
+//when this is called it should be called with an argument that is an object that looks like this {amount: 5}
+export const fetchTasks = (numOfTasks) => async (dispatch) => {
   try {
-    const { data } = await axios.get("/api/tasks");
-    console.log("data", data);
-    dispatch(getPlayers(data));
+    const { data: tasks } = await axios.get('/api/tasks', numOfTasks);
+    console.log('tasks', tasks);
+    dispatch(getTasks(tasks));
   } catch (err) {
     console.error(err);
   }
