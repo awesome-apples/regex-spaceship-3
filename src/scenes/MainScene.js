@@ -1,25 +1,85 @@
-import Phaser from "phaser";
-import axios from "axios";
+import Phaser from 'phaser';
+import axios from 'axios';
+import store from '../store';
+import ProgressBar from '../entity/progressBar';
+import Timer from '../entity/Timer';
+import ControlPanel from '../entity/ControlPanel';
 // import io from "socket.io-client";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
-    super("MainScene");
+    super('MainScene');
   }
 
   preload() {
-    this.load.image("ship", "assets/spaceShips_001.png");
-    this.load.image("otherPlayer", "assets/enemyBlack5.png");
-    this.load.image("star", "assets/star_gold.png");
-    this.load.image("mainroom", "assets/backgrounds/mainroom.png");
+    this.load.spritesheet(
+      'progressBar',
+      'assets/spritesheets/progressBar.png',
+      {
+        frameWidth: 300,
+        frameHeight: 100,
+      }
+    );
+    this.load.spritesheet('astronaut', 'assets/spritesheets/astronaut3.png', {
+      frameWidth: 29,
+      frameHeight: 37,
+    });
+    this.load.image('controlPanelLeft', 'assets/sprites/console_s.png');
+    this.load.image('controlPanelRight', 'assets/sprites/console_w.png');
+    this.load.image('star', 'assets/star_gold.png');
+    this.load.image('mainroom', 'assets/backgrounds/mainroom.png');
   }
 
   create() {
     var self = this;
-    this.add.image(0, 0, "mainroom").setOrigin(0);
+    this.add.image(0, 0, 'mainroom').setOrigin(0);
+
+    //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
+    this.controlPanelLeft = new ControlPanel(
+      this,
+      200,
+      200,
+      'controlPanelLeft'
+    );
+    this.controlPanelRight = new ControlPanel(
+      this,
+      580,
+      400,
+      'controlPanelRight'
+    );
+
+    //Progress Bar
+    this.progressText = this.add.text(30, 16, 'Tasks Completed', {
+      fontSize: '20px',
+      fill: '#ffffff',
+    });
+
+    this.tasks = [
+      { problem: 'beep', solution: 'bop', completed: false },
+      { problem: 'beep', solution: 'bop', completed: false },
+    ];
+    this.tasksCompleted = 0;
+    //hey Adria :))
+    //call store.dispatch(fetchTasks) to populate this array
+    //write a func for when a task is completed that changes that tasks 'completed' property to true and increments the this.tasksCompleted, should also socket.emit('taskCompleted')
+    //write a socket that listens for 'taskCompleted' and updates the progress tracker for all players
+
+    //I wrote a progress tracker entity and got an asset that has empty and green bars
+    //my intention was to change one bar to green each time a task was completed
+    //You can implement whatever you want feel free to scrap the asset and the entity i think its kinda ugly anyway
+    this.progressBar = this.physics.add.staticGroup({ classType: ProgressBar });
+
+    for (var i = 0; i < this.tasks.length; i++) {
+      let x = 100 + i * 130;
+      let y = 50;
+
+      this.progressBar.create(x, y, 'progressBar').setScale(0.5);
+    }
+
+    //Socket Connections
     this.socket = io();
     this.otherPlayers = this.physics.add.group();
-    this.socket.on("currentPlayers", function (players) {
+    this.socket.on('currentPlayers', function (players) {
       Object.keys(players).forEach(function (id) {
         if (players[id].playerId === self.socket.id) {
           self.addPlayer(self, players[id]);
@@ -28,17 +88,17 @@ export default class MainScene extends Phaser.Scene {
         }
       });
     });
-    this.socket.on("newPlayer", function (playerInfo) {
+    this.socket.on('newPlayer', function (playerInfo) {
       self.addOtherPlayers(self, playerInfo);
     });
-    this.socket.on("disconnected", function (playerId) {
+    this.socket.on('disconnected', function (playerId) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
         }
       });
     });
-    this.socket.on("playerMoved", function (playerInfo) {
+    this.socket.on('playerMoved', function (playerInfo) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerInfo.playerId === otherPlayer.playerId) {
           otherPlayer.setRotation(playerInfo.rotation);
@@ -48,31 +108,31 @@ export default class MainScene extends Phaser.Scene {
     });
     this.cursors = this.input.keyboard.createCursorKeys();
 
-    this.blueScoreText = this.add.text(16, 16, "", {
-      fontSize: "32px",
-      fill: "#0000FF",
-    });
-    this.redScoreText = this.add.text(584, 16, "", {
-      fontSize: "32px",
-      fill: "#FF0000",
-    });
+    // this.blueScoreText = this.add.text(16, 16, '', {
+    //   fontSize: '32px',
+    //   fill: '#0000FF',
+    // });
+    // this.redScoreText = this.add.text(584, 16, '', {
+    //   fontSize: '32px',
+    //   fill: '#FF0000',
+    // });
 
-    this.socket.on("scoreUpdate", function (scores) {
-      self.blueScoreText.setText("Blue: " + scores.blue);
-      self.redScoreText.setText("Red: " + scores.red);
-    });
-    this.socket.on("starLocation", function (starLocation) {
+    // this.socket.on('scoreUpdate', function (scores) {
+    //   self.blueScoreText.setText('Blue: ' + scores.blue);
+    //   self.redScoreText.setText('Red: ' + scores.red);
+    // });
+    this.socket.on('starLocation', function (starLocation) {
       if (self.star) self.star.destroy();
       self.star = self.physics.add.image(
         starLocation.x,
         starLocation.y,
-        "star"
+        'star'
       );
       self.physics.add.overlap(
-        self.ship,
+        self.astronaut,
         self.star,
         function () {
-          this.socket.emit("starCollected");
+          this.socket.emit('starCollected');
         },
         null,
         self
@@ -87,84 +147,89 @@ export default class MainScene extends Phaser.Scene {
 
       // if launched before, wake up, otherwise: launch
       this.scene.launch("RegexScene");
-
+    });
+    
+    //TIMER
+    this.timerLabel = this.add.text(680, 16, '120s', {
+      fontSize: '32px',
+      fill: '#ffffff',
+    });
+    this.socket.on('countdown', function (time) {
+      const timeRemaining = 120 - time;
+      self.timerLabel.setText(timeRemaining.toFixed(0) + 's');
     });
   }
 
-  update() {
-    if (this.ship) {
+  update(time) {
+    this.socket.emit('countdown', time);
+    if (this.astronaut) {
       if (this.cursors.left.isDown) {
-        this.ship.setAngularVelocity(-150);
+        this.astronaut.setVelocityX(-150);
       } else if (this.cursors.right.isDown) {
-        this.ship.setAngularVelocity(150);
+        this.astronaut.setVelocityX(150);
+      } else if (this.cursors.up.isDown) {
+        this.astronaut.setVelocityY(-150);
+      } else if (this.cursors.down.isDown) {
+        this.astronaut.setVelocityY(150);
       } else {
-        this.ship.setAngularVelocity(0);
+        this.astronaut.setVelocity(0);
       }
 
-      if (this.cursors.up.isDown) {
-        this.physics.velocityFromRotation(
-          this.ship.rotation + 1.5,
-          100,
-          this.ship.body.acceleration
-        );
-      } else {
-        this.ship.setAcceleration(0);
-      }
-
-      this.physics.world.wrap(this.ship, 5);
+      this.physics.world.wrap(this.astronaut, 5);
 
       // emit player movement
-      var x = this.ship.x;
-      var y = this.ship.y;
-      var r = this.ship.rotation;
+      var x = this.astronaut.x;
+      var y = this.astronaut.y;
       if (
-        this.ship.oldPosition &&
-        (x !== this.ship.oldPosition.x ||
-          y !== this.ship.oldPosition.y ||
-          r !== this.ship.oldPosition.rotation)
+        this.astronaut.oldPosition &&
+        (x !== this.astronaut.oldPosition.x ||
+          y !== this.astronaut.oldPosition.y)
       ) {
-        this.socket.emit("playerMovement", {
-          x: this.ship.x,
-          y: this.ship.y,
-          rotation: this.ship.rotation,
+        this.socket.emit('playerMovement', {
+          x: this.astronaut.x,
+          y: this.astronaut.y,
         });
       }
 
       // save old position data
-      this.ship.oldPosition = {
-        x: this.ship.x,
-        y: this.ship.y,
-        rotation: this.ship.rotation,
+      this.astronaut.oldPosition = {
+        x: this.astronaut.x,
+        y: this.astronaut.y,
+        rotation: this.astronaut.rotation,
       };
     }
   }
 
   addPlayer(self, playerInfo) {
-    self.ship = self.physics.add
-      .image(playerInfo.x, playerInfo.y, "ship")
+    self.astronaut = self.physics.add
+      .image(playerInfo.x, playerInfo.y, 'astronaut')
       .setOrigin(0.5, 0.5)
-      .setDisplaySize(53, 40);
-    if (playerInfo.team === "blue") {
-      self.ship.setTint(0x0000ff);
+      .setDisplaySize(43.5, 55.5);
+    if (playerInfo.team === 'blue') {
+      self.astronaut.setTint(0x2796a5);
     } else {
-      self.ship.setTint(0xff0000);
+      self.astronaut.setTint(0xd86969);
     }
-    self.ship.setDrag(100);
-    self.ship.setAngularDrag(100);
-    self.ship.setMaxVelocity(200);
+    self.astronaut.setDrag(100);
+    self.astronaut.setAngularDrag(100);
+    self.astronaut.setMaxVelocity(200);
   }
 
   addOtherPlayers(self, playerInfo) {
     const otherPlayer = self.add
-      .sprite(playerInfo.x, playerInfo.y, "otherPlayer")
+      .sprite(playerInfo.x, playerInfo.y, 'astronaut')
       .setOrigin(0.5, 0.5)
-      .setDisplaySize(53, 40);
-    if (playerInfo.team === "blue") {
-      otherPlayer.setTint(0x0000ff);
+      .setDisplaySize(43.5, 55.5);
+    if (playerInfo.team === 'blue') {
+      otherPlayer.setTint(0x2796a5);
     } else {
-      otherPlayer.setTint(0xff0000);
+      otherPlayer.setTint(0xd86969);
     }
     otherPlayer.playerId = playerInfo.playerId;
     self.otherPlayers.add(otherPlayer);
+  }
+
+  handleCountdownFinished() {
+    //write function that takes to losing screen when finished
   }
 }
