@@ -6,11 +6,9 @@ export default class RegexScene extends Phaser.Scene {
     }
 
     preload() {
-        this.load.image("mainroom", "assets/mainroom.png");
     }
 
     create() {
-        this.add.image(0, 0, "mainroom").setOrigin(0);
 
         this.graphics = this.add.graphics();
         this.graphics2 = this.add.graphics();
@@ -46,7 +44,14 @@ export default class RegexScene extends Phaser.Scene {
         this.add.text(430, 330, 'Output Here', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
 
         this.add.text(430, 285, 'Correct/Incorrect', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
-        this.add.text(55, 525, 'Return', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
+
+        const exit = this.add.text(55, 525, 'Return', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
+        exit.setInteractive();
+        exit.on('pointerdown', () => {
+            console.log("You returned to main room!");
+            this.scene.sleep("RegexScene");
+        });
+        
         this.add.text(642, 525, 'Submit', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
     }
 }

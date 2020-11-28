@@ -79,10 +79,16 @@ export default class MainScene extends Phaser.Scene {
       );
     });
 
-    const button = this.add.text(400, 300, 'Click Me!!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
-    button.setInteractive();
+    const goToTask = this.add.text(400, 300, 'Click Me!!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    goToTask.setInteractive();
 
-    button.on('pointerdown', this.actionOnClick );
+    goToTask.on('pointerdown', () => {
+      console.log('u clicked the button!');
+
+      // if launched before, wake up, otherwise: launch
+      this.scene.launch("RegexScene");
+
+    });
   }
 
   update() {
@@ -160,9 +166,5 @@ export default class MainScene extends Phaser.Scene {
     }
     otherPlayer.playerId = playerInfo.playerId;
     self.otherPlayers.add(otherPlayer);
-  }
-
-  actionOnClick() {
-    console.log('u clicked the button!');
   }
 }
