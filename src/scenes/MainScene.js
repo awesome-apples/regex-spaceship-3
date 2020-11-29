@@ -49,17 +49,6 @@ export default class MainScene extends Phaser.Scene {
       'controlPanelRight'
     );
 
-    this.physics.add.collider(this.player, this.controlPanelLeft, () => {
-      console.log('you collided with controlPanel!')
-    });
-
-    // this.physics.add.collider(this.player, this.controlPanelLeft, () => {
-    //   this.physics.arcade.collide(this.player, this.controlPanelLeft);
-    // });
-    // this.physics.add.collider(this.player, this.controlPanelRight, () => {
-    //   this.physics.arcade.collide(this.player, this.controlPanelLeft);
-    // });
-
     //Progress Bar
     this.progressText = this.add.text(30, 16, 'Tasks Completed', {
       fontSize: '20px',
@@ -151,7 +140,7 @@ export default class MainScene extends Phaser.Scene {
       );
     });
 
-    const goToTask = this.add.text(400, 300, 'Click Me!!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    const goToTask = this.add.text(400, 300, 'Click Me!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
     goToTask.setInteractive();
 
     goToTask.on('pointerdown', () => {

@@ -31,6 +31,14 @@ async function seed() {
       problem: 'extract hrg from the string gafvbaiudr',
       solution: '/*',
     }),
+    Task.create({
+      problem: 'Write the word \'cat\'',
+      solution: 'cat',
+    }),
+    Task.create({
+      problem: 'Write the word \'dog\'',
+      solution: 'dog',
+    }),
   ]);
 
   console.log(`seeded ${users.length} users`);
