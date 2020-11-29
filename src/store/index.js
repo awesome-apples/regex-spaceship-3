@@ -4,12 +4,12 @@ import thunkMiddleware from 'redux-thunk';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import users from './users';
 import scores from './scores';
-import tasks from './tasks';
+import randomTasks from './randomTasks';
 
 const reducer = combineReducers({
   users,
   scores,
-  tasks,
+  randomTasks,
 });
 const middleware = composeWithDevTools(
   applyMiddleware(thunkMiddleware, createLogger({ collapsed: true }))

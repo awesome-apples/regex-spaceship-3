@@ -1,65 +1,77 @@
 import Phaser from "phaser";
 import store from '../store';
+import { fetchRandomTasks } from "../store/randomTasks";
 
 export default class RegexScene extends Phaser.Scene {
     constructor() {
         super("RegexScene");
+        this.state = {
+            randomTasks: []
+        }
     }
 
     preload() {
         this.load.html("taskform", "assets/text/taskform.html");
     }
 
-    create() {
-
-        // this.tasks = store.dispatch({ type: GET_TASKS });
-        // console.log(this.tasks);
-
-        this.graphics = this.add.graphics();
-        this.graphics2 = this.add.graphics();
-
-        // for popup window
-        this.graphics.lineStyle(1, 0xffffff);
-        this.graphics.fillStyle(0xffffff, 0.5);
-
-        // for boxes
-        this.graphics2.lineStyle(1, 0xffffff);
-        this.graphics2.fillStyle(0xffffff, 1);
-
-        // game windows: w: 800; h: 600
-        // whole popup window: x, y, w, h
-
-        // popup window
-        this.graphics.strokeRect(25, 25, 750, 550);
-        this.graphics.fillRect(25, 25, 750, 550);
-
-        // regex problem prompt
-        this.graphics2.strokeRect(50, 50, 325, 450);
-        this.graphics2.fillRect(50, 50, 325, 450);
-        this.add.text(55, 55, 'Example Problem', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
-
-        // input area
-        this.graphics2.strokeRect(425, 50, 325, 225);
-        this.graphics2.fillRect(425, 50, 325, 225);
-        this.add.text(430, 55, 'Input Here', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
-
-        // this.inputField = this.add
-        //     .dom(425, 50)
-        //     .createFromCache("taskform")
-
-        // output area
-        this.graphics2.strokeRect(425, 325, 325, 175);
-        this.graphics2.fillRect(425, 325, 325, 175);
-        this.add.text(430, 330, 'Output Here', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
-
-        this.add.text(430, 285, 'Correct/Incorrect', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
-
-        const exit = this.add.text(55, 525, 'Return', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
-        exit.setInteractive();
-        exit.on('pointerdown', () => {
-            this.scene.sleep("RegexScene");
-        });
+    async create() {
         
-        this.add.text(642, 525, 'Submit', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
+        const scene = this;
+
+        try {
+            console.log('hello')
+            await store.dispatch(fetchRandomTasks());
+            this.state.randomTasks = store.randomTasks;
+            console.log("randomTasks on state: ", this.state.randomTasks);
+    
+            scene.graphics = scene.add.graphics();
+            scene.graphics2 = scene.add.graphics();
+    
+            // for popup window
+            scene.graphics.lineStyle(1, 0xffffff);
+            scene.graphics.fillStyle(0xffffff, 0.5);
+    
+            // for boxes
+            scene.graphics2.lineStyle(1, 0xffffff);
+            scene.graphics2.fillStyle(0xffffff, 1);
+    
+            // game windows: w: 800; h: 600
+            // whole popup window: x, y, w, h
+    
+            // popup window
+            scene.graphics.strokeRect(25, 25, 750, 550);
+            scene.graphics.fillRect(25, 25, 750, 550);
+    
+            // regex problem prompt
+            scene.graphics2.strokeRect(50, 50, 325, 450);
+            scene.graphics2.fillRect(50, 50, 325, 450);
+            scene.add.text(55, 55, 'Example Problem', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    
+            // input area
+            scene.graphics2.strokeRect(425, 50, 325, 225);
+            scene.graphics2.fillRect(425, 50, 325, 225);
+            scene.add.text(430, 55, 'Input Here', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    
+            // scene.inputField = scene.add
+            //     .dom(425, 50)
+            //     .createFromCache("taskform")
+    
+            // output area
+            scene.graphics2.strokeRect(425, 325, 325, 175);
+            scene.graphics2.fillRect(425, 325, 325, 175);
+            scene.add.text(430, 330, 'Output Here', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+    
+            scene.add.text(430, 285, 'Correct/Incorrect', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
+    
+            scene.exit = scene.add.text(55, 525, 'Return', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
+            scene.exit.setInteractive();
+            scene.exit.on('pointerdown', () => {
+                scene.scene.sleep("RegexScene");
+            });
+            
+            scene.add.text(642, 525, 'Submit', { fill: '#000000', fontSize: '30px', fontStyle: 'bold' });
+        } catch (err) {
+            console.error(err);
+        }
     }
 }
