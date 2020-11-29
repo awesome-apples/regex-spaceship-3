@@ -27,7 +27,6 @@ router.get('/randomTask', async (req, res, next) => {
   try {
     const tasks = await Task.findAll();
     const randomId = Math.ceil(Math.random() * tasks.length);
-    console.log(randomId, randomId, randomId, randomId, randomId);
     const task = await Task.findByPk(randomId);
     res.json(task);
   } catch (err) {

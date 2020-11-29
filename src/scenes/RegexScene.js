@@ -1,5 +1,6 @@
 import Phaser from "phaser";
 import store from '../store';
+import { fetchRandomTask } from "../store/tasks";
 
 export default class RegexScene extends Phaser.Scene {
     constructor() {
@@ -11,9 +12,9 @@ export default class RegexScene extends Phaser.Scene {
     }
 
     create() {
-
-        // this.tasks = store.dispatch({ type: GET_TASKS });
-        // console.log(this.tasks);
+        // const state = store.getState();
+        // store.dispatch(fetchRandomTask());
+        // console.log('state: ', state)
 
         this.graphics = this.add.graphics();
         this.graphics2 = this.add.graphics();
