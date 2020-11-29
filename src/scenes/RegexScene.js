@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import store from '../store';
 
 export default class RegexScene extends Phaser.Scene {
     constructor() {
