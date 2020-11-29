@@ -41,12 +41,42 @@ export default class MainScene extends Phaser.Scene {
       200,
       'controlPanelLeft'
     );
+
     this.controlPanelRight = new ControlPanel(
       this,
       580,
       400,
       'controlPanelRight'
     );
+
+    // click on control panels and Regex Scene will launch
+    this.controlPanelLeft.setInteractive();
+    this.controlPanelLeft.on('pointerdown', () => {
+      var isSleep = this.scene.isSleeping("RegexScene");
+
+      if (isSleep) {
+        this.scene.wake("RegexScene");
+      }
+      else {
+        this.scene.launch("RegexScene");
+      }
+    });
+
+    this.controlPanelRight.setInteractive();
+    this.controlPanelRight.on('pointerdown', () => {
+      var isSleep = this.scene.isSleeping("RegexScene");
+
+      if (isSleep) {
+        this.scene.wake("RegexScene");
+      }
+      else {
+        this.scene.launch("RegexScene");
+      }     
+    });
+
+    // not working :(
+    // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
+    // this.physics.add.collider(this.astronaut, this.controlPanelRight);
 
     //Progress Bar
     this.progressText = this.add.text(30, 16, 'Tasks Completed', {
@@ -137,16 +167,6 @@ export default class MainScene extends Phaser.Scene {
         null,
         self
       );
-    });
-
-    const goToTask = this.add.text(400, 300, 'Click Me!!', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
-    goToTask.setInteractive();
-
-    goToTask.on('pointerdown', () => {
-      console.log('u clicked the button!');
-
-      // if launched before, wake up, otherwise: launch
-      this.scene.launch("RegexScene");
     });
     
     //TIMER
