@@ -23,12 +23,14 @@ router.get('/', async (req, res, next) => {
 });
 
 // get 1 random task?
-router.get('/randomTask', async (req, res, next) => {
+router.get('/randomTasks', async (req, res, next) => {
   try {
     const tasks = await Task.findAll();
-    const randomId = Math.ceil(Math.random() * tasks.length);
-    const task = await Task.findByPk(randomId);
-    res.json(task);
+    const randomIdOne = Math.ceil(Math.random() * tasks.length);
+    const randomIdTwo = Math.ceil(Math.random() * tasks.length);
+    const taskOne = await Task.findByPk(randomIdOne);
+    const taskTwo = await Task.findByPk(randomIdTwo);
+    res.json([taskOne, taskTwo]);
   } catch (err) {
     next(err);
   }
