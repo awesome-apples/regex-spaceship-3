@@ -1,6 +1,4 @@
 import Phaser from "phaser";
-import store from "../store";
-import { fetchRandomTasks } from "../store/randomTasks";
 
 export default class RegexScene extends Phaser.Scene {
   constructor() {
@@ -16,11 +14,6 @@ export default class RegexScene extends Phaser.Scene {
     const scene = this;
 
     try {
-      console.log("hello");
-      await store.dispatch(fetchRandomTasks());
-      this.state = store.getState();
-      console.log("state: ", this.state);
-
       scene.graphics = scene.add.graphics();
       scene.graphics2 = scene.add.graphics();
 
@@ -86,13 +79,35 @@ export default class RegexScene extends Phaser.Scene {
         scene.scene.sleep("RegexScene");
       });
 
-      scene.add.text(642, 525, "Submit", {
+      scene.inputElement = scene.add.dom(587, 190).createFromCache("taskform");
+      scene.outputText = scene.add.text(440, 360, "temp", {
+        fill: "#000000",
+        fontSize: "12px",
+      });
+      scene.outputText.setVisible(false);
+
+      scene.submitButton = scene.add.text(642, 525, "Submit", {
         fill: "#000000",
         fontSize: "30px",
         fontStyle: "bold",
       });
+      scene.submitButton.setInteractive();
+      scene.submitButton.on("pointerdown", () => {
+        const inputText = scene.inputElement.getChildByName("code");
+        if (inputText.value !== "") {
+          console.log("input text:", inputText.value);
+          scene.output = scene.handleInput();
+          console.log(scene.output);
+          scene.outputText.setText(scene.output);
+          scene.outputText.setVisible(true);
+        }
+      });
     } catch (err) {
       console.error(err);
     }
+  }
+  handleInput() {
+    //emit completedTask
+    return "this is the output info";
   }
 }
