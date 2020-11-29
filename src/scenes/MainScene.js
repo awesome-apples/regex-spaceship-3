@@ -54,16 +54,24 @@ export default class MainScene extends Phaser.Scene {
     this.controlPanelLeft.on('pointerdown', () => {
       var isSleep = this.scene.isSleeping("RegexScene");
 
-      if (isSleep) this.scene.wake("RegexScene");
-      else this.scene.launch("RegexScene");      
+      if (isSleep) {
+        this.scene.wake("RegexScene");
+      }
+      else {
+        this.scene.launch("RegexScene");
+      }
     });
 
     this.controlPanelRight.setInteractive();
     this.controlPanelRight.on('pointerdown', () => {
       var isSleep = this.scene.isSleeping("RegexScene");
 
-      if (isSleep) this.scene.wake("RegexScene");
-      else this.scene.launch("RegexScene");      
+      if (isSleep) {
+        this.scene.wake("RegexScene");
+      }
+      else {
+        this.scene.launch("RegexScene");
+      }     
     });
 
     // not working :(

@@ -7,9 +7,13 @@ export default class RegexScene extends Phaser.Scene {
     }
 
     preload() {
+        this.load.html("taskform", "assets/text/taskform.html");
     }
 
     create() {
+
+        // this.tasks = store.dispatch({ type: GET_TASKS });
+        // console.log(this.tasks);
 
         this.graphics = this.add.graphics();
         this.graphics2 = this.add.graphics();
@@ -38,6 +42,10 @@ export default class RegexScene extends Phaser.Scene {
         this.graphics2.strokeRect(425, 50, 325, 225);
         this.graphics2.fillRect(425, 50, 325, 225);
         this.add.text(430, 55, 'Input Here', { fill: '#000000', fontSize: '20px', fontStyle: 'bold' });
+
+        // this.inputField = this.add
+        //     .dom(425, 50)
+        //     .createFromCache("taskform")
 
         // output area
         this.graphics2.strokeRect(425, 325, 325, 175);
