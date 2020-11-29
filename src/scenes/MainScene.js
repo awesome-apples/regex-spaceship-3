@@ -49,6 +49,10 @@ export default class MainScene extends Phaser.Scene {
       'controlPanelRight'
     );
 
+    // not working :(
+    // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
+    // this.physics.add.collider(this.astronaut, this.controlPanelRight);
+
     //Progress Bar
     this.progressText = this.add.text(30, 16, 'Tasks Completed', {
       fontSize: '20px',
