@@ -9,6 +9,7 @@ import ControlPanel from '../entity/ControlPanel';
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super('MainScene');
+    this.timerHasBegun = false;
   }
 
   preload() {
@@ -34,6 +35,18 @@ export default class MainScene extends Phaser.Scene {
     var self = this;
     this.add.image(0, 0, 'mainroom').setOrigin(0);
 
+    //TIMER
+    this.initialTime = 120;
+    this.timerLabel = this.add.text(
+      680,
+      16,
+      this.formatTime(this.initialTime),
+      {
+        fontSize: '32px',
+        fill: '#ffffff',
+      }
+    );
+
     //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
     this.controlPanelLeft = new ControlPanel(
       this,
@@ -52,26 +65,24 @@ export default class MainScene extends Phaser.Scene {
     // click on control panels and Regex Scene will launch
     this.controlPanelLeft.setInteractive();
     this.controlPanelLeft.on('pointerdown', () => {
-      var isSleep = this.scene.isSleeping("RegexScene");
+      var isSleep = this.scene.isSleeping('RegexScene');
 
       if (isSleep) {
-        this.scene.wake("RegexScene");
-      }
-      else {
-        this.scene.launch("RegexScene");
+        this.scene.wake('RegexScene');
+      } else {
+        this.scene.launch('RegexScene');
       }
     });
 
     this.controlPanelRight.setInteractive();
     this.controlPanelRight.on('pointerdown', () => {
-      var isSleep = this.scene.isSleeping("RegexScene");
+      var isSleep = this.scene.isSleeping('RegexScene');
 
       if (isSleep) {
-        this.scene.wake("RegexScene");
+        this.scene.wake('RegexScene');
+      } else {
+        this.scene.launch('RegexScene');
       }
-      else {
-        this.scene.launch("RegexScene");
-      }     
     });
 
     // not working :(
@@ -120,6 +131,15 @@ export default class MainScene extends Phaser.Scene {
     });
     this.socket.on('newPlayer', function (playerInfo) {
       self.addOtherPlayers(self, playerInfo);
+      if (!self.timerHasBegun) {
+        self.timerHasBegun = true;
+        self.countdownEvent = self.time.addEvent({
+          delay: 1000,
+          callback: self.countdown,
+          callbackScope: self,
+          loop: true,
+        });
+      }
     });
     this.socket.on('disconnected', function (playerId) {
       self.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -168,20 +188,9 @@ export default class MainScene extends Phaser.Scene {
         self
       );
     });
-    
-    //TIMER
-    this.timerLabel = this.add.text(680, 16, '120s', {
-      fontSize: '32px',
-      fill: '#ffffff',
-    });
-    this.socket.on('countdown', function (time) {
-      const timeRemaining = 120 - time;
-      self.timerLabel.setText(timeRemaining.toFixed(0) + 's');
-    });
   }
 
   update(time) {
-    this.socket.emit('countdown', time);
     if (this.astronaut) {
       if (this.cursors.left.isDown) {
         this.astronaut.setVelocityX(-150);
@@ -249,6 +258,25 @@ export default class MainScene extends Phaser.Scene {
     self.otherPlayers.add(otherPlayer);
   }
 
+  formatTime(seconds) {
+    var minutes = Math.floor(seconds / 60);
+    var partInSeconds = seconds % 60;
+    partInSeconds = partInSeconds.toString().padStart(2, '0');
+    return `${minutes}:${partInSeconds}`;
+  }
+  countdown() {
+    if (this.initialTime === 11) {
+      this.timerLabel.setStyle({ fill: '#ff0000' });
+    }
+    if (this.initialTime === 1) {
+      this.countdownEvent.paused = true;
+    }
+    this.initialTime -= 1;
+    this.timerLabel.setText(this.formatTime(this.initialTime));
+    if (this.initialTime === 0) {
+      //bring up game over scene here
+    }
+  }
   handleCountdownFinished() {
     //write function that takes to losing screen when finished
   }
