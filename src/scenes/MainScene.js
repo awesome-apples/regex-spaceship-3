@@ -277,7 +277,4 @@ export default class MainScene extends Phaser.Scene {
       //bring up game over scene here
     }
   }
-  handleCountdownFinished() {
-    //write function that takes to losing screen when finished
-  }
 }
