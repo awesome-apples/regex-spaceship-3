@@ -1,13 +1,10 @@
-import Phaser from 'phaser';
-import ProgressBar from '../entity/progressBar';
-import ControlPanel from '../entity/ControlPanel';
-import store from '../store';
-import { fetchRandomTasks } from '../store/randomTasks';
-// import io from "socket.io-client";
+import Phaser from "phaser";
+import ProgressBar from "../entity/progressBar";
+import ControlPanel from "../entity/ControlPanel";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
-    super('MainScene');
+    super("MainScene");
     this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
     this.hasBeenSet = false;
     this.numPlayers = 0;
@@ -15,53 +12,56 @@ export default class MainScene extends Phaser.Scene {
 
   preload() {
     this.load.spritesheet(
-      'progressBar',
-      'assets/spritesheets/progressBar.png',
+      "progressBar",
+      "assets/spritesheets/progressBar.png",
       {
         frameWidth: 300,
         frameHeight: 100,
       }
     );
-    this.load.spritesheet('astronaut', 'assets/spritesheets/astronaut3.png', {
+    this.load.spritesheet("astronaut", "assets/spritesheets/astronaut3.png", {
       frameWidth: 29,
       frameHeight: 37,
     });
-    this.load.image('controlPanelLeft', 'assets/sprites/console_s.png');
-    this.load.image('controlPanelRight', 'assets/sprites/console_w.png');
-    this.load.image('star', 'assets/star_gold.png');
-    this.load.image('mainroom', 'assets/backgrounds/mainroom.png');
+    this.load.image("controlPanelLeft", "assets/sprites/console_s.png");
+    this.load.image("controlPanelRight", "assets/sprites/console_w.png");
+    this.load.image("star", "assets/star_gold.png");
+    this.load.image("mainroom", "assets/backgrounds/mainroom.png");
   }
 
   async create() {
-    var scene = this;
+    const scene = this;
 
-    this.add.image(0, 0, 'mainroom').setOrigin(0);
+    this.add.image(0, 0, "mainroom").setOrigin(0);
     try {
       //SOCKET CONNECTIONS
       this.socket = io();
       this.otherPlayers = this.physics.add.group();
+      console.log("this! ->>>", this);
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
-        this.socket.on('setState', function (state) {
-          this.state = state;
-          console.log('SET STATE', state);
+        this.socket.on("setState", function (state) {
+          const { users, randomTasks, scores, gameScore } = state;
+          scene.state.users = users;
+          scene.state.randomTasks = randomTasks;
+          scene.state.scores = scores;
+          scene.state.gameScore = gameScore;
+          console.log("SET STATE", state);
         });
       }
-      if (scene.state.randomTasks.length !== 2) {
-        await store.dispatch(fetchRandomTasks());
-        const newState = store.getState();
-        console.log('NEWSTATE', newState);
-        scene.socket.emit('sendState', newState);
-      }
-      this.socket.on('updateState', function (state) {
-        this.state = state;
-        console.log('UPDATE STATE', state);
+      console.log("scene on mainscene", scene);
+      console.log("scene random tasks length", this.state.randomTasks.length);
+      console.log("random tasks without the length", this.state.randomTasks);
+
+      this.socket.on("updateState", function (serverState) {
+        scene.state = serverState;
+        console.log("UPDATE STATE", scene.state);
       });
 
-      this.socket.on('currentPlayers', function (arg) {
+      this.socket.on("currentPlayers", function (arg) {
         const { players, numPlayers } = arg;
         scene.numPlayers = numPlayers;
-        console.log('NUMPLAYERS', scene.numPlayers);
+        console.log("NUMPLAYERS", scene.numPlayers);
         Object.keys(players).forEach(function (id) {
           if (players[id].playerId === scene.socket.id) {
             scene.addPlayer(scene, players[id]);
@@ -71,11 +71,11 @@ export default class MainScene extends Phaser.Scene {
         });
       });
 
-      this.socket.on('newPlayer', function (arg) {
+      this.socket.on("newPlayer", function (arg) {
         const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
         scene.numPlayers = numPlayers;
-        console.log('NEW PLAYER< NUM PLAYERS', scene.numPlayers);
+        console.log("NEW PLAYER< NUM PLAYERS", scene.numPlayers);
         if (!scene.timerHasBegun) {
           scene.timerHasBegun = true;
           scene.countdownEvent = scene.time.addEvent({
@@ -86,17 +86,31 @@ export default class MainScene extends Phaser.Scene {
           });
         }
       });
-      this.socket.on('disconnected', function (arg) {
+
+      if (this.numPlayers >= 2) {
+        scene.startText = scene.add.text(400, 300, "START", {
+          fill: "#000000",
+          fontSize: "20px",
+          fontStyle: "bold",
+        });
+        scene.startText.setInteractive();
+        scene.startText.on("pointerdown", () => {
+          scene.startButton();
+        });
+      }
+
+      this.socket.on("disconnected", function (arg) {
         const { playerId, numPlayers } = arg;
         scene.numPlayers = numPlayers;
-        console.log('PLAYER DELETED NE NUMPLAYERS', scene.numPlayers);
+        console.log("PLAYER DELETED NE NUMPLAYERS", scene.numPlayers);
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
           }
         });
       });
-      this.socket.on('playerMoved', function (playerInfo) {
+
+      this.socket.on("playerMoved", function (playerInfo) {
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerInfo.playerId === otherPlayer.playerId) {
             otherPlayer.setRotation(playerInfo.rotation);
@@ -106,25 +120,25 @@ export default class MainScene extends Phaser.Scene {
       });
       this.cursors = this.input.keyboard.createCursorKeys();
 
-      this.socket.on('scoreUpdate', function (score) {
+      this.socket.on("scoreUpdate", function (score) {
         scene.state.gameScore = score;
         if (scene.state.gameScore >= 2) {
-          scene.scene.state('WinScene');
+          scene.scene.state("WinScene");
         }
       });
 
-      this.socket.on('starLocation', function (starLocation) {
+      this.socket.on("starLocation", function (starLocation) {
         if (scene.star) scene.star.destroy();
         scene.star = scene.physics.add.image(
           starLocation.x,
           starLocation.y,
-          'star'
+          "star"
         );
         scene.physics.add.overlap(
           scene.astronaut,
           scene.star,
           function () {
-            this.socket.emit('starCollected');
+            this.socket.emit("starCollected");
           },
           null,
           scene
@@ -136,36 +150,36 @@ export default class MainScene extends Phaser.Scene {
         this,
         200,
         200,
-        'controlPanelLeft'
+        "controlPanelLeft"
       );
 
       this.controlPanelRight = new ControlPanel(
         this,
         580,
         400,
-        'controlPanelRight'
+        "controlPanelRight"
       );
 
       // click on control panels and Regex Scene will launch
       this.controlPanelLeft.setInteractive();
-      this.controlPanelLeft.on('pointerdown', () => {
-        var isSleep = this.scene.isSleeping('RegexScene');
+      this.controlPanelLeft.on("pointerdown", () => {
+        var isSleep = this.scene.isSleeping("RegexScene");
 
         if (isSleep) {
-          this.scene.wake('RegexScene');
+          this.scene.wake("RegexScene");
         } else {
-          this.scene.launch('RegexScene');
+          this.scene.launch("RegexScene");
         }
       });
 
       this.controlPanelRight.setInteractive();
-      this.controlPanelRight.on('pointerdown', () => {
-        var isSleep = this.scene.isSleeping('RegexScene');
+      this.controlPanelRight.on("pointerdown", () => {
+        var isSleep = this.scene.isSleeping("RegexScene");
 
         if (isSleep) {
-          this.scene.wake('RegexScene');
+          this.scene.wake("RegexScene");
         } else {
-          this.scene.launch('RegexScene');
+          this.scene.launch("RegexScene");
         }
       });
 
@@ -174,14 +188,14 @@ export default class MainScene extends Phaser.Scene {
       // this.physics.add.collider(this.astronaut, this.controlPanelRight);
 
       //Progress Bar
-      this.progressText = this.add.text(30, 16, 'Tasks Completed', {
-        fontSize: '20px',
-        fill: '#ffffff',
+      this.progressText = this.add.text(30, 16, "Tasks Completed", {
+        fontSize: "20px",
+        fill: "#ffffff",
       });
 
       this.tasks = [
-        { problem: 'beep', solution: 'bop', completed: false },
-        { problem: 'beep', solution: 'bop', completed: false },
+        { problem: "beep", solution: "bop", completed: false },
+        { problem: "beep", solution: "bop", completed: false },
       ];
       this.tasksCompleted = 0;
       //hey Adria :))
@@ -200,7 +214,7 @@ export default class MainScene extends Phaser.Scene {
         let x = 100 + i * 130;
         let y = 50;
 
-        this.progressBar.create(x, y, 'progressBar').setScale(0.5);
+        this.progressBar.create(x, y, "progressBar").setScale(0.5);
       }
 
       //TIMER
@@ -210,8 +224,8 @@ export default class MainScene extends Phaser.Scene {
         16,
         this.formatTime(this.initialTime),
         {
-          fontSize: '32px',
-          fill: '#ffffff',
+          fontSize: "32px",
+          fill: "#ffffff",
         }
       );
     } catch (error) {
@@ -243,7 +257,7 @@ export default class MainScene extends Phaser.Scene {
         (x !== this.astronaut.oldPosition.x ||
           y !== this.astronaut.oldPosition.y)
       ) {
-        this.socket.emit('playerMovement', {
+        this.socket.emit("playerMovement", {
           x: this.astronaut.x,
           y: this.astronaut.y,
         });
@@ -260,10 +274,10 @@ export default class MainScene extends Phaser.Scene {
 
   addPlayer(scene, playerInfo) {
     scene.astronaut = scene.physics.add
-      .image(playerInfo.x, playerInfo.y, 'astronaut')
+      .image(playerInfo.x, playerInfo.y, "astronaut")
       .setOrigin(0.5, 0.5)
       .setDisplaySize(43.5, 55.5);
-    if (playerInfo.team === 'blue') {
+    if (playerInfo.team === "blue") {
       scene.astronaut.setTint(0x2796a5);
     } else {
       scene.astronaut.setTint(0xd86969);
@@ -275,10 +289,10 @@ export default class MainScene extends Phaser.Scene {
 
   addOtherPlayers(scene, playerInfo) {
     const otherPlayer = scene.add
-      .sprite(playerInfo.x, playerInfo.y, 'astronaut')
+      .sprite(playerInfo.x, playerInfo.y, "astronaut")
       .setOrigin(0.5, 0.5)
       .setDisplaySize(43.5, 55.5);
-    if (playerInfo.team === 'blue') {
+    if (playerInfo.team === "blue") {
       otherPlayer.setTint(0x2796a5);
     } else {
       otherPlayer.setTint(0xd86969);
@@ -290,12 +304,12 @@ export default class MainScene extends Phaser.Scene {
   formatTime(seconds) {
     var minutes = Math.floor(seconds / 60);
     var partInSeconds = seconds % 60;
-    partInSeconds = partInSeconds.toString().padStart(2, '0');
+    partInSeconds = partInSeconds.toString().padStart(2, "0");
     return `${minutes}:${partInSeconds}`;
   }
   countdown() {
     if (this.initialTime === 11) {
-      this.timerLabel.setStyle({ fill: '#ff0000' });
+      this.timerLabel.setStyle({ fill: "#ff0000" });
     }
     if (this.initialTime === 1) {
       this.countdownEvent.paused = true;
@@ -305,5 +319,15 @@ export default class MainScene extends Phaser.Scene {
     if (this.initialTime === 0) {
       //bring up game over scene here
     }
+  }
+  startButton() {
+    scene.socket.emit("createTasks");
+    //load random tasks
+    //already handles with sockets: emits tasks to the socket server, socket server to everyone
+
+    //start the timer
+
+    //make start button go away
+    scene.startText.destroy();
   }
 }
