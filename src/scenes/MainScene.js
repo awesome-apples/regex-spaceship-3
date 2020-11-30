@@ -69,6 +69,16 @@ export default class MainScene extends Phaser.Scene {
 
       this.socket.on('newPlayer', function (playerInfo) {
         scene.addOtherPlayers(scene, playerInfo);
+        //this is what makes the timer begin
+        if (!scene.timerHasBegun) {
+          scene.timerHasBegun = true;
+          scene.countdownEvent = scene.time.addEvent({
+            delay: 1000,
+            callback: scene.countdown,
+            callbackScope: scene,
+            loop: true,
+          });
+        }
       });
       this.socket.on('disconnected', function (playerId) {
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -185,14 +195,16 @@ export default class MainScene extends Phaser.Scene {
       }
 
       //TIMER
-      this.timerLabel = this.add.text(680, 16, '120s', {
-        fontSize: '32px',
-        fill: '#ffffff',
-      });
-      this.socket.on('countdown', function (time) {
-        const timeRemaining = 120 - time;
-        scene.timerLabel.setText(timeRemaining.toFixed(0) + 's');
-      });
+      this.initialTime = 120;
+      this.timerLabel = this.add.text(
+        680,
+        16,
+        this.formatTime(this.initialTime),
+        {
+          fontSize: '32px',
+          fill: '#ffffff',
+        }
+      );
     } catch (error) {
       console.error(error);
     }
@@ -266,7 +278,23 @@ export default class MainScene extends Phaser.Scene {
     scene.otherPlayers.add(otherPlayer);
   }
 
-  handleCountdownFinished() {
-    //write function that takes to losing screen when finished
+  formatTime(seconds) {
+    var minutes = Math.floor(seconds / 60);
+    var partInSeconds = seconds % 60;
+    partInSeconds = partInSeconds.toString().padStart(2, '0');
+    return `${minutes}:${partInSeconds}`;
+  }
+  countdown() {
+    if (this.initialTime === 11) {
+      this.timerLabel.setStyle({ fill: '#ff0000' });
+    }
+    if (this.initialTime === 1) {
+      this.countdownEvent.paused = true;
+    }
+    this.initialTime -= 1;
+    this.timerLabel.setText(this.formatTime(this.initialTime));
+    if (this.initialTime === 0) {
+      //bring up game over scene here
+    }
   }
 }
