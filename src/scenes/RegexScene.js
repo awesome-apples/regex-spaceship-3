@@ -48,10 +48,12 @@ export default class RegexScene extends Phaser.Scene {
       // regex problem prompt
       scene.graphics2.strokeRect(50, 50, 325, 450);
       scene.graphics2.fillRect(50, 50, 325, 450);
-      scene.add.text(55, 55, 'Example Problem', {
+      scene.add.text(55, 55, 'Vivamus lacus risus, mattis at ligula et, hendrerit posuere augue. Donec pulvinar neque a justo laoreet elementum. Nunc luctus, velit non blandit imperdiet, purus urna pellentesque nibh, ut consectetur nulla nisi vitae elit. Sed ligula orci, suscipit sit amet lacinia non, luctus ut orci. Praesent a ullamcorper felis. Integer pharetra consequat viverra. In accumsan erat hendrerit, dignissim nulla at, tristique ante. Ut elementum mi magna, non rutrum arcu sollicitudin quis.', {
         fill: '#000000',
         fontSize: '20px',
         fontStyle: 'bold',
+        align: "left",
+        wordWrap: { width: 320, height: 445, useAdvancedWrap: true }
       });
 
       // input area
@@ -70,10 +72,12 @@ export default class RegexScene extends Phaser.Scene {
       // output area
       scene.graphics2.strokeRect(425, 325, 325, 175);
       scene.graphics2.fillRect(425, 325, 325, 175);
-      scene.add.text(430, 330, 'Output Here', {
+      scene.add.text(430, 330, `expected output: \nyour output: `, {
         fill: '#000000',
         fontSize: '20px',
         fontStyle: 'bold',
+        align: "left",
+        wordWrap: { width: 320, height: 170, useAdvancedWrap: true }
       });
 
       scene.add.text(430, 285, 'Correct/Incorrect', {
@@ -120,7 +124,7 @@ export default class RegexScene extends Phaser.Scene {
       console.error(err);
     }
   }
-  handleInput() {
+  handleInput(input) {
     //emit completedTask
     return 'this is the output info';
   }
