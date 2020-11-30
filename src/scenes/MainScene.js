@@ -10,6 +10,7 @@ export default class MainScene extends Phaser.Scene {
     super('MainScene');
     this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
     this.hasBeenSet = false;
+    this.numPlayers = 0;
   }
 
   preload() {
@@ -57,7 +58,10 @@ export default class MainScene extends Phaser.Scene {
         console.log('UPDATE STATE', state);
       });
 
-      this.socket.on('currentPlayers', function (players) {
+      this.socket.on('currentPlayers', function (arg) {
+        const { players, numPlayers } = arg;
+        scene.numPlayers = numPlayers;
+        console.log('NUMPLAYERS', scene.numPlayers);
         Object.keys(players).forEach(function (id) {
           if (players[id].playerId === scene.socket.id) {
             scene.addPlayer(scene, players[id]);
@@ -67,10 +71,25 @@ export default class MainScene extends Phaser.Scene {
         });
       });
 
-      this.socket.on('newPlayer', function (playerInfo) {
+      this.socket.on('newPlayer', function (arg) {
+        const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
+        scene.numPlayers = numPlayers;
+        console.log('NEW PLAYER< NUM PLAYERS', scene.numPlayers);
+        if (!scene.timerHasBegun) {
+          scene.timerHasBegun = true;
+          scene.countdownEvent = scene.time.addEvent({
+            delay: 1000,
+            callback: scene.countdown,
+            callbackScope: scene,
+            loop: true,
+          });
+        }
       });
-      this.socket.on('disconnected', function (playerId) {
+      this.socket.on('disconnected', function (arg) {
+        const { playerId, numPlayers } = arg;
+        scene.numPlayers = numPlayers;
+        console.log('PLAYER DELETED NE NUMPLAYERS', scene.numPlayers);
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
@@ -185,14 +204,16 @@ export default class MainScene extends Phaser.Scene {
       }
 
       //TIMER
-      this.timerLabel = this.add.text(680, 16, '120s', {
-        fontSize: '32px',
-        fill: '#ffffff',
-      });
-      this.socket.on('countdown', function (time) {
-        const timeRemaining = 120 - time;
-        scene.timerLabel.setText(timeRemaining.toFixed(0) + 's');
-      });
+      this.initialTime = 120;
+      this.timerLabel = this.add.text(
+        680,
+        16,
+        this.formatTime(this.initialTime),
+        {
+          fontSize: '32px',
+          fill: '#ffffff',
+        }
+      );
     } catch (error) {
       console.error(error);
     }
@@ -266,7 +287,23 @@ export default class MainScene extends Phaser.Scene {
     scene.otherPlayers.add(otherPlayer);
   }
 
-  handleCountdownFinished() {
-    //write function that takes to losing screen when finished
+  formatTime(seconds) {
+    var minutes = Math.floor(seconds / 60);
+    var partInSeconds = seconds % 60;
+    partInSeconds = partInSeconds.toString().padStart(2, '0');
+    return `${minutes}:${partInSeconds}`;
+  }
+  countdown() {
+    if (this.initialTime === 11) {
+      this.timerLabel.setStyle({ fill: '#ff0000' });
+    }
+    if (this.initialTime === 1) {
+      this.countdownEvent.paused = true;
+    }
+    this.initialTime -= 1;
+    this.timerLabel.setText(this.formatTime(this.initialTime));
+    if (this.initialTime === 0) {
+      //bring up game over scene here
+    }
   }
 }
