@@ -1,14 +1,15 @@
 import Phaser from 'phaser';
-import axios from 'axios';
-import store from '../store';
 import ProgressBar from '../entity/progressBar';
-import Timer from '../entity/Timer';
 import ControlPanel from '../entity/ControlPanel';
+import store from '../store';
+import { fetchRandomTasks } from '../store/randomTasks';
 // import io from "socket.io-client";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super('MainScene');
+    this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
+    this.hasBeenSet = false;
   }
 
   preload() {
@@ -30,158 +31,174 @@ export default class MainScene extends Phaser.Scene {
     this.load.image('mainroom', 'assets/backgrounds/mainroom.png');
   }
 
-  create() {
-    var self = this;
+  async create() {
+    var scene = this;
+
     this.add.image(0, 0, 'mainroom').setOrigin(0);
-
-    //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
-    this.controlPanelLeft = new ControlPanel(
-      this,
-      200,
-      200,
-      'controlPanelLeft'
-    );
-
-    this.controlPanelRight = new ControlPanel(
-      this,
-      580,
-      400,
-      'controlPanelRight'
-    );
-
-    // click on control panels and Regex Scene will launch
-    this.controlPanelLeft.setInteractive();
-    this.controlPanelLeft.on('pointerdown', () => {
-      var isSleep = this.scene.isSleeping("RegexScene");
-
-      if (isSleep) {
-        this.scene.wake("RegexScene");
+    try {
+      //SOCKET CONNECTIONS
+      this.socket = io();
+      this.otherPlayers = this.physics.add.group();
+      if (!this.hasBeenSet) {
+        this.hasBeenSet = true;
+        this.socket.on('setState', function (state) {
+          this.state = state;
+          console.log('SET STATE', state);
+        });
       }
-      else {
-        this.scene.launch("RegexScene");
+      if (scene.state.randomTasks.length !== 2) {
+        await store.dispatch(fetchRandomTasks());
+        const newState = store.getState();
+        console.log('NEWSTATE', newState);
+        scene.socket.emit('sendState', newState);
       }
-    });
+      this.socket.on('updateState', function (state) {
+        this.state = state;
+        console.log('UPDATE STATE', state);
+      });
 
-    this.controlPanelRight.setInteractive();
-    this.controlPanelRight.on('pointerdown', () => {
-      var isSleep = this.scene.isSleeping("RegexScene");
+      this.socket.on('currentPlayers', function (players) {
+        Object.keys(players).forEach(function (id) {
+          if (players[id].playerId === scene.socket.id) {
+            scene.addPlayer(scene, players[id]);
+          } else {
+            scene.addOtherPlayers(scene, players[id]);
+          }
+        });
+      });
 
-      if (isSleep) {
-        this.scene.wake("RegexScene");
-      }
-      else {
-        this.scene.launch("RegexScene");
-      }     
-    });
+      this.socket.on('newPlayer', function (playerInfo) {
+        scene.addOtherPlayers(scene, playerInfo);
+      });
+      this.socket.on('disconnected', function (playerId) {
+        scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerId === otherPlayer.playerId) {
+            otherPlayer.destroy();
+          }
+        });
+      });
+      this.socket.on('playerMoved', function (playerInfo) {
+        scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerInfo.playerId === otherPlayer.playerId) {
+            otherPlayer.setRotation(playerInfo.rotation);
+            otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+          }
+        });
+      });
+      this.cursors = this.input.keyboard.createCursorKeys();
 
-    // not working :(
-    // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
-    // this.physics.add.collider(this.astronaut, this.controlPanelRight);
+      this.socket.on('scoreUpdate', function (score) {
+        scene.state.gameScore = score;
+        if (scene.state.gameScore >= 2) {
+          scene.scene.state('WinScene');
+        }
+      });
 
-    //Progress Bar
-    this.progressText = this.add.text(30, 16, 'Tasks Completed', {
-      fontSize: '20px',
-      fill: '#ffffff',
-    });
+      this.socket.on('starLocation', function (starLocation) {
+        if (scene.star) scene.star.destroy();
+        scene.star = scene.physics.add.image(
+          starLocation.x,
+          starLocation.y,
+          'star'
+        );
+        scene.physics.add.overlap(
+          scene.astronaut,
+          scene.star,
+          function () {
+            this.socket.emit('starCollected');
+          },
+          null,
+          scene
+        );
+      });
 
-    this.tasks = [
-      { problem: 'beep', solution: 'bop', completed: false },
-      { problem: 'beep', solution: 'bop', completed: false },
-    ];
-    this.tasksCompleted = 0;
-    //hey Adria :))
-    //call store.dispatch(fetchTasks) to populate this array
-    //write a func for when a task is completed that changes that tasks 'completed' property to true and increments the this.tasksCompleted, should also socket.emit('taskCompleted')
-    //write a socket that listens for 'taskCompleted' and updates the progress tracker for all players
+      //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
+      this.controlPanelLeft = new ControlPanel(
+        this,
+        200,
+        200,
+        'controlPanelLeft'
+      );
 
-    //I wrote a progress tracker entity and got an asset that has empty and green bars
-    //my intention was to change one bar to green each time a task was completed
-    //You can implement whatever you want feel free to scrap the asset and the entity i think its kinda ugly anyway
-    this.progressBar = this.physics.add.staticGroup({ classType: ProgressBar });
+      this.controlPanelRight = new ControlPanel(
+        this,
+        580,
+        400,
+        'controlPanelRight'
+      );
 
-    for (var i = 0; i < this.tasks.length; i++) {
-      let x = 100 + i * 130;
-      let y = 50;
+      // click on control panels and Regex Scene will launch
+      this.controlPanelLeft.setInteractive();
+      this.controlPanelLeft.on('pointerdown', () => {
+        var isSleep = this.scene.isSleeping('RegexScene');
 
-      this.progressBar.create(x, y, 'progressBar').setScale(0.5);
-    }
-
-    //Socket Connections
-    this.socket = io();
-    this.otherPlayers = this.physics.add.group();
-    this.socket.on('currentPlayers', function (players) {
-      Object.keys(players).forEach(function (id) {
-        if (players[id].playerId === self.socket.id) {
-          self.addPlayer(self, players[id]);
+        if (isSleep) {
+          this.scene.wake('RegexScene');
         } else {
-          self.addOtherPlayers(self, players[id]);
+          this.scene.launch('RegexScene');
         }
       });
-    });
-    this.socket.on('newPlayer', function (playerInfo) {
-      self.addOtherPlayers(self, playerInfo);
-    });
-    this.socket.on('disconnected', function (playerId) {
-      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerId === otherPlayer.playerId) {
-          otherPlayer.destroy();
-        }
-      });
-    });
-    this.socket.on('playerMoved', function (playerInfo) {
-      self.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerInfo.playerId === otherPlayer.playerId) {
-          otherPlayer.setRotation(playerInfo.rotation);
-          otherPlayer.setPosition(playerInfo.x, playerInfo.y);
-        }
-      });
-    });
-    this.cursors = this.input.keyboard.createCursorKeys();
 
-    // this.blueScoreText = this.add.text(16, 16, '', {
-    //   fontSize: '32px',
-    //   fill: '#0000FF',
-    // });
-    // this.redScoreText = this.add.text(584, 16, '', {
-    //   fontSize: '32px',
-    //   fill: '#FF0000',
-    // });
+      this.controlPanelRight.setInteractive();
+      this.controlPanelRight.on('pointerdown', () => {
+        var isSleep = this.scene.isSleeping('RegexScene');
 
-    // this.socket.on('scoreUpdate', function (scores) {
-    //   self.blueScoreText.setText('Blue: ' + scores.blue);
-    //   self.redScoreText.setText('Red: ' + scores.red);
-    // });
-    this.socket.on('starLocation', function (starLocation) {
-      if (self.star) self.star.destroy();
-      self.star = self.physics.add.image(
-        starLocation.x,
-        starLocation.y,
-        'star'
-      );
-      self.physics.add.overlap(
-        self.astronaut,
-        self.star,
-        function () {
-          this.socket.emit('starCollected');
-        },
-        null,
-        self
-      );
-    });
-    
-    //TIMER
-    this.timerLabel = this.add.text(680, 16, '120s', {
-      fontSize: '32px',
-      fill: '#ffffff',
-    });
-    this.socket.on('countdown', function (time) {
-      const timeRemaining = 120 - time;
-      self.timerLabel.setText(timeRemaining.toFixed(0) + 's');
-    });
+        if (isSleep) {
+          this.scene.wake('RegexScene');
+        } else {
+          this.scene.launch('RegexScene');
+        }
+      });
+
+      // not working :(
+      // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
+      // this.physics.add.collider(this.astronaut, this.controlPanelRight);
+
+      //Progress Bar
+      this.progressText = this.add.text(30, 16, 'Tasks Completed', {
+        fontSize: '20px',
+        fill: '#ffffff',
+      });
+
+      this.tasks = [
+        { problem: 'beep', solution: 'bop', completed: false },
+        { problem: 'beep', solution: 'bop', completed: false },
+      ];
+      this.tasksCompleted = 0;
+      //hey Adria :))
+      //call store.dispatch(fetchTasks) to populate this array
+      //write a func for when a task is completed that changes that tasks 'completed' property to true and increments the this.tasksCompleted, should also socket.emit('taskCompleted')
+      //write a socket that listens for 'taskCompleted' and updates the progress tracker for all players
+
+      //I wrote a progress tracker entity and got an asset that has empty and green bars
+      //my intention was to change one bar to green each time a task was completed
+      //You can implement whatever you want feel free to scrap the asset and the entity i think its kinda ugly anyway
+      this.progressBar = this.physics.add.staticGroup({
+        classType: ProgressBar,
+      });
+
+      for (var i = 0; i < this.tasks.length; i++) {
+        let x = 100 + i * 130;
+        let y = 50;
+
+        this.progressBar.create(x, y, 'progressBar').setScale(0.5);
+      }
+
+      //TIMER
+      this.timerLabel = this.add.text(680, 16, '120s', {
+        fontSize: '32px',
+        fill: '#ffffff',
+      });
+      this.socket.on('countdown', function (time) {
+        const timeRemaining = 120 - time;
+        scene.timerLabel.setText(timeRemaining.toFixed(0) + 's');
+      });
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   update(time) {
-    this.socket.emit('countdown', time);
     if (this.astronaut) {
       if (this.cursors.left.isDown) {
         this.astronaut.setVelocityX(-150);
@@ -220,23 +237,23 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  addPlayer(self, playerInfo) {
-    self.astronaut = self.physics.add
+  addPlayer(scene, playerInfo) {
+    scene.astronaut = scene.physics.add
       .image(playerInfo.x, playerInfo.y, 'astronaut')
       .setOrigin(0.5, 0.5)
       .setDisplaySize(43.5, 55.5);
     if (playerInfo.team === 'blue') {
-      self.astronaut.setTint(0x2796a5);
+      scene.astronaut.setTint(0x2796a5);
     } else {
-      self.astronaut.setTint(0xd86969);
+      scene.astronaut.setTint(0xd86969);
     }
-    self.astronaut.setDrag(100);
-    self.astronaut.setAngularDrag(100);
-    self.astronaut.setMaxVelocity(200);
+    scene.astronaut.setDrag(100);
+    scene.astronaut.setAngularDrag(100);
+    scene.astronaut.setMaxVelocity(200);
   }
 
-  addOtherPlayers(self, playerInfo) {
-    const otherPlayer = self.add
+  addOtherPlayers(scene, playerInfo) {
+    const otherPlayer = scene.add
       .sprite(playerInfo.x, playerInfo.y, 'astronaut')
       .setOrigin(0.5, 0.5)
       .setDisplaySize(43.5, 55.5);
@@ -246,7 +263,7 @@ export default class MainScene extends Phaser.Scene {
       otherPlayer.setTint(0xd86969);
     }
     otherPlayer.playerId = playerInfo.playerId;
-    self.otherPlayers.add(otherPlayer);
+    scene.otherPlayers.add(otherPlayer);
   }
 
   handleCountdownFinished() {

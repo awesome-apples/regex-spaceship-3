@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 //ACTION TYPES
 // const GET_TASKS = 'GET_TASKS';
-const GET_RANDOM_TASKS = 'GET_RANDOM_TASKS';
+const GET_RANDOM_TASKS = "GET_RANDOM_TASKS";
 
 //ACTION CREATORS
 // const getTasks = (tasks) => ({ type: GET_TASKS, tasks });
@@ -26,7 +26,7 @@ export const fetchRandomTasks = () => async (dispatch) => {
   } catch (err) {
     console.error(err);
   }
-}
+};
 
 //INITIAL STATE
 const initialState = [];

@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 //ACTION TYPES
-const ADD_PLAYER = 'ADD_PLAYER';
-const GET_GAME_PLAYERS = 'GET_GAME_PLAYERS';
+const ADD_PLAYER = "ADD_PLAYER";
+const GET_GAME_PLAYERS = "GET_GAME_PLAYERS";
 
 //INITIAL STATE
 const initialState = [];
@@ -17,7 +17,7 @@ const getGamePlayers = (players) => ({ type: GET_GAME_PLAYERS, players });
 
 export const postPlayer = (playerInfo) => async (dispatch) => {
   try {
-    const player = await axios.post('/api/users/signup', playerInfo);
+    const player = await axios.post("/api/users/signup", playerInfo);
     dispatch(addPlayer(player));
   } catch (error) {
     console.error(error);
@@ -27,7 +27,7 @@ export const postPlayer = (playerInfo) => async (dispatch) => {
 export const fetchGamePlayers = (gameId) => async (dispatch) => {
   try {
     const { data: players } = await axios.get(`/api/users/${gameId}`);
-    console.log('players', players);
+    console.log("players", players);
     dispatch(getGamePlayers(players));
   } catch (err) {
     console.error(err);

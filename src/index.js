@@ -16,6 +16,7 @@ But this hasn't happened yet!
 import "phaser";
 import MainScene from "./scenes/MainScene";
 import RegexScene from "./scenes/RegexScene";
+import WinScene from "./scenes/WinScene";
 import config from "./config/config";
 
 class Game extends Phaser.Game {
@@ -26,6 +27,7 @@ class Game extends Phaser.Game {
     // << ADD ALL SCENES HERE >>
     this.scene.add("MainScene", MainScene);
     this.scene.add("RegexScene", RegexScene);
+    this.scene.add("WinScene");
 
     // Start the game with the mainscene
     // << START GAME WITH MAIN SCENE HERE >>
