@@ -10,6 +10,7 @@ export default class MainScene extends Phaser.Scene {
     super('MainScene');
     this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
     this.hasBeenSet = false;
+    this.numPlayers = 0;
   }
 
   preload() {
@@ -57,7 +58,10 @@ export default class MainScene extends Phaser.Scene {
         console.log('UPDATE STATE', state);
       });
 
-      this.socket.on('currentPlayers', function (players) {
+      this.socket.on('currentPlayers', function (arg) {
+        const { players, numPlayers } = arg;
+        scene.numPlayers = numPlayers;
+        console.log('NUMPLAYERS', scene.numPlayers);
         Object.keys(players).forEach(function (id) {
           if (players[id].playerId === scene.socket.id) {
             scene.addPlayer(scene, players[id]);
@@ -67,9 +71,11 @@ export default class MainScene extends Phaser.Scene {
         });
       });
 
-      this.socket.on('newPlayer', function (playerInfo) {
+      this.socket.on('newPlayer', function (arg) {
+        const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
-        //this is what makes the timer begin
+        scene.numPlayers = numPlayers;
+        console.log('NEW PLAYER< NUM PLAYERS', scene.numPlayers);
         if (!scene.timerHasBegun) {
           scene.timerHasBegun = true;
           scene.countdownEvent = scene.time.addEvent({
@@ -80,7 +86,10 @@ export default class MainScene extends Phaser.Scene {
           });
         }
       });
-      this.socket.on('disconnected', function (playerId) {
+      this.socket.on('disconnected', function (arg) {
+        const { playerId, numPlayers } = arg;
+        scene.numPlayers = numPlayers;
+        console.log('PLAYER DELETED NE NUMPLAYERS', scene.numPlayers);
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();

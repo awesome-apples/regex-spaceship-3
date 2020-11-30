@@ -13,7 +13,7 @@ let mockState = {
 //gameScore
 //
 const players = {};
-
+let numPlayers = 0;
 // async function startGameState() {
 //   await store.dispatch(fetchRandomTasks());
 //   state = store.getState();
@@ -39,8 +39,10 @@ module.exports = (io) => {
       playerId: socket.id,
       team: Math.floor(Math.random() * 2) == 0 ? 'red' : 'blue',
     };
+    numPlayers = Object.keys(players).length;
+    console.log('NUMPLAYERS', numPlayers);
     // send the players object to the new player
-    socket.emit('currentPlayers', players);
+    socket.emit('currentPlayers', { players, numPlayers });
     // send the star object to the new player
     // socket.emit("starLocation", star);
     // send the current scores
@@ -48,14 +50,19 @@ module.exports = (io) => {
     // set initial state
     socket.emit('setState', mockState);
     // update all other players of the new player
-    socket.broadcast.emit('newPlayer', players[socket.id]);
+    socket.broadcast.emit('newPlayer', {
+      playerInfo: players[socket.id],
+      numPlayers,
+    });
     // when a player disconnects, remove them from our players object
     socket.on('disconnect', function () {
       console.log('user disconnected: ', socket.id);
       // remove this player from our players object
       delete players[socket.id];
+      numPlayers = Object.keys(players).length;
+      console.log('PLAYER DELETE< NEW NUM', numPlayers);
       // emit a message to all players to remove this player
-      io.emit('disconnected', socket.id);
+      io.emit('disconnected', { playerId: socket.id, numPlayers: numPlayers });
     });
     // when a player moves, update the player data
     socket.on('playerMovement', function (movementData) {
