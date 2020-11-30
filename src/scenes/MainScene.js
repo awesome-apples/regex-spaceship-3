@@ -7,6 +7,7 @@ export default class MainScene extends Phaser.Scene {
     super("MainScene");
     this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
     this.hasBeenSet = false;
+    this.startClickable = true;
     this.numPlayers = 0;
   }
 
@@ -76,28 +77,7 @@ export default class MainScene extends Phaser.Scene {
         scene.addOtherPlayers(scene, playerInfo);
         scene.numPlayers = numPlayers;
         console.log("NEW PLAYER< NUM PLAYERS", scene.numPlayers);
-        if (!scene.timerHasBegun) {
-          scene.timerHasBegun = true;
-          scene.countdownEvent = scene.time.addEvent({
-            delay: 1000,
-            callback: scene.countdown,
-            callbackScope: scene,
-            loop: true,
-          });
-        }
       });
-
-      if (this.numPlayers >= 2) {
-        scene.startText = scene.add.text(400, 300, "START", {
-          fill: "#000000",
-          fontSize: "20px",
-          fontStyle: "bold",
-        });
-        scene.startText.setInteractive();
-        scene.startText.on("pointerdown", () => {
-          scene.startButton();
-        });
-      }
 
       this.socket.on("disconnected", function (arg) {
         const { playerId, numPlayers } = arg;
@@ -228,6 +208,26 @@ export default class MainScene extends Phaser.Scene {
           fill: "#ffffff",
         }
       );
+
+      scene.startText = scene.add.text(400, 300, "START", {
+        fill: "#000000",
+        fontSize: "20px",
+        fontStyle: "bold",
+      });
+      scene.startText.setVisible(false);
+
+      this.socket.on("destroyButton", function () {
+        scene.startText.destroy();
+      });
+
+      this.socket.on("startTimer", function () {
+        scene.countdownEvent = scene.time.addEvent({
+          delay: 1000,
+          callback: scene.countdown,
+          callbackScope: scene,
+          loop: true,
+        });
+      });
     } catch (error) {
       console.error(error);
     }
@@ -269,6 +269,16 @@ export default class MainScene extends Phaser.Scene {
         y: this.astronaut.y,
         rotation: this.astronaut.rotation,
       };
+    }
+
+    if (this.numPlayers >= 2 && this.startClickable === true) {
+      this.startClickable = false;
+      this.startText.setVisible(true);
+      this.startText.setInteractive();
+      this.startText.on("pointerdown", () => {
+        console.log("going to start button");
+        this.startButton();
+      });
     }
   }
 
@@ -321,13 +331,15 @@ export default class MainScene extends Phaser.Scene {
     }
   }
   startButton() {
-    scene.socket.emit("createTasks");
+    // this.socket.emit("createTasks");
     //load random tasks
     //already handles with sockets: emits tasks to the socket server, socket server to everyone
 
     //start the timer
 
     //make start button go away
-    scene.startText.destroy();
+    // this.startText.destroy();
+    console.log("in start button");
+    this.socket.emit("startGame");
   }
 }
