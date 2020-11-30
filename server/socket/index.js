@@ -1,7 +1,7 @@
 // const { fetchRandomTasks } = require("../../src/store/randomTasks");
 // const store = require("../../src/store");
 
-const axios = require("axios");
+const { Task } = require("../db/models");
 
 let serverState = {
   users: [],
@@ -42,7 +42,7 @@ const twoRandomTasks = //axios call
       };
       numPlayers = Object.keys(players).length;
       // send the players object to the new player
-      socket.emit("currentPlayers", players);
+      socket.emit("currentPlayers", { players, numPlayers });
       // send the star object to the new player
       // socket.emit("starLocation", star);
       // send the current scores
@@ -50,7 +50,10 @@ const twoRandomTasks = //axios call
       // set initial state
       socket.emit("setState", serverState);
       // update all other players of the new player
-      socket.broadcast.emit("newPlayer", players[socket.id]);
+      socket.broadcast.emit("newPlayer", {
+        playerInfo: players[socket.id],
+        numPlayers: numPlayers,
+      });
       // when a player disconnects, remove them from our players object
       socket.on("disconnect", function () {
         console.log("user disconnected: ", socket.id);
@@ -58,7 +61,7 @@ const twoRandomTasks = //axios call
         delete players[socket.id];
         numPlayers = Object.keys(players).length;
         // emit a message to all players to remove this player
-        io.emit("disconnected", socket.id);
+        io.emit("disconnected", { playerId: socket.id, numPlayers });
       });
       // when a player moves, update the player data
       socket.on("playerMovement", function (movementData) {
@@ -72,11 +75,28 @@ const twoRandomTasks = //axios call
         serverState.gameScore++;
         io.emit("scoreUpdate", serverState.gameScore);
       });
-      socket.on("createTasks", async function () {
-        //axios call to database to set random tasks
-        const { data } = await axios.get(`/api/tasks/randomTasks`);
-        serverState.randomTasks = data;
-        io.emit("updateState", serverState);
+      // socket.on("createTasks", async function () {
+      //   //axios call to database to set random tasks
+      //   const { data } = await axios.get(`/api/tasks/randomTasks`);
+      //   serverState.randomTasks = data;
+      //   io.emit("updateState", serverState);
+      // });
+      socket.on("startGame", async function () //get tasks
+      {
+        try {
+          const tasks = await Task.findAll();
+          const randomIdOne = Math.ceil(Math.random() * tasks.length);
+          const randomIdTwo = Math.ceil(Math.random() * tasks.length);
+          const taskOne = await Task.findByPk(randomIdOne);
+          const taskTwo = await Task.findByPk(randomIdTwo);
+          serverState.randomTasks = [taskOne, taskTwo];
+
+          io.emit("updateState", serverState);
+          io.emit("destroyButton");
+          io.emit("startTimer");
+        } catch (err) {
+          console.log("error starting game", err);
+        }
       });
     });
   });
