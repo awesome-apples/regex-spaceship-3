@@ -1,9 +1,16 @@
+
 import Phaser from 'phaser';
 
 export default class RegexScene extends Phaser.Scene {
   constructor() {
     super('RegexScene');
     this.state = {};
+    this.randomTask = {
+      problem:
+        "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
+      matchArray: ["1 file found?", "2 files found?", "24 files found?"],
+      skipArray: ["No files found."],
+    };
   }
 
   init(data) {
@@ -47,18 +54,19 @@ export default class RegexScene extends Phaser.Scene {
         fontSize: '20px',
         fontStyle: 'bold',
       });
-      if (scene.state.randomTasks) {
-        scene.task1 = scene.randomTasks[0].problem;
-        scene.task2 = scene.randomTasks[1].problem;
 
-        scene.add.text(55, 55, scene.task1, {
-          fill: '#000000',
-          fontSize: '20px',
-          fontStyle: 'bold',
-          align: 'left',
-          wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
-        });
-      }
+      // if (scene.state.randomTasks) {
+      //   scene.task1 = scene.randomTasks[0].problem;
+      //   scene.task2 = scene.randomTasks[1].problem;
+
+      //   scene.add.text(55, 55, scene.task1, {
+      //     fill: "#000000",
+      //     fontSize: "20px",
+      //     fontStyle: "bold",
+      //     align: "left",
+      //     wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
+      //   });
+      // }
 
       // input area
       scene.graphics2.strokeRect(425, 50, 325, 225);
@@ -106,11 +114,12 @@ export default class RegexScene extends Phaser.Scene {
         fontStyle: 'bold',
       });
       scene.submitButton.setInteractive();
-      scene.submitButton.on('pointerdown', () => {
-        const inputText = scene.inputElement.getChildByName('code');
-        if (inputText.value !== '') {
-          scene.output = scene.handleInput(inputText.value);
-          scene.outputText.setText(scene.output);
+
+      scene.submitButton.on("pointerdown", () => {
+        const inputText = scene.inputElement.getChildByName("code");
+        if (inputText.value !== "") {
+          scene.output = scene.handleInput(inputText.value, scene.randomTask);
+          scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
           scene.isCorrect = scene.add.text(320, 525, 'temp', {
@@ -120,9 +129,10 @@ export default class RegexScene extends Phaser.Scene {
             boundsAlignH: 'center',
           });
           scene.isCorrect.setVisible(false);
-          if (inputText.value === 'potato') {
-            scene.isCorrect.setText('Correct');
+          if (scene.output.win) {
+            scene.isCorrect.setText("Correct");
             scene.isCorrect.setVisible(true);
+            scene.socket.emit("completedTask");
           } else {
             scene.isCorrect.setText('Incorrect');
             scene.isCorrect.setVisible(true);
@@ -133,7 +143,25 @@ export default class RegexScene extends Phaser.Scene {
       console.error(err);
     }
   }
-  handleInput(input) {
-    return `expected: potato\nyours: ${input}`;
+
+  handleInput(input, randomTask) {
+    const regex = new RegExp(input);
+
+    const matchResult = randomTask.matchArray.every((string) => {
+      if (string.match(regex) === null) {
+        return false;
+      } else {
+        return string.match(regex)[0] === string;
+      }
+    });
+    const skipResult = randomTask.skipArray.every((string) => {
+      if (string.match(regex) === null) {
+        return true;
+      } else {
+        return string.match(regex)[0] !== string;
+      }
+    });
+    const result = matchResult === true && skipResult === true;
+    return { text: `expected: potato\nyours: ${input}`, win: result };
   }
 }

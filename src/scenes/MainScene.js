@@ -40,7 +40,6 @@ export default class MainScene extends Phaser.Scene {
       //SOCKET CONNECTIONS
       this.socket = io();
       this.otherPlayers = this.physics.add.group();
-      //console.log("this! ->>>", this);
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
         this.socket.on('setState', function (state) {
@@ -49,22 +48,16 @@ export default class MainScene extends Phaser.Scene {
           scene.state.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
-          //console.log("SET STATE", state);
         });
       }
-      //console.log("scene on mainscene", scene);
-      //console.log("scene random tasks length", this.state.randomTasks.length);
-      //console.log("random tasks without the length", this.state.randomTasks);
 
       this.socket.on('updateState', function (serverState) {
         scene.state = serverState;
-        //console.log("UPDATE STATE", scene.state);
       });
 
       this.socket.on('currentPlayers', function (arg) {
         const { players, numPlayers } = arg;
         scene.numPlayers = numPlayers;
-        //console.log("NUMPLAYERS", scene.numPlayers);
         Object.keys(players).forEach(function (id) {
           if (players[id].playerId === scene.socket.id) {
             scene.addPlayer(scene, players[id]);
@@ -78,13 +71,11 @@ export default class MainScene extends Phaser.Scene {
         const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
         scene.numPlayers = numPlayers;
-        //console.log("NEW PLAYER< NUM PLAYERS", scene.numPlayers);
       });
 
       this.socket.on('disconnected', function (arg) {
         const { playerId, numPlayers } = arg;
         scene.numPlayers = numPlayers;
-        //console.log("PLAYER DELETED NE NUMPLAYERS", scene.numPlayers);
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
@@ -172,9 +163,28 @@ export default class MainScene extends Phaser.Scene {
         }
       });
 
-      // not working :(
-      // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
-      // this.physics.add.collider(this.astronaut, this.controlPanelRight);
+      //Progress Bar
+      this.progressText = this.add.text(30, 16, "Tasks Completed", {
+        fontSize: "20px",
+        fill: "#ffffff",
+      });
+
+      this.tasks = [
+        { problem: "beep", solution: "bop", completed: false },
+        { problem: "beep", solution: "bop", completed: false },
+      ];
+      this.tasksCompleted = 0;
+
+      this.progressBar = this.physics.add.staticGroup({
+        classType: ProgressBar,
+      });
+
+      for (var i = 0; i < this.tasks.length; i++) {
+        let x = 100 + i * 130;
+        let y = 50;
+
+        this.progressBar.create(x, y, "progressBar").setScale(0.5);
+      }
 
       //TIMER
       this.initialTime = 120;
