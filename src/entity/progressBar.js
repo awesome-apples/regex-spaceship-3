@@ -2,7 +2,7 @@ import 'phaser';
 
 export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y, taskAmount) {
-    super(scene, x, y);
+    super(scene, x, y, taskAmount);
     console.log('inside ProgressBar Constructor');
     this.bar = new Phaser.GameObjects.Graphics(scene);
 
