@@ -8,6 +8,7 @@ export default class MainScene extends Phaser.Scene {
     this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
     this.hasBeenSet = false;
     this.startClickable = true;
+    this.beginTimer = false;
     this.numPlayers = 0;
   }
 
@@ -159,7 +160,7 @@ export default class MainScene extends Phaser.Scene {
         if (isSleep) {
           this.scene.wake("RegexScene");
         } else {
-          this.scene.launch("RegexScene");
+          this.scene.launch("RegexScene", this.state);
         }
       });
 
@@ -221,12 +222,7 @@ export default class MainScene extends Phaser.Scene {
       });
 
       this.socket.on("startTimer", function () {
-        scene.countdownEvent = scene.time.addEvent({
-          delay: 1000,
-          callback: scene.countdown,
-          callbackScope: scene,
-          loop: true,
-        });
+        scene.beginTimer = Date.now();
       });
     } catch (error) {
       console.error(error);
@@ -280,6 +276,10 @@ export default class MainScene extends Phaser.Scene {
         this.startButton();
       });
     }
+
+    if (this.beginTimer) {
+      this.countdown();
+    }
   }
 
   addPlayer(scene, playerInfo) {
@@ -318,16 +318,20 @@ export default class MainScene extends Phaser.Scene {
     return `${minutes}:${partInSeconds}`;
   }
   countdown() {
-    if (this.initialTime === 11) {
-      this.timerLabel.setStyle({ fill: "#ff0000" });
-    }
-    if (this.initialTime === 1) {
-      this.countdownEvent.paused = true;
-    }
-    this.initialTime -= 1;
-    this.timerLabel.setText(this.formatTime(this.initialTime));
-    if (this.initialTime === 0) {
-      //bring up game over scene here
+    const currentTime = Date.now();
+    const secondsPassed = currentTime - this.beginTimer;
+
+    if (secondsPassed > 999) {
+      this.initialTime -= 1;
+      this.timerLabel.setText(this.formatTime(this.initialTime));
+      if (this.initialTime === 10) {
+        this.timerLabel.setStyle({ fill: "#ff0000" });
+      }
+      this.beginTimer = currentTime;
+      if (this.initialTime === 0) {
+        this.beginTimer = false;
+        //bring up game over scene here
+      }
     }
   }
   startButton() {
