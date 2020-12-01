@@ -39,7 +39,6 @@ export default class MainScene extends Phaser.Scene {
       //SOCKET CONNECTIONS
       this.socket = io();
       this.otherPlayers = this.physics.add.group();
-      //console.log("this! ->>>", this);
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
         this.socket.on("setState", function (state) {
@@ -48,22 +47,16 @@ export default class MainScene extends Phaser.Scene {
           scene.state.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
-          //console.log("SET STATE", state);
         });
       }
-      //console.log("scene on mainscene", scene);
-      //console.log("scene random tasks length", this.state.randomTasks.length);
-      //console.log("random tasks without the length", this.state.randomTasks);
 
       this.socket.on("updateState", function (serverState) {
         scene.state = serverState;
-        //console.log("UPDATE STATE", scene.state);
       });
 
       this.socket.on("currentPlayers", function (arg) {
         const { players, numPlayers } = arg;
         scene.numPlayers = numPlayers;
-        //console.log("NUMPLAYERS", scene.numPlayers);
         Object.keys(players).forEach(function (id) {
           if (players[id].playerId === scene.socket.id) {
             scene.addPlayer(scene, players[id]);
@@ -77,13 +70,11 @@ export default class MainScene extends Phaser.Scene {
         const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
         scene.numPlayers = numPlayers;
-        //console.log("NEW PLAYER< NUM PLAYERS", scene.numPlayers);
       });
 
       this.socket.on("disconnected", function (arg) {
         const { playerId, numPlayers } = arg;
         scene.numPlayers = numPlayers;
-        //console.log("PLAYER DELETED NE NUMPLAYERS", scene.numPlayers);
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
@@ -164,10 +155,6 @@ export default class MainScene extends Phaser.Scene {
         }
       });
 
-      // not working :(
-      // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
-      // this.physics.add.collider(this.astronaut, this.controlPanelRight);
-
       //Progress Bar
       this.progressText = this.add.text(30, 16, "Tasks Completed", {
         fontSize: "20px",
@@ -179,14 +166,7 @@ export default class MainScene extends Phaser.Scene {
         { problem: "beep", solution: "bop", completed: false },
       ];
       this.tasksCompleted = 0;
-      //hey Adria :))
-      //call store.dispatch(fetchTasks) to populate this array
-      //write a func for when a task is completed that changes that tasks 'completed' property to true and increments the this.tasksCompleted, should also socket.emit('taskCompleted')
-      //write a socket that listens for 'taskCompleted' and updates the progress tracker for all players
-
-      //I wrote a progress tracker entity and got an asset that has empty and green bars
-      //my intention was to change one bar to green each time a task was completed
-      //You can implement whatever you want feel free to scrap the asset and the entity i think its kinda ugly anyway
+      
       this.progressBar = this.physics.add.staticGroup({
         classType: ProgressBar,
       });
@@ -272,7 +252,6 @@ export default class MainScene extends Phaser.Scene {
       this.startText.setVisible(true);
       this.startText.setInteractive();
       this.startText.on("pointerdown", () => {
-        //console.log("going to start button");
         this.startButton();
       });
     }
@@ -335,15 +314,6 @@ export default class MainScene extends Phaser.Scene {
     }
   }
   startButton() {
-    // this.socket.emit("createTasks");
-    //load random tasks
-    //already handles with sockets: emits tasks to the socket server, socket server to everyone
-
-    //start the timer
-
-    //make start button go away
-    // this.startText.destroy();
-    //console.log("in start button");
     this.socket.emit("startGame");
   }
 }
