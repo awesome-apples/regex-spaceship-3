@@ -112,7 +112,7 @@ export default class RegexScene extends Phaser.Scene {
         const inputText = scene.inputElement.getChildByName("code");
         if (inputText.value !== "") {
           scene.output = scene.handleInput(inputText.value);
-          scene.outputText.setText(scene.output);
+          scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
           scene.isCorrect = scene.add.text(320, 525, "temp", {
@@ -122,9 +122,10 @@ export default class RegexScene extends Phaser.Scene {
             boundsAlignH: "center",
           });
           scene.isCorrect.setVisible(false);
-          if (inputText.value === "potato") {
+          if (scene.output.win) {
             scene.isCorrect.setText("Correct");
             scene.isCorrect.setVisible(true);
+            scene.socket.emit("completedTask");
           } else {
             scene.isCorrect.setText("Incorrect");
             scene.isCorrect.setVisible(true);
@@ -136,6 +137,7 @@ export default class RegexScene extends Phaser.Scene {
     }
   }
   handleInput(input) {
-    return `expected: potato\nyours: ${input}`;
+    let result = true;
+    return { text: `expected: potato\nyours: ${input}`, win: result };
   }
 }
