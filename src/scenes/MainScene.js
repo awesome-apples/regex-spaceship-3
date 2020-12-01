@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import ProgressBar from '../entity/progressBar';
+import ProgressBar from '../entity/ProgressBar';
 import ControlPanel from '../entity/ControlPanel';
 
 export default class MainScene extends Phaser.Scene {
@@ -13,14 +13,6 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.spritesheet(
-      'progressBar',
-      'assets/spritesheets/progressBar.png',
-      {
-        frameWidth: 300,
-        frameHeight: 100,
-      }
-    );
     this.load.spritesheet('astronaut', 'assets/spritesheets/astronaut3.png', {
       frameWidth: 29,
       frameHeight: 37,
@@ -35,6 +27,15 @@ export default class MainScene extends Phaser.Scene {
     const scene = this;
 
     this.add.image(0, 0, 'mainroom').setOrigin(0);
+
+    //PROGRESS BAR
+    this.progressText = this.add.text(30, 16, 'Progress Tracker', {
+      fontSize: '20px',
+      fill: '#ffffff',
+    });
+
+    scene.progressBar = new ProgressBar(scene, 30, 50);
+
     try {
       //SOCKET CONNECTIONS
       this.socket = io();
@@ -108,6 +109,7 @@ export default class MainScene extends Phaser.Scene {
             scene.state.randomTasks[i].completed = true;
           }
         }
+        scene.progressBar.increase(gameScore - scene.state.gameScore);
         scene.state.gameScore = gameScore;
         if (scene.state.gameScore >= 2) {
           scene.scene.launch('WinScene');
@@ -173,31 +175,6 @@ export default class MainScene extends Phaser.Scene {
       // not working :(
       // this.physics.add.collider(this.astronaut, this.controlPanelLeft);
       // this.physics.add.collider(this.astronaut, this.controlPanelRight);
-
-      scene.numBars = 0;
-      //if numBars !== randomTasks.length{
-      //create empty Bars
-      //}
-
-      //
-      //Progress Bar
-      if (scene.state.randomTasks.length > 0) {
-        this.progressText = this.add.text(30, 16, 'Progress Tracker', {
-          fontSize: '20px',
-          fill: '#ffffff',
-        });
-
-        this.progressBar = this.physics.add.staticGroup({
-          classType: ProgressBar,
-        });
-
-        for (var i = 0; i < scene.state.randomTasks.length; i++) {
-          let x = 100 + i * 130;
-          let y = 50;
-
-          this.progressBar.create(x, y, 'progressBar').setScale(0.5);
-        }
-      }
 
       //TIMER
       this.initialTime = 120;

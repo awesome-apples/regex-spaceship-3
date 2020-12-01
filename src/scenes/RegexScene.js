@@ -137,6 +137,3 @@ export default class RegexScene extends Phaser.Scene {
     return `expected: potato\nyours: ${input}`;
   }
 }
-
-//If the task if correctly submitted, send the following emit
-//scene.socket.emit("completedTask", randomTasks[i??].id)
