@@ -34,7 +34,7 @@ export default class MainScene extends Phaser.Scene {
       fill: '#ffffff',
     });
 
-    scene.progressBar = new ProgressBar(scene, 30, 50);
+    scene.progressBar = new ProgressBar(scene, 30, 50, 2);
 
     try {
       //SOCKET CONNECTIONS
@@ -250,7 +250,6 @@ export default class MainScene extends Phaser.Scene {
       this.startText.setVisible(true);
       this.startText.setInteractive();
       this.startText.on('pointerdown', () => {
-        //console.log("going to start button");
         this.startButton();
       });
     }
@@ -306,22 +305,13 @@ export default class MainScene extends Phaser.Scene {
         this.timerLabel.setStyle({ fill: '#ff0000' });
       }
       this.beginTimer = currentTime;
-      if (this.initialTime === 0) {
+      if (this.initialTime === 119) {
         this.beginTimer = false;
         this.scene.launch('LoseScene');
       }
     }
   }
   startButton() {
-    // this.socket.emit("createTasks");
-    //load random tasks
-    //already handles with sockets: emits tasks to the socket server, socket server to everyone
-
-    //start the timer
-
-    //make start button go away
-    // this.startText.destroy();
-    //console.log("in start button");
     this.socket.emit('startGame');
   }
 }
