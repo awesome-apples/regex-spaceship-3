@@ -166,7 +166,7 @@ export default class MainScene extends Phaser.Scene {
         { problem: "beep", solution: "bop", completed: false },
       ];
       this.tasksCompleted = 0;
-      
+
       this.progressBar = this.physics.add.staticGroup({
         classType: ProgressBar,
       });

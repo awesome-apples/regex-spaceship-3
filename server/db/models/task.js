@@ -14,12 +14,12 @@ const Task = db.define("task", {
   possibleSolutions: {
     type: Sequelize.ARRAY(Sequelize.TEXT),
   },
-  difficulty: {
-    type: Sequelize.STRING,
-  },
-  category: {
-    type: Sequelize.STRING,
-  },
+  // difficulty: {
+  //   type: Sequelize.STRING,
+  // },
+  // category: {
+  //   type: Sequelize.STRING,
+  // },
   completed: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,
