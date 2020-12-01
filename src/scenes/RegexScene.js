@@ -136,8 +136,20 @@ export default class RegexScene extends Phaser.Scene {
       console.error(err);
     }
   }
-  handleInput(input) {
-    let result = true;
+
+  // /[^abc]/
+
+  handleInput(input, randomTask) {
+    const matchResult = randomTask.matchArray.every((string) => {
+      return string.match(input)[0] === string;
+    });
+
+    const skipResult = randomTask.skipArray.every((string) => {
+      return string.match(input)[0] !== string;
+    });
+
+    const result = matchResult === true && skipResult === true;
+
     return { text: `expected: potato\nyours: ${input}`, win: result };
   }
 }
