@@ -19,26 +19,26 @@ async function seed() {
   ]);
 
   const tasks = await Promise.all([
-    Task.create({
-      problem: "extract xyz from the string agubfpuvba",
-      solution: "/*",
-    }),
-    Task.create({
-      problem: "extract abc from the string rbtqifsg",
-      solution: "/*",
-    }),
-    Task.create({
-      problem: "extract hrg from the string gafvbaiudr",
-      solution: "/*",
-    }),
-    Task.create({
-      problem: "Write the word 'cat'",
-      solution: "cat",
-    }),
-    Task.create({
-      problem: "Write the word 'dog'",
-      solution: "dog",
-    }),
+    // Task.create({
+    //   problem: "extract xyz from the string agubfpuvba",
+    //   solution: "/*",
+    // }),
+    // Task.create({
+    //   problem: "extract abc from the string rbtqifsg",
+    //   solution: "/*",
+    // }),
+    // Task.create({
+    //   problem: "extract hrg from the string gafvbaiudr",
+    //   solution: "/*",
+    // }),
+    // Task.create({
+    //   problem: "Write the word 'cat'",
+    //   solution: "cat",
+    // }),
+    // Task.create({
+    //   problem: "Write the word 'dog'",
+    //   solution: "dog",
+    // }),
     ////hannah
     Task.create({
       problem:
@@ -56,7 +56,7 @@ async function seed() {
     }),
   ]);
 
-  console.log(`seeded ${users.length} users`);
+  console.log(`seeded ${tasks.length} tasks`);
 }
 
 // We've separated the `seed` function from the `runSeed` function.
