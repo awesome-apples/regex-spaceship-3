@@ -17,7 +17,7 @@ export default class RegexScene extends Phaser.Scene {
     this.randomTasks = data.randomTasks;
     this.scores = data.scores;
     this.gameScore = data.gameScore;
-    // this.socket = data.socket;
+    this.socket = data.socket;
   }
 
   preload() {
@@ -32,7 +32,7 @@ export default class RegexScene extends Phaser.Scene {
 
     try {
       //sockets
-      this.socket = io();
+      // this.socket = io();
 
       scene.graphics = scene.add.graphics();
       scene.graphics2 = scene.add.graphics();

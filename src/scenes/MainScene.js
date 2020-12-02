@@ -159,7 +159,13 @@ export default class MainScene extends Phaser.Scene {
         if (isSleep) {
           this.scene.wake("RegexScene");
         } else {
-          this.scene.launch("RegexScene", this.state);
+          this.scene.launch("RegexScene", {
+            users: this.state.users,
+            randomTasks: this.state.randomTasks,
+            scores: this.state.scores,
+            gameScore: this.state.gameScore,
+            socket: this.socket,
+          });
         }
       });
 
