@@ -1,16 +1,16 @@
 import 'phaser';
 
 export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, taskAmount) {
-    super(scene, x, y, taskAmount);
+  constructor(scene, x, y) {
+    super(scene, x, y);
     console.log('inside ProgressBar Constructor');
     this.bar = new Phaser.GameObjects.Graphics(scene);
 
     this.x = x;
     this.y = y;
     this.value = 0;
-    this.taskAmount = taskAmount;
-    this.pixels = 186 / this.taskAmount;
+    this.taskAmount = 100;
+    this.pixels = 186 / 100;
 
     this.draw();
 
@@ -20,13 +20,13 @@ export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
   increase(amount) {
     this.value += amount;
 
-    if (this.value > this.taskAmount) {
-      this.value = this.taskAmount;
+    if (this.value < 100) {
+      this.value = 100;
     }
 
     this.draw();
 
-    return this.value === this.taskAmount;
+    return this.value === 100;
   }
 
   draw() {

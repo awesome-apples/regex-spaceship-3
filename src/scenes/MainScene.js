@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import ProgressBar from '../entity/ProgressBar';
+import ProgressBar from '../entity/progressBar';
 import ControlPanel from '../entity/ControlPanel';
 
 export default class MainScene extends Phaser.Scene {
@@ -34,7 +34,7 @@ export default class MainScene extends Phaser.Scene {
       fill: '#ffffff',
     });
 
-    scene.progressBar = new ProgressBar(scene, 30, 50, 2);
+    scene.progressBar = new ProgressBar(scene, 30, 50);
 
     try {
       //SOCKET CONNECTIONS
@@ -162,29 +162,6 @@ export default class MainScene extends Phaser.Scene {
           this.scene.launch('RegexScene', this.state);
         }
       });
-
-      //Progress Bar
-      this.progressText = this.add.text(30, 16, "Tasks Completed", {
-        fontSize: "20px",
-        fill: "#ffffff",
-      });
-
-      this.tasks = [
-        { problem: "beep", solution: "bop", completed: false },
-        { problem: "beep", solution: "bop", completed: false },
-      ];
-      this.tasksCompleted = 0;
-
-      this.progressBar = this.physics.add.staticGroup({
-        classType: ProgressBar,
-      });
-
-      for (var i = 0; i < this.tasks.length; i++) {
-        let x = 100 + i * 130;
-        let y = 50;
-
-        this.progressBar.create(x, y, "progressBar").setScale(0.5);
-      }
 
       //TIMER
       this.initialTime = 120;
