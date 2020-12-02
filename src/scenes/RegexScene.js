@@ -1,9 +1,8 @@
-
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export default class RegexScene extends Phaser.Scene {
   constructor() {
-    super('RegexScene');
+    super("RegexScene");
     this.state = {};
     this.randomTask = {
       problem:
@@ -21,7 +20,7 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.html('taskform', 'assets/text/taskform.html');
+    this.load.html("taskform", "assets/text/taskform.html");
   }
 
   async create() {
@@ -49,10 +48,10 @@ export default class RegexScene extends Phaser.Scene {
       // regex problem prompt
       scene.graphics2.strokeRect(50, 50, 325, 450);
       scene.graphics2.fillRect(50, 50, 325, 450);
-      scene.add.text(53, 35, 'Task Prompt', {
-        fill: '#000000',
-        fontSize: '20px',
-        fontStyle: 'bold',
+      scene.add.text(53, 35, "Task Prompt", {
+        fill: "#000000",
+        fontSize: "20px",
+        fontStyle: "bold",
       });
 
       // if (scene.state.randomTasks) {
@@ -71,47 +70,47 @@ export default class RegexScene extends Phaser.Scene {
       // input area
       scene.graphics2.strokeRect(425, 50, 325, 225);
       scene.graphics2.fillRect(425, 50, 325, 225);
-      scene.add.text(430, 35, 'Input', {
-        fill: '#000000',
-        fontSize: '20px',
-        fontStyle: 'bold',
+      scene.add.text(430, 35, "Input", {
+        fill: "#000000",
+        fontSize: "20px",
+        fontStyle: "bold",
       });
 
       // output area
       scene.graphics2.strokeRect(425, 325, 325, 175);
       scene.graphics2.fillRect(425, 325, 325, 175);
 
-      scene.add.text(430, 310, 'Output', {
-        fill: '#000000',
-        fontSize: '20px',
-        fontStyle: 'bold',
+      scene.add.text(430, 310, "Output", {
+        fill: "#000000",
+        fontSize: "20px",
+        fontStyle: "bold",
       });
 
-      scene.exit = scene.add.text(55, 525, 'Return', {
-        fill: '#000000',
-        fontSize: '30px',
-        fontStyle: 'bold',
+      scene.exit = scene.add.text(55, 525, "Return", {
+        fill: "#000000",
+        fontSize: "30px",
+        fontStyle: "bold",
       });
       scene.exit.setInteractive();
-      scene.exit.on('pointerdown', () => {
+      scene.exit.on("pointerdown", () => {
         scene.inputElement.setVisible(false);
-        scene.scene.sleep('RegexScene');
+        scene.scene.sleep("RegexScene");
       });
 
-      scene.inputElement = scene.add.dom(587, 163).createFromCache('taskform');
-      scene.outputText = scene.add.text(430, 330, 'temp', {
-        fill: '#000000',
-        fontSize: '20px',
-        fontStyle: 'bold',
-        align: 'left',
+      scene.inputElement = scene.add.dom(587, 163).createFromCache("taskform");
+      scene.outputText = scene.add.text(430, 330, "temp", {
+        fill: "#000000",
+        fontSize: "20px",
+        fontStyle: "bold",
+        align: "left",
         wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
       });
       scene.outputText.setVisible(false);
 
-      scene.submitButton = scene.add.text(642, 525, 'Submit', {
-        fill: '#000000',
-        fontSize: '30px',
-        fontStyle: 'bold',
+      scene.submitButton = scene.add.text(642, 525, "Submit", {
+        fill: "#000000",
+        fontSize: "30px",
+        fontStyle: "bold",
       });
       scene.submitButton.setInteractive();
 
@@ -122,11 +121,11 @@ export default class RegexScene extends Phaser.Scene {
           scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
-          scene.isCorrect = scene.add.text(320, 525, 'temp', {
-            fill: '#000000',
-            fontSize: '30px',
-            fontStyle: 'bold',
-            boundsAlignH: 'center',
+          scene.isCorrect = scene.add.text(320, 525, "temp", {
+            fill: "#000000",
+            fontSize: "30px",
+            fontStyle: "bold",
+            boundsAlignH: "center",
           });
           scene.isCorrect.setVisible(false);
           if (scene.output.win) {
@@ -134,7 +133,7 @@ export default class RegexScene extends Phaser.Scene {
             scene.isCorrect.setVisible(true);
             scene.socket.emit("completedTask");
           } else {
-            scene.isCorrect.setText('Incorrect');
+            scene.isCorrect.setText("Incorrect");
             scene.isCorrect.setVisible(true);
           }
         }

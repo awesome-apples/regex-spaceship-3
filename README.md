@@ -15,7 +15,7 @@ Regex Spaceship is a web-based multiplayer game that helps players fine tune the
 
 ### Deployment Link
 
-http://regexspaceship.herokuapp.com/
+http://regex-spaceship.herokuapp.com/
 
 ### Zoom Room
 
