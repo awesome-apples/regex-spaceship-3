@@ -17,9 +17,9 @@ const Task = db.define("task", {
   // difficulty: {
   //   type: Sequelize.STRING,
   // },
-  // category: {
-  //   type: Sequelize.STRING,
-  // },
+  category: {
+    type: Sequelize.STRING,
+  },
   completed: {
     type: Sequelize.BOOLEAN,
     defaultValue: false,

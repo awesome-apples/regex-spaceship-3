@@ -11,6 +11,7 @@ export default class WinScene extends Phaser.Scene {
     this.randomTasks = data.randomTasks;
     this.scores = data.scores;
     this.gameScore = data.gameScore;
+    this.socket = data.socket;
   }
 
   preload() {}
@@ -20,7 +21,7 @@ export default class WinScene extends Phaser.Scene {
 
     try {
       //sockets
-      this.socket = io();
+      // this.socket = io();
 
       scene.popUp = scene.add.graphics();
       scene.textBox = scene.add.graphics();

@@ -24,28 +24,32 @@ async function seed() {
         "Matching repeated characters: Below are a few simple strings that you can match using both the star and plus metacharacters",
       matchArray: ["aaaabcc", "aabbbc", "aacc"],
       skipArray: ["a"],
-      // possibleSolutions: [/aa+b*c+/, /a{2,4}b{0,4}c{1,2}/],
+      possibleSolutions: ["aa+b*c+", "a{2,4}b{0,4}c{1,2}"],
+      category: "one",
     }),
     Task.create({
       problem:
         "Matching repeated characters: Try writing a pattern that matches only the first two spellings by using the curly brace notation above.",
       matchArray: ["wazzzzzup", "wazzzup"],
       skipArray: ["wazup"],
-      // possibleSolutions: [/waz{3,5}up/],
+      possibleSolutions: ["waz{3,5}up"],
+      category: "one",
     }),
     Task.create({
       problem:
         "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
       matchArray: ["1 file found?", "2 files found?", "24 files found?"],
       skipArray: ["No files found."],
-      // possibleSolutions: [/\d+ files? found\?/],
+      // possibleSolutions: ['\d+ files? found\?'],
+      category: "one",
     }),
     Task.create({
       problem:
         "Matching whitespaces: Try writing a pattern that can match each line containing whitespace characters between the number and the content. Notice that the whitespace characters are just like any other character and the special metacharacters like the star and the plus can be used as well.",
       matchArray: ["1.  abc", "2.   abc", "3.       abc"],
       skipArray: ["4.abc"],
-      // possibleSolutions: [/\d\.\s+abc/],
+      // possibleSolutions: ['\d\.\s+abc'],
+      category: "one",
     }),
   ]);
 
