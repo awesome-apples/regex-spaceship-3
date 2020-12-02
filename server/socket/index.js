@@ -24,6 +24,7 @@ module.exports = (io) => {
       team: Math.floor(Math.random() * 2) == 0 ? "red" : "blue",
     };
     numPlayers = Object.keys(players).length;
+    console.log(numPlayers);
     // send the players object to the new player
     socket.emit("currentPlayers", { players, numPlayers });
     // set initial state
@@ -39,6 +40,7 @@ module.exports = (io) => {
       // remove this player from our players object
       delete players[socket.id];
       numPlayers = Object.keys(players).length;
+      console.log(numPlayers);
       // emit a message to all players to remove this player
       io.emit("disconnected", { playerId: socket.id, numPlayers });
     });

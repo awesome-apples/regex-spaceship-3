@@ -105,7 +105,13 @@ export default class MainScene extends Phaser.Scene {
         scene.state.gameScore = gameScore;
         if (scene.state.gameScore >= scene.state.randomTasks.length) {
           scene.scene.stop("RegexScene");
-          scene.scene.launch("WinScene");
+          scene.scene.launch("WinScene", {
+            users: scene.state.users,
+            randomTasks: scene.state.randomTasks,
+            scores: scene.state.scores,
+            gameScore: scene.state.gameScore,
+            socket: scene.socket,
+          });
           scene.finalTime = scene.initialTime;
           this.beginTimer = false;
         }
@@ -133,7 +139,13 @@ export default class MainScene extends Phaser.Scene {
         if (isSleep) {
           this.scene.wake("RegexScene");
         } else {
-          this.scene.launch("RegexScene");
+          this.scene.launch("RegexScene", {
+            users: this.state.users,
+            randomTasks: this.state.randomTasks,
+            scores: this.state.scores,
+            gameScore: this.state.gameScore,
+            socket: this.socket,
+          });
         }
       });
 

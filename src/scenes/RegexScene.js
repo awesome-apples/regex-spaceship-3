@@ -9,6 +9,8 @@ export default class RegexScene extends Phaser.Scene {
         "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
       matchArray: ["1 file found?", "2 files found?", "24 files found?"],
       skipArray: ["No files found."],
+      completed: false,
+      category: "one",
     };
   }
 
@@ -32,7 +34,6 @@ export default class RegexScene extends Phaser.Scene {
 
     try {
       //sockets
-      // this.socket = io();
 
       scene.graphics = scene.add.graphics();
       scene.graphics2 = scene.add.graphics();
@@ -140,7 +141,11 @@ export default class RegexScene extends Phaser.Scene {
       scene.submitButton.on("pointerdown", () => {
         const inputText = scene.inputElement.getChildByName("code");
         if (inputText.value !== "") {
-          scene.output = scene.handleInput(inputText.value, scene.randomTask);
+          scene.output = scene.handleInput(
+            scene,
+            inputText.value,
+            scene.randomTask
+          );
           scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
@@ -166,9 +171,18 @@ export default class RegexScene extends Phaser.Scene {
     }
   }
 
-  handleInput(input, randomTask) {
+  handleInput(scene, input, randomTask) {
     const regex = new RegExp(input);
+    let result = false;
+    if (randomTask.category === "one") {
+      result = scene.validatorOne(regex, randomTask);
+    } else if (randomTask.category === "two") {
+      result = scene.validatorTwo(regex, randomTask);
+    }
+    return { text: `expected: potato\nyours: ${input}`, win: result };
+  }
 
+  validatorOne(regex, randomTask) {
     const matchResult = randomTask.matchArray.every((string) => {
       if (string.match(regex) === null) {
         return false;
@@ -184,6 +198,12 @@ export default class RegexScene extends Phaser.Scene {
       }
     });
     const result = matchResult === true && skipResult === true;
-    return { text: `expected: potato\nyours: ${input}`, win: result };
+
+    return result;
+  }
+  validatorTwo(regex, randomTask) {
+    //waiting for category two tasks and algorithm
+    const result = false;
+    return result;
   }
 }
