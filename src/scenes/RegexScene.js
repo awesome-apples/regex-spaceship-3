@@ -17,6 +17,7 @@ export default class RegexScene extends Phaser.Scene {
     this.randomTasks = data.randomTasks;
     this.scores = data.scores;
     this.gameScore = data.gameScore;
+    this.socket = data.socket;
   }
 
   preload() {
@@ -26,9 +27,12 @@ export default class RegexScene extends Phaser.Scene {
   async create() {
     const scene = this;
 
+    //get an emition of the persons random task from their socket
+    //assign random task to this.randomTask
+
     try {
       //sockets
-      this.socket = io();
+      // this.socket = io();
 
       scene.graphics = scene.add.graphics();
       scene.graphics2 = scene.add.graphics();
@@ -54,18 +58,26 @@ export default class RegexScene extends Phaser.Scene {
         fontStyle: "bold",
       });
 
-      // if (scene.state.randomTasks) {
-      //   scene.task1 = scene.randomTasks[0].problem;
-      //   scene.task2 = scene.randomTasks[1].problem;
-
-      //   scene.add.text(55, 55, scene.task1, {
-      //     fill: "#000000",
-      //     fontSize: "20px",
-      //     fontStyle: "bold",
-      //     align: "left",
-      //     wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
-      //   });
-      // }
+      scene.add.text(
+        55,
+        55,
+        `${scene.randomTask.problem}
+        Matches: ${scene.randomTask.matchArray.map(
+          (string) => `
+        ${string}`
+        )}
+        Skips:${scene.randomTask.skipArray.map(
+          (string) => `
+        ${string}`
+        )}`,
+        {
+          fill: "#000000",
+          fontSize: "20px",
+          fontStyle: "bold",
+          align: "left",
+          wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
+        }
+      );
 
       // input area
       scene.graphics2.strokeRect(425, 50, 325, 225);
@@ -93,11 +105,22 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.exit.setInteractive();
       scene.exit.on("pointerdown", () => {
-        scene.inputElement.setVisible(false);
+        // scene.inputElement.sleep();
+        // scene.inputElement.setVisible(false);
         scene.scene.sleep("RegexScene");
       });
 
       scene.inputElement = scene.add.dom(587, 163).createFromCache("taskform");
+
+      // this.add.dom().createElement('div', 'background-color: lime; width: 220px; height: 100px; font: 48px Arial', 'Phaser');
+
+      // if (scene.inputElement) {
+      //   scene.inputElement.setVisible(true);
+      // } else {
+      //   scene.inputElement = scene.add
+      //     .dom(587, 163)
+      //     .createFromCache("taskform");
+      // }
       scene.outputText = scene.add.text(430, 330, "temp", {
         fill: "#000000",
         fontSize: "20px",

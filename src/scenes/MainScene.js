@@ -110,7 +110,6 @@ export default class MainScene extends Phaser.Scene {
           this.beginTimer = false;
         }
       });
-
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
       this.controlPanelLeft = new ControlPanel(
         this,
@@ -145,7 +144,13 @@ export default class MainScene extends Phaser.Scene {
         if (isSleep) {
           this.scene.wake("RegexScene");
         } else {
-          this.scene.launch("RegexScene", this.state);
+          this.scene.launch("RegexScene", {
+            users: this.state.users,
+            randomTasks: this.state.randomTasks,
+            scores: this.state.scores,
+            gameScore: this.state.gameScore,
+            socket: this.socket,
+          });
         }
       });
 
