@@ -142,7 +142,7 @@ export default class MainScene extends Phaser.Scene {
       });
 
       // click on control panels and Regex Scene will launch
-      this.controlPanelLeft.setInteractive();
+
       this.controlPanelLeft.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           users: this.state.users,
@@ -155,7 +155,6 @@ export default class MainScene extends Phaser.Scene {
         scene.socket.emit("disablePanel", "left");
       });
 
-      this.controlPanelRight.setInteractive();
       this.controlPanelRight.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           users: this.state.users,
@@ -244,6 +243,9 @@ export default class MainScene extends Phaser.Scene {
       this.startText.on("pointerdown", () => {
         this.startButton();
       });
+
+      this.controlPanelLeft.setInteractive();
+      this.controlPanelRight.setInteractive();
     }
 
     if (this.beginTimer) {
