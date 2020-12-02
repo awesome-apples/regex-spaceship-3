@@ -137,11 +137,19 @@ export default class MainScene extends Phaser.Scene {
         var isSleep = this.scene.isSleeping("RegexScene");
 
         if (isSleep) {
-          this.scene.wake("RegexScene");
+          this.scene.wake("RegexScene", {
+            users: this.state.users,
+            randomTasks: this.state.randomTasks,
+            randomTask: this.state.randomTasks[0],
+            scores: this.state.scores,
+            gameScore: this.state.gameScore,
+            socket: this.socket,
+          });
         } else {
           this.scene.launch("RegexScene", {
             users: this.state.users,
             randomTasks: this.state.randomTasks,
+            randomTask: this.state.randomTasks[0],
             scores: this.state.scores,
             gameScore: this.state.gameScore,
             socket: this.socket,
@@ -154,11 +162,19 @@ export default class MainScene extends Phaser.Scene {
         var isSleep = this.scene.isSleeping("RegexScene");
 
         if (isSleep) {
-          this.scene.wake("RegexScene");
+          this.scene.wake("RegexScene", {
+            users: this.state.users,
+            randomTasks: this.state.randomTasks,
+            randomTask: this.state.randomTasks[1],
+            scores: this.state.scores,
+            gameScore: this.state.gameScore,
+            socket: this.socket,
+          });
         } else {
           this.scene.launch("RegexScene", {
             users: this.state.users,
             randomTasks: this.state.randomTasks,
+            randomTask: this.state.randomTasks[1],
             scores: this.state.scores,
             gameScore: this.state.gameScore,
             socket: this.socket,
