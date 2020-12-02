@@ -47,13 +47,13 @@ export default class RegexScene extends Phaser.Scene {
       scene.graphics2.fillStyle(0xffffff, 1);
 
       // popup window
-      scene.graphics.strokeRect(25, 25, 750, 550);
-      scene.graphics.fillRect(25, 25, 750, 550);
+      scene.graphics.strokeRect(25, 75, 750, 500);
+      scene.graphics.fillRect(25, 75, 750, 500);
 
       // regex problem prompt
-      scene.graphics2.strokeRect(50, 50, 325, 450);
-      scene.graphics2.fillRect(50, 50, 325, 450);
-      scene.add.text(53, 35, "Task Prompt", {
+      scene.graphics2.strokeRect(50, 100, 325, 425);
+      scene.graphics2.fillRect(50, 100, 325, 425);
+      scene.add.text(53, 85, "Task Prompt", {
         fill: "#000000",
         fontSize: "20px",
         fontStyle: "bold",
@@ -61,7 +61,7 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.add.text(
         55,
-        55,
+        105,
         `${scene.randomTask.problem}
         Matches: ${scene.randomTask.matchArray.map(
           (string) => `
@@ -79,50 +79,38 @@ export default class RegexScene extends Phaser.Scene {
           wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
         }
       );
-
+      
       // input area
-      scene.graphics2.strokeRect(425, 50, 325, 225);
-      scene.graphics2.fillRect(425, 50, 325, 225);
-      scene.add.text(430, 35, "Input", {
+      scene.graphics2.strokeRect(425, 100, 325, 200);
+      scene.graphics2.fillRect(425, 100, 325, 200);
+      scene.add.text(430, 85, "Input", {
         fill: "#000000",
         fontSize: "20px",
         fontStyle: "bold",
       });
+      scene.inputElement = scene.add.dom(587, 203).createFromCache("taskform");
 
       // output area
-      scene.graphics2.strokeRect(425, 325, 325, 175);
-      scene.graphics2.fillRect(425, 325, 325, 175);
+      scene.graphics2.strokeRect(425, 350, 325, 175);
+      scene.graphics2.fillRect(425, 350, 325, 175);
 
-      scene.add.text(430, 310, "Output", {
+      scene.add.text(430, 335, "Output", {
         fill: "#000000",
         fontSize: "20px",
         fontStyle: "bold",
       });
 
-      scene.exit = scene.add.text(55, 525, "Return", {
+      scene.exit = scene.add.text(55, 540, "Return", {
         fill: "#000000",
         fontSize: "30px",
         fontStyle: "bold",
       });
       scene.exit.setInteractive();
       scene.exit.on("pointerdown", () => {
-        // scene.inputElement.sleep();
-        // scene.inputElement.setVisible(false);
         scene.scene.sleep("RegexScene");
       });
 
-      scene.inputElement = scene.add.dom(587, 163).createFromCache("taskform");
-
-      // this.add.dom().createElement('div', 'background-color: lime; width: 220px; height: 100px; font: 48px Arial', 'Phaser');
-
-      // if (scene.inputElement) {
-      //   scene.inputElement.setVisible(true);
-      // } else {
-      //   scene.inputElement = scene.add
-      //     .dom(587, 163)
-      //     .createFromCache("taskform");
-      // }
-      scene.outputText = scene.add.text(430, 330, "temp", {
+      scene.outputText = scene.add.text(430, 350, "temp", {
         fill: "#000000",
         fontSize: "20px",
         fontStyle: "bold",
@@ -131,7 +119,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.outputText.setVisible(false);
 
-      scene.submitButton = scene.add.text(642, 525, "Submit", {
+      scene.submitButton = scene.add.text(642, 540, "Submit", {
         fill: "#000000",
         fontSize: "30px",
         fontStyle: "bold",
@@ -149,20 +137,25 @@ export default class RegexScene extends Phaser.Scene {
           scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
-          scene.isCorrect = scene.add.text(320, 525, "temp", {
-            fill: "#000000",
+          scene.isCorrect = scene.add.text(320, 540, "Correct", {
+            fill: "#00ff00",
+            fontSize: "30px",
+            fontStyle: "bold",
+            boundsAlignH: "center",
+          });
+          scene.isIncorrect = scene.add.text(320, 540, "Incorrect", {
+            fill: "#ff0000",
             fontSize: "30px",
             fontStyle: "bold",
             boundsAlignH: "center",
           });
           scene.isCorrect.setVisible(false);
+          scene.isIncorrect.setVisible(false);
           if (scene.output.win) {
-            scene.isCorrect.setText("Correct");
             scene.isCorrect.setVisible(true);
             scene.socket.emit("completedTask");
           } else {
-            scene.isCorrect.setText("Incorrect");
-            scene.isCorrect.setVisible(true);
+            scene.isIncorrect.setVisible(true);
           }
         }
       });
