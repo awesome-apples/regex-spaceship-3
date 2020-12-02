@@ -53,6 +53,7 @@ export default class MainScene extends Phaser.Scene {
 
       this.socket.on("updateState", function (serverState) {
         scene.state = serverState;
+        scene.progressBar.changeTaskAmount(scene.state.randomTasks.length);
       });
 
       this.socket.on("currentPlayers", function (arg) {
@@ -102,29 +103,13 @@ export default class MainScene extends Phaser.Scene {
         }
         scene.progressBar.increase(gameScore - scene.state.gameScore);
         scene.state.gameScore = gameScore;
-        if (scene.state.gameScore >= 2) {
+        if (scene.state.gameScore >= scene.state.randomTasks.length) {
+          scene.scene.stop("RegexScene");
           scene.scene.launch("WinScene");
+          scene.finalTime = scene.initialTime;
+          this.beginTimer = false;
         }
       });
-
-      this.socket.on("starLocation", function (starLocation) {
-        if (scene.star) scene.star.destroy();
-        scene.star = scene.physics.add.image(
-          starLocation.x,
-          starLocation.y,
-          "star"
-        );
-        scene.physics.add.overlap(
-          scene.astronaut,
-          scene.star,
-          function () {
-            this.socket.emit("starCollected");
-          },
-          null,
-          scene
-        );
-      });
-
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
       this.controlPanelLeft = new ControlPanel(
         this,
@@ -300,6 +285,7 @@ export default class MainScene extends Phaser.Scene {
       this.beginTimer = currentTime;
       if (this.initialTime === 0) {
         this.beginTimer = false;
+        this.scene.stop("RegexScene");
         this.scene.launch("LoseScene");
       }
     }

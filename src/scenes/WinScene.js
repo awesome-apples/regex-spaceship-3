@@ -1,8 +1,8 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export default class WinScene extends Phaser.Scene {
   constructor() {
-    super('WinScene');
+    super("WinScene");
     this.state = {};
   }
 
@@ -40,10 +40,10 @@ export default class WinScene extends Phaser.Scene {
       // input area
       scene.textBox.strokeRect(240, 245, 320, 110);
       scene.textBox.fillRect(240, 245, 320, 110);
-      scene.add.text(292, 280, 'YOU WIN', {
-        fill: '#00ff00',
-        fontSize: '40px',
-        fontStyle: 'bold',
+      scene.add.text(310, 280, "YOU WIN", {
+        fill: "#00ff00",
+        fontSize: "40px",
+        fontStyle: "bold",
       });
     } catch (err) {
       console.error(err);

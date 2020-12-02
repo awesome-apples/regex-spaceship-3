@@ -121,7 +121,6 @@ export default class RegexScene extends Phaser.Scene {
       //     .dom(587, 163)
       //     .createFromCache("taskform");
       // }
-
       scene.outputText = scene.add.text(430, 330, "temp", {
         fill: "#000000",
         fontSize: "20px",
