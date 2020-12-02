@@ -76,5 +76,8 @@ module.exports = (io) => {
         console.log("error starting game", err);
       }
     });
+    socket.on("disablePanel", function (controlPanel) {
+      socket.broadcast.emit("setInactive", controlPanel);
+    });
   });
 };

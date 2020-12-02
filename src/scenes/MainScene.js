@@ -131,55 +131,41 @@ export default class MainScene extends Phaser.Scene {
         "controlPanelRight"
       );
 
+      this.socket.on("setInactive", function (controlPanel) {
+        if (controlPanel === "left") {
+          scene.controlPanelLeft.disableInteractive();
+          scene.controlPanelLeft.setTint(0xd86969);
+        } else if (controlPanel === "right") {
+          scene.controlPanelRight.disableInteractive();
+          scene.controlPanelRight.setTint(0xd86969);
+        }
+      });
+
       // click on control panels and Regex Scene will launch
       this.controlPanelLeft.setInteractive();
       this.controlPanelLeft.on("pointerdown", () => {
-        var isSleep = this.scene.isSleeping("RegexScene");
-
-        if (isSleep) {
-          this.scene.wake("RegexScene", {
-            users: this.state.users,
-            randomTasks: this.state.randomTasks,
-            randomTask: this.state.randomTasks[0],
-            scores: this.state.scores,
-            gameScore: this.state.gameScore,
-            socket: this.socket,
-          });
-        } else {
-          this.scene.launch("RegexScene", {
-            users: this.state.users,
-            randomTasks: this.state.randomTasks,
-            randomTask: this.state.randomTasks[0],
-            scores: this.state.scores,
-            gameScore: this.state.gameScore,
-            socket: this.socket,
-          });
-        }
+        this.scene.launch("RegexScene", {
+          users: this.state.users,
+          randomTasks: this.state.randomTasks,
+          randomTask: this.state.randomTasks[0],
+          scores: this.state.scores,
+          gameScore: this.state.gameScore,
+          socket: this.socket,
+        });
+        scene.socket.emit("disablePanel", "left");
       });
 
       this.controlPanelRight.setInteractive();
       this.controlPanelRight.on("pointerdown", () => {
-        var isSleep = this.scene.isSleeping("RegexScene");
-
-        if (isSleep) {
-          this.scene.wake("RegexScene", {
-            users: this.state.users,
-            randomTasks: this.state.randomTasks,
-            randomTask: this.state.randomTasks[1],
-            scores: this.state.scores,
-            gameScore: this.state.gameScore,
-            socket: this.socket,
-          });
-        } else {
-          this.scene.launch("RegexScene", {
-            users: this.state.users,
-            randomTasks: this.state.randomTasks,
-            randomTask: this.state.randomTasks[1],
-            scores: this.state.scores,
-            gameScore: this.state.gameScore,
-            socket: this.socket,
-          });
-        }
+        this.scene.launch("RegexScene", {
+          users: this.state.users,
+          randomTasks: this.state.randomTasks,
+          randomTask: this.state.randomTasks[1],
+          scores: this.state.scores,
+          gameScore: this.state.gameScore,
+          socket: this.socket,
+        });
+        scene.socket.emit("disablePanel", "right");
       });
 
       //TIMER

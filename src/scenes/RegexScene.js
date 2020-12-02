@@ -109,9 +109,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.exit.setInteractive();
       scene.exit.on("pointerdown", () => {
-        // scene.inputElement.sleep();
-        // scene.inputElement.setVisible(false);
-        scene.scene.sleep("RegexScene");
+        scene.scene.stop("RegexScene");
       });
 
       scene.inputElement = scene.add.dom(587, 163).createFromCache("taskform");
