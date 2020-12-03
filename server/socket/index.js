@@ -10,7 +10,6 @@ const gameRooms = {
   //     numPlayers: 0
   // }
 };
-
 //write join room
 
 //hash table
@@ -25,8 +24,7 @@ module.exports = (io) => {
     );
     socket.on('joinRoom', (arg) => {
       const { roomKey, socket } = arg;
-      socket.join(roomKey);
-      const roomInfo = (gameRooms[roomKey] = {});
+      const roomInfo = gameRooms[roomKey];
       console.log(roomInfo.numPlayers);
       roomInfo.players[socket.id] = {
         rotation: 0,
@@ -119,16 +117,25 @@ module.exports = (io) => {
 
     // get a random code for the room
     socket.on('getRoomCode', async function () {
-      try {
-        let code = '';
-        let chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
-        for (let i = 0; i < 5; i++) {
-          code += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        console.log("here's a random code!: ", code);
-      } catch (err) {
-        console.log('there was an error getting a room code', err);
-      }
+      let code = codeGenerator();
+      Object.keys(gameRooms).includes(code) ? (code = codeGenerator()) : code;
+      gameRooms[code] = {};
+      socket.join(code);
+      socket.emit('roomCreated', code);
+    });
+    socket.on('isKeyValid', function (input) {
+      Object.keys(gameRooms).includes(input)
+        ? socket.emit('keyIsValid')
+        : socket.emit('keyNotValid');
     });
   });
 };
+
+function codeGenerator() {
+  let code = '';
+  let chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+  for (let i = 0; i < 5; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}

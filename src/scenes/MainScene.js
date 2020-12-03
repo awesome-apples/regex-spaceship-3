@@ -17,6 +17,10 @@ export default class MainScene extends Phaser.Scene {
     this.beginTimer = false;
   }
 
+  init(data) {
+    this.socket = data.socket;
+  }
+
   preload() {
     this.load.spritesheet('astronaut', 'assets/spritesheets/astronaut3.png', {
       frameWidth: 29,
@@ -30,7 +34,6 @@ export default class MainScene extends Phaser.Scene {
 
   async create() {
     const scene = this;
-
     this.add.image(0, 0, 'mainroom').setOrigin(0);
 
     //PROGRESS BAR

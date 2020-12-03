@@ -18,6 +18,7 @@ import MainScene from './scenes/MainScene';
 import RegexScene from './scenes/RegexScene';
 import WinScene from './scenes/WinScene';
 import LoseScene from './scenes/LoseScene';
+import WaitingRoom from './scenes/WaitingRoom';
 import config from './config/config';
 
 class Game extends Phaser.Game {
@@ -30,10 +31,11 @@ class Game extends Phaser.Game {
     this.scene.add('RegexScene', RegexScene);
     this.scene.add('WinScene', WinScene);
     this.scene.add('LoseScene', LoseScene);
+    this.scene.add('WaitingRoom', WaitingRoom);
 
     // Start the game with the mainscene
     // << START GAME WITH MAIN SCENE HERE >>
-    this.scene.start('MainScene');
+    this.scene.start('WaitingRoom');
   }
 }
 // Create new instance of game
