@@ -119,6 +119,21 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.outputText.setVisible(false);
 
+      scene.isCorrect = scene.add.text(320, 540, "Correct", {
+        fill: "#00ff00",
+        fontSize: "30px",
+        fontStyle: "bold",
+        boundsAlignH: "center",
+      });
+      scene.isIncorrect = scene.add.text(320, 540, "Incorrect", {
+        fill: "#ff0000",
+        fontSize: "30px",
+        fontStyle: "bold",
+        boundsAlignH: "center",
+      });
+      scene.isCorrect.setVisible(false);
+      scene.isIncorrect.setVisible(false);
+
       scene.submitButton = scene.add.text(642, 540, "Submit", {
         fill: "#000000",
         fontSize: "30px",
@@ -128,6 +143,9 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.submitButton.on("pointerdown", () => {
         const inputText = scene.inputElement.getChildByName("code");
+        scene.isCorrect.setVisible(false);
+        scene.isIncorrect.setVisible(false);
+
         if (inputText.value !== "") {
           scene.output = scene.handleInput(
             scene,
@@ -137,20 +155,6 @@ export default class RegexScene extends Phaser.Scene {
           scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
-          scene.isCorrect = scene.add.text(320, 540, "Correct", {
-            fill: "#00ff00",
-            fontSize: "30px",
-            fontStyle: "bold",
-            boundsAlignH: "center",
-          });
-          scene.isIncorrect = scene.add.text(320, 540, "Incorrect", {
-            fill: "#ff0000",
-            fontSize: "30px",
-            fontStyle: "bold",
-            boundsAlignH: "center",
-          });
-          scene.isCorrect.setVisible(false);
-          scene.isIncorrect.setVisible(false);
           if (scene.output.win) {
             scene.isCorrect.setVisible(true);
             scene.socket.emit("completedTask");
