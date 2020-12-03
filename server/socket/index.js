@@ -3,7 +3,7 @@ const { Task } = require("../db/models");
 let serverState = {
   users: [],
   randomTasks: [],
-  scores: [],
+  scores: {},
   gameScore: 0,
 };
 
@@ -23,6 +23,10 @@ module.exports = (io) => {
       playerId: socket.id,
       team: Math.floor(Math.random() * 2) == 0 ? "red" : "blue",
     };
+
+    //add to player to scores obj
+    serverState.scores[socket.id] = 0;
+
     numPlayers = Object.keys(players).length;
     console.log(numPlayers);
     // send the players object to the new player
@@ -39,6 +43,8 @@ module.exports = (io) => {
       console.log("user disconnected: ", socket.id);
       // remove this player from our players object
       delete players[socket.id];
+      //remove player from scores obj
+      delete serverState.scores[socket.id];
       numPlayers = Object.keys(players).length;
       console.log(numPlayers);
       // emit a message to all players to remove this player
@@ -52,12 +58,26 @@ module.exports = (io) => {
       // emit a message to all players about the player that moved
       socket.broadcast.emit("playerMoved", players[socket.id]);
     });
+
     socket.on("completedTask", function (completedTaskId) {
       serverState.gameScore++;
-      io.emit("scoreUpdate", {
+      io.emit("progressUpdate", {
         gameScore: serverState.gameScore,
         completedTaskId,
       });
+    });
+
+    //update score
+    socket.on("scoreUpdate", function (scoreObj) {
+      serverState.scores[socket.id] += scoreObj.points;
+      if (scoreObj.timeBonus) {
+        serverState.scores[socket.id] += scoreObj.timeBonus;
+      }
+      io.emit("updateLeaderboard", serverState.scores);
+    });
+
+    socket.on("sendTime", function (time) {
+      socket.emit("sendTimeToRegex", time);
     });
 
     socket.on("startGame", async function () {
@@ -78,14 +98,14 @@ module.exports = (io) => {
     });
 
     // get a random code for the room
-    socket.on("getRoomCode", async function() {
+    socket.on("getRoomCode", async function () {
       try {
-        let code = '';
-        let chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
-        for (let i=0; i<5; i++) {
+        let code = "";
+        let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+        for (let i = 0; i < 5; i++) {
           code += chars.charAt(Math.floor(Math.random() * chars.length));
         }
-        console.log("here's a random code!: ", code)
+        console.log("here's a random code!: ", code);
       } catch (err) {
         console.log("there was an error getting a room code", err);
       }

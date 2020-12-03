@@ -64,7 +64,7 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.add.text(
         55,
-        55,
+        80,
         `${scene.randomTask.problem}
         Matches: ${scene.randomTask.matchArray.map(
           (string) => `
@@ -82,7 +82,7 @@ export default class RegexScene extends Phaser.Scene {
           wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
         }
       );
-      
+
       // input area
       scene.graphics2.strokeRect(425, 100, 325, 200);
       scene.graphics2.fillRect(425, 100, 325, 200);
@@ -149,6 +149,12 @@ export default class RegexScene extends Phaser.Scene {
         scene.isCorrect.setVisible(false);
         scene.isIncorrect.setVisible(false);
 
+        scene.socket.on("sendTimeToRegex", function (time) {
+          scene.timeBonus = time;
+        });
+        console.log("scene time bonus", scene.timeBonus);
+        console.log("this time bonus", this.timeBonus);
+
         if (inputText.value !== "") {
           scene.output = scene.handleInput(
             scene,
@@ -160,9 +166,14 @@ export default class RegexScene extends Phaser.Scene {
 
           if (scene.output.win) {
             scene.isCorrect.setVisible(true);
+            scene.socket.emit("scoreUpdate", {
+              points: 50,
+              timeBonus: scene.timeBonus,
+            });
             scene.socket.emit("completedTask");
           } else {
             scene.isIncorrect.setVisible(true);
+            scene.socket.emit("scoreUpdate", { points: -5 });
           }
         }
       });
