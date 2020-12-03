@@ -4,19 +4,20 @@ export default class RegexScene extends Phaser.Scene {
   constructor() {
     super("RegexScene");
     this.state = {};
-    this.randomTask = {
-      problem:
-        "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
-      matchArray: ["1 file found?", "2 files found?", "24 files found?"],
-      skipArray: ["No files found."],
-      completed: false,
-      category: "one",
-    };
+    // this.randomTask = {
+    //   problem:
+    //     "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
+    //   matchArray: ["1 file found?", "2 files found?", "24 files found?"],
+    //   skipArray: ["No files found."],
+    //   completed: false,
+    //   category: "one",
+    // };
   }
 
   init(data) {
     this.users = data.users;
     this.randomTasks = data.randomTasks;
+    this.randomTask = data.randomTask;
     this.scores = data.scores;
     this.gameScore = data.gameScore;
     this.socket = data.socket;
@@ -29,6 +30,8 @@ export default class RegexScene extends Phaser.Scene {
   async create() {
     const scene = this;
 
+    console.log("random tasks altogether in this scene", this.randomTasks);
+    console.log("random task in this scene !!", this.randomTask);
     //get an emition of the persons random task from their socket
     //assign random task to this.randomTask
 
@@ -113,7 +116,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.exit.setInteractive();
       scene.exit.on("pointerdown", () => {
-        scene.scene.sleep("RegexScene");
+        scene.scene.stop("RegexScene");
       });
 
       scene.outputText = scene.add.text(430, 350, "temp", {

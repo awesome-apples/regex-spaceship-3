@@ -51,6 +51,14 @@ async function seed() {
       // possibleSolutions: ['\d\.\s+abc'],
       category: "one",
     }),
+    Task.create({
+      problem:
+        "Go ahead and try writing a conditional pattern that matches only the lines with small fuzzy creatures below.",
+      matchArray: ["I love cats", "I love dogs"],
+      skipArray: ["I love logs", "I love cogs"],
+      possibleSolutions: ["I love (cats|dogs)"],
+      category: "one",
+    }),
   ]);
 
   console.log(`seeded ${tasks.length} tasks`);
