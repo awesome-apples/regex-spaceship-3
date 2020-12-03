@@ -59,18 +59,24 @@ export default class RegexScene extends Phaser.Scene {
         fontStyle: "bold",
       });
 
+      scene.promptArr = [
+        scene.randomTask.problem,
+        '\n\n',
+        'Matches:',
+        '\n',
+        scene.randomTask.matchArray,
+        '\n\n',
+        'Skips:',
+        '\n',
+        scene.randomTask.skipArray,
+      ]
+
+      scene.promptArr2 = [scene.randomTask.problem, '\n\n', 'hello again', '\n\n', 'hello once more']
+
       scene.add.text(
         55,
         105,
-        `${scene.randomTask.problem}
-        Matches: ${scene.randomTask.matchArray.map(
-          (string) => `
-        ${string}`
-        )}
-        Skips:${scene.randomTask.skipArray.map(
-          (string) => `
-        ${string}`
-        )}`,
+        scene.promptArr2,
         {
           fill: "#000000",
           fontSize: "20px",
