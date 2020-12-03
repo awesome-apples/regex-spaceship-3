@@ -76,6 +76,21 @@ module.exports = (io) => {
         console.log("error starting game", err);
       }
     });
+
+    // get a random code for the room
+    socket.on("getRoomCode", async function() {
+      try {
+        let code = '';
+        let chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ0123456789';
+        for (let i=0; i<5; i++) {
+          code += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        console.log("here's a random code!: ", code)
+      } catch (err) {
+        console.log("there was an error getting a room code", err);
+      }
+    });
+
     socket.on("disablePanel", function (controlPanel) {
       socket.broadcast.emit("setInactive", controlPanel);
     });
