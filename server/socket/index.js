@@ -76,5 +76,15 @@ module.exports = (io) => {
         console.log("error starting game", err);
       }
     });
+
+    // get a random code for the room
+    // socket.on("getRoomCode", async function() {
+    //   try {
+    //     const code = 0;
+    //   } catch (err) {
+    //     console.log("there was an error getting a room code", err);
+    //   }
+    // });
+
   });
 };
