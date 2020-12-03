@@ -90,5 +90,9 @@ module.exports = (io) => {
         console.log("there was an error getting a room code", err);
       }
     });
+
+    socket.on("disablePanel", function (controlPanel) {
+      socket.broadcast.emit("setInactive", controlPanel);
+    });
   });
 };

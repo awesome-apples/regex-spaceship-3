@@ -4,19 +4,20 @@ export default class RegexScene extends Phaser.Scene {
   constructor() {
     super("RegexScene");
     this.state = {};
-    this.randomTask = {
-      problem:
-        "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
-      matchArray: ["1 file found?", "2 files found?", "24 files found?"],
-      skipArray: ["No files found."],
-      completed: false,
-      category: "one",
-    };
+    // this.randomTask = {
+    //   problem:
+    //     "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
+    //   matchArray: ["1 file found?", "2 files found?", "24 files found?"],
+    //   skipArray: ["No files found."],
+    //   completed: false,
+    //   category: "one",
+    // };
   }
 
   init(data) {
     this.users = data.users;
     this.randomTasks = data.randomTasks;
+    this.randomTask = data.randomTask;
     this.scores = data.scores;
     this.gameScore = data.gameScore;
     this.socket = data.socket;
@@ -29,6 +30,8 @@ export default class RegexScene extends Phaser.Scene {
   async create() {
     const scene = this;
 
+    console.log("random tasks altogether in this scene", this.randomTasks);
+    console.log("random task in this scene !!", this.randomTask);
     //get an emition of the persons random task from their socket
     //assign random task to this.randomTask
 
@@ -61,7 +64,7 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.add.text(
         55,
-        105,
+        55,
         `${scene.randomTask.problem}
         Matches: ${scene.randomTask.matchArray.map(
           (string) => `
@@ -107,7 +110,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.exit.setInteractive();
       scene.exit.on("pointerdown", () => {
-        scene.scene.sleep("RegexScene");
+        scene.scene.stop("RegexScene");
       });
 
       scene.outputText = scene.add.text(430, 350, "temp", {
@@ -119,6 +122,21 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.outputText.setVisible(false);
 
+      scene.isCorrect = scene.add.text(320, 540, "Correct", {
+        fill: "#00ff00",
+        fontSize: "30px",
+        fontStyle: "bold",
+        boundsAlignH: "center",
+      });
+      scene.isIncorrect = scene.add.text(320, 540, "Incorrect", {
+        fill: "#ff0000",
+        fontSize: "30px",
+        fontStyle: "bold",
+        boundsAlignH: "center",
+      });
+      scene.isCorrect.setVisible(false);
+      scene.isIncorrect.setVisible(false);
+
       scene.submitButton = scene.add.text(642, 540, "Submit", {
         fill: "#000000",
         fontSize: "30px",
@@ -128,6 +146,9 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.submitButton.on("pointerdown", () => {
         const inputText = scene.inputElement.getChildByName("code");
+        scene.isCorrect.setVisible(false);
+        scene.isIncorrect.setVisible(false);
+
         if (inputText.value !== "") {
           scene.output = scene.handleInput(
             scene,
@@ -137,20 +158,6 @@ export default class RegexScene extends Phaser.Scene {
           scene.outputText.setText(scene.output.text);
           scene.outputText.setVisible(true);
 
-          scene.isCorrect = scene.add.text(320, 540, "Correct", {
-            fill: "#00ff00",
-            fontSize: "30px",
-            fontStyle: "bold",
-            boundsAlignH: "center",
-          });
-          scene.isIncorrect = scene.add.text(320, 540, "Incorrect", {
-            fill: "#ff0000",
-            fontSize: "30px",
-            fontStyle: "bold",
-            boundsAlignH: "center",
-          });
-          scene.isCorrect.setVisible(false);
-          scene.isIncorrect.setVisible(false);
           if (scene.output.win) {
             scene.isCorrect.setVisible(true);
             scene.socket.emit("completedTask");
