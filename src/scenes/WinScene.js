@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import ScoreBoard from "../entity/ScoreBoard";
 
 export default class WinScene extends Phaser.Scene {
   constructor() {
@@ -7,11 +8,11 @@ export default class WinScene extends Phaser.Scene {
   }
 
   init(data) {
-    this.users = data.users;
-    this.randomTasks = data.randomTasks;
-    this.scores = data.scores;
-    this.gameScore = data.gameScore;
-    this.socket = data.socket;
+    // this.users = data.users;
+    // this.randomTasks = data.randomTasks;
+    // this.scores = data.scores;
+    // this.gameScore = data.gameScore;
+    // this.socket = data.socket;
   }
 
   preload() {}
@@ -46,6 +47,9 @@ export default class WinScene extends Phaser.Scene {
         fontSize: "40px",
         fontStyle: "bold",
       });
+
+      const scoreBoard = new ScoreBoard(scene, 500, 70, 250, 300, '#000000');
+
     } catch (err) {
       console.error(err);
     }

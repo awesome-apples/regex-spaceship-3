@@ -1,14 +1,9 @@
 import "phaser";
 
-export default class ScoreBoard extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, scores) {
-    super(scene, x, y, scores);
-
-    this.scene = scene;
+export default class ScoreBoard extends Phaser.GameObjects.Rectangle {
+  constructor(scene, x, y, width, height, fillColor) {
+    super(scene, x, y, width, height, fillColor);
     this.scene.add.existing(this);
-
-    this.x = 240;
-    this.y = 100;
   }
 
   preload() {}
@@ -23,16 +18,16 @@ export default class ScoreBoard extends Phaser.Physics.Arcade.Sprite {
     this.board.fillRect(this.x, this.y, 250, 200);
 
     //add scores to board
-    let yPos = this.y - 10;
-    scores.forEach((score) => addScore(score, yPos));
+    // let yPos = this.y - 10;
+    // scores.forEach((score) => addScore(score, yPos));
   }
 
-  addScore(score, yPos) {
-    this.add.text(this.x + 20, yPos, `${score.userId}   ${score.points}`, {
-      fill: "#0000ff",
-      fontSize: "8px",
-    });
+  // addScore(score, yPos) {
+  //   this.add.text(this.x + 20, yPos, `${score.userId}   ${score.points}`, {
+  //     fill: "#0000ff",
+  //     fontSize: "8px",
+  //   });
 
-    yPos += 10;
-  }
+  //   yPos += 10;
+  // }
 }

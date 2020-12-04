@@ -136,6 +136,11 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
+      
+      scene.timeBonus = 0;
+      scene.socket.on("sendTimeToRegex", function (time) {
+        scene.timeBonus = time;
+      });
 
       scene.submitButton = scene.add.text(642, 540, "Submit", {
         fill: "#000000",
@@ -148,12 +153,6 @@ export default class RegexScene extends Phaser.Scene {
         const inputText = scene.inputElement.getChildByName("code");
         scene.isCorrect.setVisible(false);
         scene.isIncorrect.setVisible(false);
-
-        scene.socket.on("sendTimeToRegex", function (time) {
-          scene.timeBonus = time;
-        });
-        console.log("scene time bonus", scene.timeBonus);
-        console.log("this time bonus", this.timeBonus);
 
         if (inputText.value !== "") {
           scene.output = scene.handleInput(
