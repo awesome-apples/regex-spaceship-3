@@ -290,6 +290,7 @@ export default class MainScene extends Phaser.Scene {
     return `${minutes}:${partInSeconds}`;
   }
   countdown() {
+    const scene = this;
     const currentTime = Date.now();
     const secondsPassed = currentTime - this.beginTimer;
 
@@ -303,7 +304,10 @@ export default class MainScene extends Phaser.Scene {
       if (this.initialTime === 0) {
         this.beginTimer = false;
         this.scene.stop("RegexScene");
-        this.scene.launch("LoseScene");
+        this.scene.launch("LoseScene", {
+          ...scene.state,
+          socket: scene.socket,
+        });
       }
     }
   }

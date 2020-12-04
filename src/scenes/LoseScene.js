@@ -1,8 +1,8 @@
-import Phaser from 'phaser';
+import Phaser from "phaser";
 
 export default class LoseScene extends Phaser.Scene {
   constructor() {
-    super('LoseScene');
+    super("LoseScene");
     this.state = {};
   }
 
@@ -11,6 +11,7 @@ export default class LoseScene extends Phaser.Scene {
     this.randomTasks = data.randomTasks;
     this.scores = data.scores;
     this.gameScore = data.gameScore;
+    this.socket = data.socket;
   }
 
   preload() {}
@@ -20,7 +21,7 @@ export default class LoseScene extends Phaser.Scene {
 
     try {
       //sockets
-      this.socket = io();
+      // this.socket = io();
 
       scene.popUp = scene.add.graphics();
       scene.textBox = scene.add.graphics();
@@ -40,10 +41,10 @@ export default class LoseScene extends Phaser.Scene {
       // input area
       scene.textBox.strokeRect(240, 245, 320, 110);
       scene.textBox.fillRect(240, 245, 320, 110);
-      scene.add.text(292, 280, 'GAME OVER', {
-        fill: '#ff0000',
-        fontSize: '40px',
-        fontStyle: 'bold',
+      scene.add.text(292, 280, "GAME OVER", {
+        fill: "#ff0000",
+        fontSize: "40px",
+        fontStyle: "bold",
       });
     } catch (err) {
       console.error(err);
