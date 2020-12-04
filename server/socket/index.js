@@ -25,7 +25,7 @@ module.exports = (io) => {
     };
 
     //add to player to scores obj
-    serverState.scores[socket.id] = { name: '', points: 0 }
+    serverState.scores[socket.id] = { name: "", points: 0 };
 
     numPlayers = Object.keys(players).length;
     console.log(numPlayers);
@@ -78,6 +78,11 @@ module.exports = (io) => {
 
     socket.on("sendTime", function (time) {
       socket.emit("sendTimeToRegex", time);
+    });
+
+    socket.on("sendScores", function (playerInfo) {
+      serverState.scores[socket.id] = playerInfo;
+      io.emit("displayScores", serverState.scores);
     });
 
     socket.on("startGame", async function () {

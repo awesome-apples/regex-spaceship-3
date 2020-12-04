@@ -56,7 +56,7 @@ export default class WinScene extends Phaser.Scene {
       // leaderboard box
       scene.textBox.strokeRect(425, 150, 325, 400);
       scene.textBox.fillRect(425, 150, 325, 400);
-      scene.add.text(490, 170, "Leaderboard", {
+      scene.add.text(485, 170, "Final Scores", {
         fill: "#ffffff",
         fontSize: "30px",
         fontStyle: "bold",
@@ -79,11 +79,36 @@ export default class WinScene extends Phaser.Scene {
       });
       scene.submitButton.setInteractive();
 
+      let count = 0;
+
       scene.submitButton.on("pointerdown", () => {
-        console.log('you clicked submit!!')
-        console.log('your score: ', scene.scores[scene.socket.id].points)
+        while (count < 1) {
+          const inputText = document.getElementsByName("username")[0].value;
+          scene.scores[scene.socket.id].name = inputText;
+
+          scene.socket.emit("sendScores", scene.scores[scene.socket.id]);
+
+          document.getElementsByName("username")[0].value = "";
+
+          count++;
+        }
       });
 
+      scene.socket.on("displayScores", function (updatedScores) {
+        let playersInfo = [];
+        for (let key in updatedScores) {
+          if (updatedScores[key].name.length > 0) {
+            playersInfo.push(
+              `${updatedScores[key].name}   ${updatedScores[key].points}`
+            );
+            playersInfo.push("\n");
+          }
+        }
+        scene.add.text(445, 210, playersInfo, {
+          fill: "#ffffff",
+          fontSize: "20px",
+        });
+      });
     } catch (err) {
       console.error(err);
     }
