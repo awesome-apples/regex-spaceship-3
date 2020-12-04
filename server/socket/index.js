@@ -63,13 +63,11 @@ module.exports = (io) => {
       let roomKey = 0;
       for (let keys1 in gameRooms) {
         for (let keys2 in gameRooms[keys1]) {
-          for (let keys3 in gameRooms[keys1][keys2]) {
-            Object.keys(gameRooms[keys1][keys2]).map((el) => {
-              if (el === socket.id) {
-                roomKey = keys1;
-              }
-            });
-          }
+          Object.keys(gameRooms[keys1][keys2]).map((el) => {
+            if (el === socket.id) {
+              roomKey = keys1;
+            }
+          });
         }
       }
       console.log("ROOMKEY", roomKey);
@@ -89,12 +87,6 @@ module.exports = (io) => {
     // when a player moves, update the player data
     socket.on("playerMovement", function (data) {
       const { x, y, roomKey } = data;
-      console.log("roomkey", roomKey);
-      console.log("game rooms", gameRooms);
-      console.log(
-        "inside player movement",
-        gameRooms[roomKey].players[socket.id]
-      );
       gameRooms[roomKey].players[socket.id].x = x;
       gameRooms[roomKey].players[socket.id].y = y;
       // emit a message to all players about the player that moved
