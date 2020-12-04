@@ -8,15 +8,15 @@ export default class WinScene extends Phaser.Scene {
   }
 
   init(data) {
-    // this.users = data.users;
-    // this.randomTasks = data.randomTasks;
-    // this.scores = data.scores;
-    // this.gameScore = data.gameScore;
-    // this.socket = data.socket;
+    this.users = data.users;
+    this.randomTasks = data.randomTasks;
+    this.scores = data.scores;
+    this.gameScore = data.gameScore;
+    this.socket = data.socket;
   }
 
   preload() {
-    this.load.html("taskform", "assets/text/nameform.html");
+    this.load.html("nameform", "assets/text/nameform.html");
   }
 
   async create() {
@@ -64,15 +64,25 @@ export default class WinScene extends Phaser.Scene {
 
       scene.textBox.strokeRect(50, 200, 325, 200);
       scene.textBox.fillRect(50, 200, 325, 200);
-      scene.add.text(75, 220, "Enter your name: ", {
+      scene.add.text(90, 220, "Enter your name: ", {
         fill: "#ffffff",
         fontSize: "25px",
         fontStyle: "bold",
       });
 
-      scene.inputElement = scene.add.dom(75, 300).createFromCache("nameform");
+      scene.inputElement = scene.add.dom(215, 300).createFromCache("nameform");
 
+      scene.submitButton = scene.add.text(165, 350, "Submit", {
+        fill: "#ffffff",
+        fontSize: "25px",
+        fontStyle: "bold",
+      });
+      scene.submitButton.setInteractive();
 
+      scene.submitButton.on("pointerdown", () => {
+        console.log('you clicked submit!!')
+        console.log('your score: ', scene.scores[scene.socket.id].points)
+      });
 
     } catch (err) {
       console.error(err);
