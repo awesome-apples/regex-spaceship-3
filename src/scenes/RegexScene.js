@@ -15,11 +15,12 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   init(data) {
-    this.users = data.users;
+    this.roomKey = data.roomKey;
     this.randomTasks = data.randomTasks;
     this.randomTask = data.randomTask;
-    this.scores = data.scores;
     this.gameScore = data.gameScore;
+    this.players = data.players;
+    this.numPlayers = data.numPlayers;
     this.socket = data.socket;
   }
 
@@ -136,7 +137,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
-      
+
       scene.timeBonus = 0;
       scene.socket.on("sendTimeToRegex", function (time) {
         scene.timeBonus = time;
@@ -166,10 +167,13 @@ export default class RegexScene extends Phaser.Scene {
           if (scene.output.win) {
             scene.isCorrect.setVisible(true);
             scene.socket.emit("scoreUpdate", {
-              points: 50,
-              timeBonus: scene.timeBonus,
+              scoreObj: {
+                points: 50,
+                timeBonus: scene.timeBonus,
+              },
+              roomKey: scene.roomKey,
             });
-            scene.socket.emit("completedTask");
+            scene.socket.emit("completedTask", { roomKey: scene.roomKey });
           } else {
             scene.isIncorrect.setVisible(true);
             scene.socket.emit("scoreUpdate", { points: -5 });

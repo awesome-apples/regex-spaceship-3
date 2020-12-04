@@ -1,123 +1,188 @@
 const { Task } = require("../db/models");
 
-let serverState = {
-  users: [],
-  randomTasks: [],
-  scores: {},
-  gameScore: 0,
+const gameRooms = {
+  // [roomKey]: {
+  // users: [],
+  // randomTasks: [],
+  // scores: [],
+  // gameScore: 0,
+  // players: {},
+  // numPlayers: 0
+  // }
 };
+//write join room
 
-const players = {};
-let numPlayers = 0;
+//hash table
+//key is the gameroom id
+// it holds and object with the games state
+// const gameRooms= [{gameScore: , roomId: , players, numPlayers}]
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
-    console.log(numPlayers);
     console.log(
       `A socket connection to the server has been made: ${socket.id}`
     );
-    players[socket.id] = {
-      rotation: 0,
-      x: Math.floor(Math.random() * 700) + 50,
-      y: Math.floor(Math.random() * 500) + 50,
-      playerId: socket.id,
-      team: Math.floor(Math.random() * 2) == 0 ? "red" : "blue",
-    };
+    socket.on("joinRoom", (roomKey) => {
+      console.log("inside joinroom");
 
-    //add to player to scores obj
-    serverState.scores[socket.id] = { name: "", points: 0 };
+      socket.join(roomKey);
+      console.log("after joining and the room key", roomKey);
 
-    numPlayers = Object.keys(players).length;
-    console.log(numPlayers);
-    // send the players object to the new player
-    socket.emit("currentPlayers", { players, numPlayers });
-    // set initial state
-    socket.emit("setState", serverState);
-    // update all other players of the new player
-    socket.broadcast.emit("newPlayer", {
-      playerInfo: players[socket.id],
-      numPlayers: numPlayers,
+      const roomInfo = gameRooms[roomKey];
+      // console.log("game rooms", gameRooms);
+      // console.log("game rooms with room key", gameRooms[roomKey]);
+      // console.log("roomInfo", roomInfo);
+
+      console.log(roomInfo.numPlayers);
+
+      roomInfo.players[socket.id] = {
+        rotation: 0,
+        x: Math.floor(Math.random() * 700) + 50,
+        y: Math.floor(Math.random() * 500) + 50,
+        playerId: socket.id,
+        team: Math.floor(Math.random() * 2) == 0 ? "red" : "blue",
+      };
+      //add to player to scores obj
+      roomInfo.scores[socket.id] = { name: "", points: 0 };
+
+      roomInfo.numPlayers = Object.keys(roomInfo.players).length;
+      console.log(roomInfo.numPlayers);
+      // send the players object to the new player
+      socket.emit("currentPlayers", {
+        players: roomInfo.players,
+        numPlayers: roomInfo.numPlayers,
+      });
+      // set initial state
+      socket.emit("setState", roomInfo);
+      // update all other players of the new player
+      socket.to(roomKey).emit("newPlayer", {
+        playerInfo: roomInfo.players[socket.id],
+        numPlayers: roomInfo.numPlayers,
+      });
     });
     // when a player disconnects, remove them from our players object
     socket.on("disconnect", function () {
+      //find which room they belong to
+      let roomKey = 0;
+      for (let keys1 in gameRooms) {
+        for (let keys2 in gameRooms[keys1]) {
+          Object.keys(gameRooms[keys1][keys2]).map((el) => {
+            if (el === socket.id) {
+              roomKey = keys1;
+            }
+          });
+        }
+      }
+      console.log("gamerooms before room key", gameRooms);
+      console.log("ROOMKEY", roomKey);
+
+      const roomInfo = gameRooms[roomKey];
+
       console.log("user disconnected: ", socket.id);
       // remove this player from our players object
-      delete players[socket.id];
-      //remove player from scores obj
-      delete serverState.scores[socket.id];
-      numPlayers = Object.keys(players).length;
-      console.log(numPlayers);
+      delete roomInfo.players[socket.id];
+      delete roomInfo.scores[socket.id];
+      roomInfo.numPlayers = Object.keys(roomInfo.players).length;
+      console.log(roomInfo.numPlayers);
       // emit a message to all players to remove this player
-      io.emit("disconnected", { playerId: socket.id, numPlayers });
-    });
-    // when a player moves, update the player data
-    socket.on("playerMovement", function (movementData) {
-      players[socket.id].x = movementData.x;
-      players[socket.id].y = movementData.y;
-      players[socket.id].rotation = movementData.rotation;
-      // emit a message to all players about the player that moved
-      socket.broadcast.emit("playerMoved", players[socket.id]);
+      io.to(roomKey).emit("disconnected", {
+        playerId: socket.id,
+        numPlayers: roomInfo.numPlayers,
+      });
     });
 
-    socket.on("completedTask", function (completedTaskId) {
-      serverState.gameScore++;
-      io.emit("progressUpdate", {
-        gameScore: serverState.gameScore,
-        completedTaskId,
+    // when a player moves, update the player data
+    socket.on("playerMovement", function (data) {
+      const { x, y, roomKey } = data;
+      gameRooms[roomKey].players[socket.id].x = x;
+      gameRooms[roomKey].players[socket.id].y = y;
+      // emit a message to all players about the player that moved
+      socket
+        .to(roomKey)
+        .emit("playerMoved", gameRooms[roomKey].players[socket.id]);
+    });
+    socket.on("completedTask", function (data) {
+      const { roomKey } = data;
+      gameRooms[roomKey].gameScore++;
+      io.to(roomKey).emit("progressUpdate", {
+        gameScore: gameRooms[roomKey].gameScore,
       });
     });
 
     //update score
-    socket.on("scoreUpdate", function (scoreObj) {
-      serverState.scores[socket.id].points += scoreObj.points;
+    socket.on("scoreUpdate", function (data) {
+      const { scoreObj, roomKey } = data;
+      gameRooms[roomKey].scores[socket.id].points += scoreObj.points;
       if (scoreObj.timeBonus) {
-        serverState.scores[socket.id].points += scoreObj.timeBonus;
+        gameRooms[roomKey].scores[socket.id].points += scoreObj.timeBonus;
       }
-      io.emit("updateLeaderboard", serverState.scores);
+      io.to(roomKey).emit("updateLeaderboard", gameRooms[roomKey].scores);
     });
 
     socket.on("sendTime", function (time) {
       socket.emit("sendTimeToRegex", time);
     });
 
-    socket.on("sendScores", function (playerInfo) {
-      serverState.scores[socket.id] = playerInfo;
-      io.emit("displayScores", serverState.scores);
+    socket.on("sendScores", function (data) {
+      const { playerInfo, roomKey } = data;
+      gameRooms[roomKey].scores[socket.id] = playerInfo;
+      console.log("socket scores", gameRooms[roomKey].scores);
+      io.to(roomKey).emit("displayScores", gameRooms[roomKey].scores);
     });
 
-    socket.on("startGame", async function () {
+    socket.on("startGame", async function (roomKey) {
       try {
         const tasks = await Task.findAll();
         const randomIdOne = Math.ceil(Math.random() * tasks.length);
         const randomIdTwo = Math.ceil(Math.random() * tasks.length);
         const taskOne = await Task.findByPk(randomIdOne);
         const taskTwo = await Task.findByPk(randomIdTwo);
-        serverState.randomTasks = [taskOne, taskTwo];
+        gameRooms[roomKey].randomTasks = [taskOne, taskTwo];
 
-        io.emit("updateState", serverState);
-        io.emit("destroyButton");
-        io.emit("startTimer");
+        io.to(roomKey).emit("updateState", gameRooms[roomKey]);
+        io.to(roomKey).emit("destroyButton");
+        io.to(roomKey).emit("startTimer");
+        io.to(roomKey).emit("activatePanels");
       } catch (err) {
         console.log("error starting game", err);
       }
     });
+    socket.on("disablePanel", function (data) {
+      const { controlPanel, roomKey } = data;
+      socket.to(roomKey).emit("setInactive", controlPanel);
+    });
 
     // get a random code for the room
     socket.on("getRoomCode", async function () {
-      try {
-        let code = "";
-        let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
-        for (let i = 0; i < 5; i++) {
-          code += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        console.log("here's a random code!: ", code);
-      } catch (err) {
-        console.log("there was an error getting a room code", err);
-      }
+      console.log("inside get room code");
+      let key = codeGenerator();
+      console.log("key", key);
+      Object.keys(gameRooms).includes(key) ? (key = codeGenerator()) : key;
+      gameRooms[key] = {
+        roomKey: key,
+        randomTasks: [],
+        gameScore: 0,
+        scores: {},
+        players: {},
+        numPlayers: 0,
+      };
+      socket.emit("roomCreated", key);
     });
-
-    socket.on("disablePanel", function (controlPanel) {
-      socket.broadcast.emit("setInactive", controlPanel);
+    socket.on("isKeyValid", function (input) {
+      console.log("inside iskeyvalid");
+      console.log("INPUT", input);
+      const keyArray = Object.keys(gameRooms)
+        ? socket.emit("keyIsValid", input)
+        : socket.emit("keyNotValid");
     });
   });
 };
+
+function codeGenerator() {
+  let code = "";
+  let chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+  for (let i = 0; i < 5; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+}

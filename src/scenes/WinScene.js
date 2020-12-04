@@ -13,6 +13,7 @@ export default class WinScene extends Phaser.Scene {
     this.scores = data.scores;
     this.gameScore = data.gameScore;
     this.socket = data.socket;
+    this.roomKey = data.roomKey;
   }
 
   preload() {
@@ -86,7 +87,11 @@ export default class WinScene extends Phaser.Scene {
           const inputText = document.getElementsByName("username")[0].value;
           scene.scores[scene.socket.id].name = inputText;
 
-          scene.socket.emit("sendScores", scene.scores[scene.socket.id]);
+          console.log("playerInfo", scene.scores[scene.socket.id]);
+          scene.socket.emit("sendScores", {
+            playerInfo: scene.scores[scene.socket.id],
+            roomKey: scene.roomKey,
+          });
 
           document.getElementsByName("username")[0].value = "";
 
@@ -96,6 +101,7 @@ export default class WinScene extends Phaser.Scene {
 
       scene.socket.on("displayScores", function (updatedScores) {
         let playersInfo = [];
+        console.log("playersInfo", playersInfo);
         for (let key in updatedScores) {
           if (updatedScores[key].name.length > 0) {
             playersInfo.push(
