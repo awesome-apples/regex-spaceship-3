@@ -63,6 +63,7 @@ module.exports = (io) => {
           }
         }
       }
+      console.log('ROOMKEY', roomKey);
       const roomInfo = gameRooms[roomKey];
       console.log('user disconnected: ', socket.id);
       // remove this player from our players object

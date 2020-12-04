@@ -4,7 +4,7 @@ export default class WaitingRoom extends Phaser.Scene {
   constructor() {
     super('WaitingRoom');
     this.state = {};
-    this.key.hasBeenSet = false;
+    this.hasBeenSet = false;
   }
 
   preload() {
@@ -42,16 +42,23 @@ export default class WaitingRoom extends Phaser.Scene {
 
     // for boxes
     scene.boxes.lineStyle(1, 0xffffff);
-    scene.boxes.fillStyle(0xffffff, 1);
+    scene.boxes.fillStyle(0xa9a9a9, 1);
 
     // popup window
-    scene.popUp.strokeRect(25, 75, 750, 500);
-    scene.popUp.fillRect(25, 75, 750, 500);
+    scene.popUp.strokeRect(25, 25, 750, 500);
+    scene.popUp.fillRect(25, 25, 750, 500);
+
+    //title
+    scene.title = scene.add.text(100, 75, 'RegEx Spaceship', {
+      fill: '#add8e6',
+      fontSize: '66px',
+      fontStyle: 'bold',
+    });
 
     //left popup
-    scene.graphics2.strokeRect(125, 175, 275, 200);
-    scene.graphics2.fillRect(125, 175, 275, 200);
-    scene.requestButton = scene.add.text(145, 195, 'Request Room Key', {
+    scene.boxes.strokeRect(100, 200, 275, 100);
+    scene.boxes.fillRect(100, 200, 275, 100);
+    scene.requestButton = scene.add.text(140, 215, 'Request Room Key', {
       fill: '#000000',
       fontSize: '20px',
       fontStyle: 'bold',
@@ -62,16 +69,16 @@ export default class WaitingRoom extends Phaser.Scene {
       scene.socket.emit('getRoomCode');
     });
 
-    scene.roomKeyText = scene.add.text(145, 250, '', {
+    scene.roomKeyText = scene.add.text(210, 250, '', {
       fill: '#00ff00',
       fontSize: '20px',
       fontStyle: 'bold',
     });
 
     //right popup
-    scene.graphics2.strokeRect(362.5, 175, 275, 200);
-    scene.graphics2.fillRect(362.5, 175, 275, 200);
-    scene.inputElement = scene.add.dom(670, 195).createFromCache('codeform');
+    scene.boxes.strokeRect(425, 200, 275, 100);
+    scene.boxes.fillRect(425, 200, 275, 100);
+    scene.inputElement = scene.add.dom(562.5, 250).createFromCache('codeform');
     scene.inputElement.on('click', function (event) {
       if (event.target.name === 'enterRoom') {
         const input = scene.inputElement.getChildByName('code-form');
