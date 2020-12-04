@@ -77,7 +77,7 @@ module.exports = (io) => {
       console.log("user disconnected: ", socket.id);
       // remove this player from our players object
       delete roomInfo.players[socket.id];
-      numPlayers = Object.keys(roomInfo.players).length;
+      roomInfo.numPlayers = Object.keys(roomInfo.players).length;
       console.log(roomInfo.numPlayers);
       // emit a message to all players to remove this player
       io.to(roomKey).emit("disconnected", {
@@ -122,6 +122,7 @@ module.exports = (io) => {
         io.to(roomKey).emit("updateState", gameRooms[roomKey]);
         io.to(roomKey).emit("destroyButton");
         io.to(roomKey).emit("startTimer");
+        io.to(roomKey).emit("activatePanels");
       } catch (err) {
         console.log("error starting game", err);
       }

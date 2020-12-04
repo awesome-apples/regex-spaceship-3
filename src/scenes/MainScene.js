@@ -142,10 +142,10 @@ export default class MainScene extends Phaser.Scene {
       });
 
       // click on control panels and Regex Scene will launch
-
       this.controlPanelLeft.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
+          randomTask: scene.state.randomTasks[0],
           socket: scene.socket,
         });
         scene.socket.emit("disablePanel", {
@@ -157,6 +157,7 @@ export default class MainScene extends Phaser.Scene {
       this.controlPanelRight.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
+          randomTask: scene.state.randomTasks[1],
           socket: scene.socket,
         });
         scene.socket.emit("disablePanel", {
@@ -241,16 +242,16 @@ export default class MainScene extends Phaser.Scene {
       this.startText.setVisible(true);
       this.startText.setInteractive();
       this.startText.on("pointerdown", () => {
-        this.socket.emit("startGame", scene.state.roomKey);
+        scene.socket.emit("startGame", scene.state.roomKey);
       });
-
-      this.controlPanelLeft.setInteractive();
-      this.controlPanelRight.setInteractive();
     }
-
     if (this.beginTimer) {
       this.countdown();
     }
+    scene.socket.on("activatePanels", function () {
+      scene.controlPanelLeft.setInteractive();
+      scene.controlPanelRight.setInteractive();
+    });
   }
 
   addPlayer(scene, playerInfo) {
