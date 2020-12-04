@@ -42,6 +42,9 @@ module.exports = (io) => {
         playerId: socket.id,
         team: Math.floor(Math.random() * 2) == 0 ? "red" : "blue",
       };
+      //add to player to scores obj
+      roomInfo.scores[socket.id] = { name: "", points: 0 };
+
       roomInfo.numPlayers = Object.keys(roomInfo.players).length;
       console.log(roomInfo.numPlayers);
       // send the players object to the new player
@@ -78,6 +81,7 @@ module.exports = (io) => {
       console.log("user disconnected: ", socket.id);
       // remove this player from our players object
       delete roomInfo.players[socket.id];
+      delete roomInfo.scores[socket.id];
       roomInfo.numPlayers = Object.keys(roomInfo.players).length;
       console.log(roomInfo.numPlayers);
       // emit a message to all players to remove this player
@@ -100,9 +104,30 @@ module.exports = (io) => {
     socket.on("completedTask", function (data) {
       const { roomKey } = data;
       gameRooms[roomKey].gameScore++;
-      io.to(roomKey).emit("scoreUpdate", {
+      io.to(roomKey).emit("progressUpdate", {
         gameScore: gameRooms[roomKey].gameScore,
       });
+    });
+
+    //update score
+    socket.on("scoreUpdate", function (data) {
+      const { scoreObj, roomKey } = data;
+      gameRooms[roomKey].scores[socket.id].points += scoreObj.points;
+      if (scoreObj.timeBonus) {
+        gameRooms[roomKey].scores[socket.id].points += scoreObj.timeBonus;
+      }
+      io.to(roomKey).emit("updateLeaderboard", gameRooms[roomKey].scores);
+    });
+
+    socket.on("sendTime", function (time) {
+      socket.emit("sendTimeToRegex", time);
+    });
+
+    socket.on("sendScores", function (data) {
+      const { playerInfo, roomKey } = data;
+      gameRooms[roomKey].scores[socket.id] = playerInfo;
+      console.log("socket scores", gameRooms[roomKey].scores);
+      io.to(roomKey).emit("displayScores", gameRooms[roomKey].scores);
     });
 
     socket.on("startGame", async function (roomKey) {
@@ -137,6 +162,7 @@ module.exports = (io) => {
         roomKey: key,
         randomTasks: [],
         gameScore: 0,
+        scores: {},
         players: {},
         numPlayers: 0,
       };

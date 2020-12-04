@@ -9,6 +9,7 @@ export default class MainScene extends Phaser.Scene {
       roomKey: "",
       randomTasks: [],
       gameScore: 0,
+      scores: {},
       players: {},
       numPlayers: 0,
     };
@@ -102,7 +103,7 @@ export default class MainScene extends Phaser.Scene {
       });
       this.cursors = this.input.keyboard.createCursorKeys();
 
-      this.socket.on("scoreUpdate", function (arg) {
+      this.socket.on("progressUpdate", function (arg) {
         const { gameScore } = arg;
         scene.progressBar.increase(gameScore - scene.state.gameScore);
         scene.state.gameScore = gameScore;
@@ -116,6 +117,13 @@ export default class MainScene extends Phaser.Scene {
           scene.beginTimer = false;
         }
       });
+
+      //update leaderboard scores for everyone
+      this.socket.on("updateLeaderboard", function (serverScores) {
+        scene.state.scores = serverScores;
+        console.log("update Leaderboard:", scene.state.scores);
+      });
+
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
       this.controlPanelLeft = new ControlPanel(
         this,
@@ -296,6 +304,9 @@ export default class MainScene extends Phaser.Scene {
 
     if (secondsPassed > 999) {
       this.initialTime -= 1;
+
+      this.socket.emit("sendTime", this.initialTime);
+
       this.timerLabel.setText(this.formatTime(this.initialTime));
       if (this.initialTime === 10) {
         this.timerLabel.setStyle({ fill: "#ff0000" });

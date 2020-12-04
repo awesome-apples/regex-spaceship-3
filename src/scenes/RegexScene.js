@@ -65,7 +65,7 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.add.text(
         55,
-        55,
+        100,
         `${scene.randomTask.problem}
         Matches: ${scene.randomTask.matchArray.map(
           (string) => `
@@ -138,6 +138,11 @@ export default class RegexScene extends Phaser.Scene {
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
 
+      scene.timeBonus = 0;
+      scene.socket.on("sendTimeToRegex", function (time) {
+        scene.timeBonus = time;
+      });
+
       scene.submitButton = scene.add.text(642, 540, "Submit", {
         fill: "#000000",
         fontSize: "30px",
@@ -161,9 +166,17 @@ export default class RegexScene extends Phaser.Scene {
 
           if (scene.output.win) {
             scene.isCorrect.setVisible(true);
+            scene.socket.emit("scoreUpdate", {
+              scoreObj: {
+                points: 50,
+                timeBonus: scene.timeBonus,
+              },
+              roomKey: scene.roomKey,
+            });
             scene.socket.emit("completedTask", { roomKey: scene.roomKey });
           } else {
             scene.isIncorrect.setVisible(true);
+            scene.socket.emit("scoreUpdate", { points: -5 });
           }
         }
       });
