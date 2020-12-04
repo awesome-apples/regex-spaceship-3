@@ -23,6 +23,7 @@ module.exports = (io) => {
       `A socket connection to the server has been made: ${socket.id}`
     );
     socket.on('joinRoom', (arg) => {
+      console.log('inside joinroom');
       const { roomKey, socket } = arg;
       const roomInfo = gameRooms[roomKey];
       console.log(roomInfo.numPlayers);
@@ -118,15 +119,18 @@ module.exports = (io) => {
 
     // get a random code for the room
     socket.on('getRoomCode', async function () {
-      let code = codeGenerator();
-      Object.keys(gameRooms).includes(code) ? (code = codeGenerator()) : code;
-      gameRooms[code] = {};
-      socket.join(code);
-      socket.emit('roomCreated', code);
+      let key = codeGenerator();
+      Object.keys(gameRooms).includes(key) ? (key = codeGenerator()) : key;
+      gameRooms[key] = {};
+      socket.join(key);
+      socket.emit('roomCreated', key);
     });
     socket.on('isKeyValid', function (input) {
-      Object.keys(gameRooms).includes(input)
-        ? socket.emit('keyIsValid')
+      console.log('inside iskeyvalid');
+      console.log('INPUT', input);
+      const keyArray = Object.keys(gameRooms);
+      console.log('keyArray', keyArray)
+        ? socket.emit('keyIsValid', input)
         : socket.emit('keyNotValid');
     });
   });

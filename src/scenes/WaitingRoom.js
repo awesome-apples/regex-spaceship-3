@@ -18,19 +18,29 @@ export default class WaitingRoom extends Phaser.Scene {
       fill: '#ff0000',
       fontSize: '15px',
     });
+    scene.roomKeyText = scene.add.text(210, 250, '', {
+      fill: '#00ff00',
+      fontSize: '20px',
+      fontStyle: 'bold',
+    });
     scene.socket.on('roomCreated', function (roomKey) {
       scene.roomKey = roomKey;
+      scene.roomKeyText.setText(scene.roomKey);
     });
     scene.socket.on('keyNotValid', function () {
+      console.log('inside keyNotValid');
+
       scene.notValidText.setText('Invalid Room Key');
     });
     scene.socket.on('keyIsValid', function (input) {
-      scene.socket.emit('joinRoom', {
-        roomKey: input,
-        socket: scene.socket,
-      });
-      scene.scene.launch('MainScene', { socket: scene.socket });
-      scene.scene.stop('WaitingRoom');
+      console.log('inside keyIsValid');
+      console.log('input');
+      // scene.socket.emit('joinRoom', {
+      //   roomKey: input,
+      //   socket: scene.socket,
+      // });
+      //scene.scene.launch('MainScene', { socket: scene.socket });
+      //scene.scene.stop('WaitingRoom');
     });
 
     scene.popUp = scene.add.graphics();
@@ -69,27 +79,17 @@ export default class WaitingRoom extends Phaser.Scene {
       scene.socket.emit('getRoomCode');
     });
 
-    scene.roomKeyText = scene.add.text(210, 250, '', {
-      fill: '#00ff00',
-      fontSize: '20px',
-      fontStyle: 'bold',
-    });
-
     //right popup
     scene.boxes.strokeRect(425, 200, 275, 100);
     scene.boxes.fillRect(425, 200, 275, 100);
     scene.inputElement = scene.add.dom(562.5, 250).createFromCache('codeform');
+    scene.inputElement.addListener('click');
     scene.inputElement.on('click', function (event) {
       if (event.target.name === 'enterRoom') {
         const input = scene.inputElement.getChildByName('code-form');
-        scene.socket.emit('isKeyValid', input);
+        scene.socket.emit('isKeyValid', input.value);
       }
     });
   }
-  update() {
-    const scene = this;
-    if (this.roomKey !== scene.roomKeyText.text) {
-      this.roomKeyText.setText(scene.roomKey);
-    }
-  }
+  update() {}
 }
