@@ -15,11 +15,12 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   init(data) {
-    this.users = data.users;
+    this.roomKey = data.roomKey;
     this.randomTasks = data.randomTasks;
     this.randomTask = data.randomTask;
-    this.scores = data.scores;
     this.gameScore = data.gameScore;
+    this.players = data.players;
+    this.numPlayers = data.numPlayers;
     this.socket = data.socket;
   }
 
@@ -82,7 +83,7 @@ export default class RegexScene extends Phaser.Scene {
           wordWrap: { width: 320, height: 445, useAdvancedWrap: true },
         }
       );
-      
+
       // input area
       scene.graphics2.strokeRect(425, 100, 325, 200);
       scene.graphics2.fillRect(425, 100, 325, 200);
@@ -160,7 +161,7 @@ export default class RegexScene extends Phaser.Scene {
 
           if (scene.output.win) {
             scene.isCorrect.setVisible(true);
-            scene.socket.emit("completedTask");
+            scene.socket.emit("completedTask", { roomKey: scene.roomKey });
           } else {
             scene.isIncorrect.setVisible(true);
           }

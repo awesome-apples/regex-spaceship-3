@@ -5,11 +5,16 @@ import ControlPanel from "../entity/ControlPanel";
 export default class MainScene extends Phaser.Scene {
   constructor() {
     super("MainScene");
-    this.state = { users: [], randomTasks: [], scores: [], gameScore: 0 };
+    this.state = {
+      roomKey: "",
+      randomTasks: [],
+      gameScore: 0,
+      players: {},
+      numPlayers: 0,
+    };
     this.hasBeenSet = false;
     this.startClickable = true;
     this.beginTimer = false;
-    this.numPlayers = 0;
   }
 
   preload() {
@@ -26,6 +31,7 @@ export default class MainScene extends Phaser.Scene {
   async create() {
     const scene = this;
 
+    //disable mainscene
     this.add.image(0, 0, "mainroom").setOrigin(0);
 
     //PROGRESS BAR
@@ -39,11 +45,13 @@ export default class MainScene extends Phaser.Scene {
     try {
       //SOCKET CONNECTIONS
       this.socket = io();
+      scene.scene.launch("WaitingRoom", { socket: scene.socket });
       this.otherPlayers = this.physics.add.group();
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
         this.socket.on("setState", function (state) {
-          const { users, randomTasks, scores, gameScore } = state;
+          const { roomKey, users, randomTasks, scores, gameScore } = state;
+          scene.state.roomKey = roomKey;
           scene.state.users = users;
           scene.state.randomTasks = randomTasks;
           scene.state.scores = scores;
@@ -58,7 +66,7 @@ export default class MainScene extends Phaser.Scene {
 
       this.socket.on("currentPlayers", function (arg) {
         const { players, numPlayers } = arg;
-        scene.numPlayers = numPlayers;
+        scene.state.numPlayers = numPlayers;
         Object.keys(players).forEach(function (id) {
           if (players[id].playerId === scene.socket.id) {
             scene.addPlayer(scene, players[id]);
@@ -71,12 +79,12 @@ export default class MainScene extends Phaser.Scene {
       this.socket.on("newPlayer", function (arg) {
         const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
-        scene.numPlayers = numPlayers;
+        scene.state.numPlayers = numPlayers;
       });
 
       this.socket.on("disconnected", function (arg) {
         const { playerId, numPlayers } = arg;
-        scene.numPlayers = numPlayers;
+        scene.state.numPlayers = numPlayers;
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerId === otherPlayer.playerId) {
             otherPlayer.destroy();
@@ -95,21 +103,13 @@ export default class MainScene extends Phaser.Scene {
       this.cursors = this.input.keyboard.createCursorKeys();
 
       this.socket.on("scoreUpdate", function (arg) {
-        const { completedTaskId, gameScore } = arg;
-        for (let i = 0; i < scene.state.randomTasks.length; i++) {
-          if (scene.state.randomTasks[i].id === completedTaskId) {
-            scene.state.randomTasks[i].completed = true;
-          }
-        }
+        const { gameScore } = arg;
         scene.progressBar.increase(gameScore - scene.state.gameScore);
         scene.state.gameScore = gameScore;
         if (scene.state.gameScore >= scene.state.randomTasks.length) {
           scene.scene.stop("RegexScene");
           scene.scene.launch("WinScene", {
-            users: scene.state.users,
-            randomTasks: scene.state.randomTasks,
-            scores: scene.state.scores,
-            gameScore: scene.state.gameScore,
+            ...scene.state,
             socket: scene.socket,
           });
           scene.finalTime = scene.initialTime;
@@ -142,29 +142,28 @@ export default class MainScene extends Phaser.Scene {
       });
 
       // click on control panels and Regex Scene will launch
-
       this.controlPanelLeft.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
-          users: this.state.users,
-          randomTasks: this.state.randomTasks,
-          randomTask: this.state.randomTasks[0],
-          scores: this.state.scores,
-          gameScore: this.state.gameScore,
-          socket: this.socket,
+          ...scene.state,
+          randomTask: scene.state.randomTasks[0],
+          socket: scene.socket,
         });
-        scene.socket.emit("disablePanel", "left");
+        scene.socket.emit("disablePanel", {
+          controlPanel: "left",
+          roomKey: scene.state.roomKey,
+        });
       });
 
       this.controlPanelRight.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
-          users: this.state.users,
-          randomTasks: this.state.randomTasks,
-          randomTask: this.state.randomTasks[1],
-          scores: this.state.scores,
-          gameScore: this.state.gameScore,
-          socket: this.socket,
+          ...scene.state,
+          randomTask: scene.state.randomTasks[1],
+          socket: scene.socket,
         });
-        scene.socket.emit("disablePanel", "right");
+        scene.socket.emit("disablePanel", {
+          controlPanel: "right",
+          roomKey: scene.state.roomKey,
+        });
       });
 
       //TIMER
@@ -199,6 +198,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update(time) {
+    const scene = this;
     if (this.astronaut) {
       if (this.cursors.left.isDown) {
         this.astronaut.setVelocityX(-150);
@@ -225,6 +225,7 @@ export default class MainScene extends Phaser.Scene {
         this.socket.emit("playerMovement", {
           x: this.astronaut.x,
           y: this.astronaut.y,
+          roomKey: scene.state.roomKey,
         });
       }
 
@@ -236,21 +237,21 @@ export default class MainScene extends Phaser.Scene {
       };
     }
 
-    if (this.numPlayers >= 2 && this.startClickable === true) {
+    if (this.state.numPlayers >= 2 && this.startClickable === true) {
       this.startClickable = false;
       this.startText.setVisible(true);
       this.startText.setInteractive();
       this.startText.on("pointerdown", () => {
-        this.startButton();
+        scene.socket.emit("startGame", scene.state.roomKey);
       });
-
-      this.controlPanelLeft.setInteractive();
-      this.controlPanelRight.setInteractive();
     }
-
     if (this.beginTimer) {
       this.countdown();
     }
+    scene.socket.on("activatePanels", function () {
+      scene.controlPanelLeft.setInteractive();
+      scene.controlPanelRight.setInteractive();
+    });
   }
 
   addPlayer(scene, playerInfo) {
@@ -305,8 +306,5 @@ export default class MainScene extends Phaser.Scene {
         this.scene.launch("LoseScene");
       }
     }
-  }
-  startButton() {
-    this.socket.emit("startGame");
   }
 }
