@@ -3,19 +3,18 @@ import "phaser";
 export default class ScoreBoard extends Phaser.GameObjects.Rectangle {
   constructor(scene, x, y, width, height, fillColor) {
     super(scene, x, y, width, height, fillColor);
+    this.scene = scene;
     this.scene.add.existing(this);
   }
 
   preload() {}
 
   create() {
-    this.board = this.add.graphics();
+    // this.board = this.add.graphics();
 
-    //make board
-    this.board.lineStyle(1, 0xffffff);
-    this.board.fillStyle(0x000000, 1);
-    this.board.strokeRect(this.x, this.y, 250, 200);
-    this.board.fillRect(this.x, this.y, 250, 200);
+    // //make board
+    // this.board.lineStyle(1, 0xffffff);
+    // this.board.fillStyle(0x000000, 1);
 
     //add scores to board
     // let yPos = this.y - 10;

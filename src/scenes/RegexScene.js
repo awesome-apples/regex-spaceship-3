@@ -64,7 +64,7 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.add.text(
         55,
-        80,
+        100,
         `${scene.randomTask.problem}
         Matches: ${scene.randomTask.matchArray.map(
           (string) => `

@@ -15,7 +15,9 @@ export default class WinScene extends Phaser.Scene {
     // this.socket = data.socket;
   }
 
-  preload() {}
+  preload() {
+    this.load.html("taskform", "assets/text/nameform.html");
+  }
 
   async create() {
     const scene = this;
@@ -39,16 +41,38 @@ export default class WinScene extends Phaser.Scene {
       scene.popUp.strokeRect(25, 25, 750, 550);
       scene.popUp.fillRect(25, 25, 750, 550);
 
-      // input area
-      scene.textBox.strokeRect(240, 245, 320, 110);
-      scene.textBox.fillRect(240, 245, 320, 110);
-      scene.add.text(310, 280, "YOU WIN", {
+      // you win box
+      scene.textBox.strokeRect(240, 50, 320, 65);
+      scene.textBox.fillRect(240, 50, 320, 65);
+      scene.add.text(310, 65, "YOU WIN", {
         fill: "#00ff00",
         fontSize: "40px",
         fontStyle: "bold",
       });
 
-      const scoreBoard = new ScoreBoard(scene, 500, 70, 250, 300, '#000000');
+      // popup specs: 25, 25, 750, 550
+      // popup specs: x, y, width, height
+
+      // leaderboard box
+      scene.textBox.strokeRect(425, 150, 325, 400);
+      scene.textBox.fillRect(425, 150, 325, 400);
+      scene.add.text(490, 170, "Leaderboard", {
+        fill: "#ffffff",
+        fontSize: "30px",
+        fontStyle: "bold",
+      });
+
+      scene.textBox.strokeRect(50, 200, 325, 200);
+      scene.textBox.fillRect(50, 200, 325, 200);
+      scene.add.text(75, 220, "Enter your name: ", {
+        fill: "#ffffff",
+        fontSize: "25px",
+        fontStyle: "bold",
+      });
+
+      scene.inputElement = scene.add.dom(75, 300).createFromCache("nameform");
+
+
 
     } catch (err) {
       console.error(err);

@@ -25,7 +25,7 @@ module.exports = (io) => {
     };
 
     //add to player to scores obj
-    serverState.scores[socket.id] = 0;
+    serverState.scores[socket.id] = { name: '', points: 0 }
 
     numPlayers = Object.keys(players).length;
     console.log(numPlayers);
@@ -69,9 +69,9 @@ module.exports = (io) => {
 
     //update score
     socket.on("scoreUpdate", function (scoreObj) {
-      serverState.scores[socket.id] += scoreObj.points;
+      serverState.scores[socket.id].points += scoreObj.points;
       if (scoreObj.timeBonus) {
-        serverState.scores[socket.id] += scoreObj.timeBonus;
+        serverState.scores[socket.id].points += scoreObj.timeBonus;
       }
       io.emit("updateLeaderboard", serverState.scores);
     });

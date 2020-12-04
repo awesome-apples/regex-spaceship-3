@@ -33,7 +33,7 @@ class Game extends Phaser.Game {
 
     // Start the game with the mainscene
     // << START GAME WITH MAIN SCENE HERE >>
-    this.scene.start('WinScene');
+    this.scene.start('MainScene');
   }
 }
 // Create new instance of game
