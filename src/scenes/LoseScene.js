@@ -1,8 +1,8 @@
 import Phaser from "phaser";
 
-export default class LoseScene extends Phaser.Scene {
+export default class EndScene extends Phaser.Scene {
   constructor() {
-    super("LoseScene");
+    super("EndScene");
     this.state = {};
   }
 
