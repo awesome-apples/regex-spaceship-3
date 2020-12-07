@@ -124,6 +124,20 @@ export default class EndScene extends Phaser.Scene {
 
         scene.scoreDisplay.setText(playersInfo);
       });
+
+      scene.playAgain = scene.add.text(125, 475, "Play Again", {
+        fill: "#000000",
+        fontSize: "30px",
+      });
+
+      scene.playAgain.setInteractive();
+
+      // scene.playAgain.on("pointerdown", () => {
+      //   scene.scene.launch("WaitingRoom");
+      //   scene.scene.remove("EndScene");
+      //   scene.scene.remove("MainScene");
+      //   scene.scene.remove("RegexScene");
+      // });
     } catch (err) {
       console.error(err);
     }

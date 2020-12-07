@@ -313,7 +313,7 @@ export default class MainScene extends Phaser.Scene {
         this.timerLabel.setStyle({ fill: "#ff0000" });
       }
       this.beginTimer = currentTime;
-      if (this.initialTime === 0) {
+      if (this.initialTime === 115) {
         this.beginTimer = false;
         this.scene.stop("RegexScene");
         this.scene.launch("EndScene", {
