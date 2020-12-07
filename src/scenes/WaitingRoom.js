@@ -44,11 +44,22 @@ export default class WaitingRoom extends Phaser.Scene {
     //left popup
     scene.boxes.strokeRect(100, 200, 275, 100);
     scene.boxes.fillRect(100, 200, 275, 100);
-    scene.requestButton = scene.add.text(140, 215, "Request Room Key", {
-      fill: "#000000",
-      fontSize: "20px",
-      fontStyle: "bold",
-    });
+
+    scene.requestButton = scene.add
+      .dom(
+        237.5,
+        270,
+        "button",
+        "width: 150px; height: 25px",
+        "Request Room Key"
+      )
+      .setOrigin(0.5);
+
+    // scene.requestButton = scene.add.text(140, 215, "Request Room Key", {
+    //   fill: "#000000",
+    //   fontSize: "20px",
+    //   fontStyle: "bold",
+    // });
 
     //right popup
     scene.boxes.strokeRect(425, 200, 275, 100);
@@ -58,23 +69,24 @@ export default class WaitingRoom extends Phaser.Scene {
     scene.inputElement.on("click", function (event) {
       if (event.target.name === "enterRoom") {
         const input = scene.inputElement.getChildByName("code-form");
-        scene.socket.emit("isKeyValid", input.value);
+        let uppercase = input.value.replace(/[a-z]/g, (L) => L.toUpperCase());
+        scene.socket.emit("isKeyValid", uppercase);
       }
     });
 
     scene.requestButton.setInteractive();
     scene.requestButton.on("pointerdown", () => {
-      console.log("inside req room key");
       scene.socket.emit("getRoomCode");
+      scene.requestButton.disableInteractive();
     });
 
-    scene.notValidText = scene.add.text(670, 295, "", {
+    scene.notValidText = scene.add.text(500, 270, "", {
       fill: "#ff0000",
       fontSize: "15px",
     });
-    scene.roomKeyText = scene.add.text(210, 250, "", {
+    scene.roomKeyText = scene.add.text(195, 220, "", {
       fill: "#00ff00",
-      fontSize: "20px",
+      fontSize: "30px",
       fontStyle: "bold",
     });
 
@@ -83,19 +95,11 @@ export default class WaitingRoom extends Phaser.Scene {
       scene.roomKeyText.setText(scene.roomKey);
     });
     scene.socket.on("keyNotValid", function () {
-      console.log("inside keyNotValid");
-
       scene.notValidText.setText("Invalid Room Key");
     });
     scene.socket.on("keyIsValid", function (input) {
-      console.log("inside keyIsValid");
-      console.log("input", input);
-      console.log("socket inside key is valid", scene.socket);
       scene.socket.emit("joinRoom", input);
-      console.log("socket with room joined", scene.socket);
-      // scene.scene.launch("MainScene", { socket: scene.socket });
       scene.scene.stop("WaitingRoom");
-      //enable mainscene body here
     });
   }
   update() {}

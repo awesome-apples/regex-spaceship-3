@@ -9,6 +9,7 @@ export default class MainScene extends Phaser.Scene {
       roomKey: '',
       randomTasks: [],
       gameScore: 0,
+      scores: {},
       players: {},
       numPlayers: 0,
     };
@@ -55,6 +56,23 @@ export default class MainScene extends Phaser.Scene {
           scene.state.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
+          scene.roomkeyText = scene.add.text(
+            30,
+            78,
+            `Room Key: ${scene.state.roomKey}`,
+            {
+              fontSize: '20px',
+              fill: '#00ff00',
+            }
+          );
+          console.log('sscene.state.scores in setstate', scene.state.scores);
+          console.log('scene.state.roomkey in set state', scene.state.roomKey);
+          scene.waitingText = scene.add
+            .text(400, 300, 'Waiting for more players to join', {
+              fontSize: '20px',
+              fill: '#ff0000',
+            })
+            .setOrigin(0.5);
         });
       }
 
@@ -101,7 +119,7 @@ export default class MainScene extends Phaser.Scene {
       });
       this.cursors = this.input.keyboard.createCursorKeys();
 
-      this.socket.on('scoreUpdate', function (arg) {
+      this.socket.on('progressUpdate', function (arg) {
         const { gameScore } = arg;
         scene.progressBar.increase(gameScore - scene.state.gameScore);
         scene.state.gameScore = gameScore;
@@ -115,6 +133,13 @@ export default class MainScene extends Phaser.Scene {
           scene.beginTimer = false;
         }
       });
+
+      //update leaderboard scores for everyone
+      this.socket.on('updateLeaderboard', function (serverScores) {
+        scene.state.scores = serverScores;
+        console.log('update Leaderboard:', scene.state.scores);
+      });
+
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
       this.controlPanelLeft = new ControlPanel(
         this,
@@ -238,6 +263,7 @@ export default class MainScene extends Phaser.Scene {
 
     if (this.state.numPlayers >= 2 && this.startClickable === true) {
       this.startClickable = false;
+      scene.waitingText.setVisible(false);
       this.startText.setVisible(true);
       this.startText.setInteractive();
       this.startText.on('pointerdown', () => {
@@ -295,6 +321,9 @@ export default class MainScene extends Phaser.Scene {
 
     if (secondsPassed > 999) {
       this.initialTime -= 1;
+
+      this.socket.emit('sendTime', this.initialTime);
+
       this.timerLabel.setText(this.formatTime(this.initialTime));
       if (this.initialTime === 10) {
         this.timerLabel.setStyle({ fill: '#ff0000' });
