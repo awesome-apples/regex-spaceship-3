@@ -80,10 +80,8 @@ export default class WinScene extends Phaser.Scene {
       });
       scene.submitButton.setInteractive();
 
-      let count = 0;
-
       scene.submitButton.on("pointerdown", () => {
-        while (count < 1) {
+        if (scene.scores[scene.socket.id].name.length < 1) {
           const inputText = document.getElementsByName("username")[0].value;
           scene.scores[scene.socket.id].name = inputText;
 
@@ -94,8 +92,6 @@ export default class WinScene extends Phaser.Scene {
           });
 
           document.getElementsByName("username")[0].value = "";
-
-          count++;
         }
       });
 
