@@ -95,24 +95,46 @@ export default class WinScene extends Phaser.Scene {
         }
       });
 
+      scene.scoreDisplay = scene.add.text(445, 210, "", {
+        fill: "#ffffff",
+        fontSize: "20px",
+      });
+
       scene.socket.on("displayScores", function (updatedScores) {
+        let scoreArr = [];
         let playersInfo = [];
-        console.log("playersInfo", playersInfo);
+
         for (let key in updatedScores) {
-          if (updatedScores[key].name.length > 0) {
-            playersInfo.push(
-              `${updatedScores[key].name}   ${updatedScores[key].points}`
-            );
-            playersInfo.push("\n");
-          }
+          if (updatedScores[key].name)
+            scoreArr.push(updatedScores[key]);
         }
-        scene.add.text(445, 210, playersInfo, {
-          fill: "#ffffff",
-          fontSize: "20px",
+
+        scoreArr = scoreArr.sort(scene.compare);
+
+        scoreArr.forEach((elem) => {
+          playersInfo.push(
+            `${elem.name}   ${elem.points}`
+          );
+          playersInfo.push("\n");
         });
+
+        scene.scoreDisplay.setText(playersInfo);
       });
     } catch (err) {
       console.error(err);
     }
+  }
+
+  compare(a, b) {
+    const scoreA = a.points;
+    const scoreB = b.points;
+  
+    let comparison = 0;
+    if (scoreA < scoreB) {
+      comparison = 1;
+    } else if (scoreA > scoreB) {
+      comparison = -1;
+    }
+    return comparison;
   }
 }
