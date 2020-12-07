@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import ScoreBoard from "../entity/ScoreBoard";
 
-export default class WinScene extends Phaser.Scene {
+export default class EndScene extends Phaser.Scene {
   constructor() {
-    super("WinScene");
+    super("EndScene");
     this.state = {};
   }
 
@@ -14,6 +14,7 @@ export default class WinScene extends Phaser.Scene {
     this.gameScore = data.gameScore;
     this.socket = data.socket;
     this.roomKey = data.roomKey;
+    this.didWin = data.didWin;
   }
 
   preload() {
@@ -44,11 +45,17 @@ export default class WinScene extends Phaser.Scene {
       // you win box
       scene.textBox.strokeRect(240, 50, 320, 65);
       scene.textBox.fillRect(240, 50, 320, 65);
-      scene.add.text(310, 65, "YOU WIN", {
+      scene.outcome = scene.add.text(310, 65, "", {
         fill: "#00ff00",
         fontSize: "40px",
         fontStyle: "bold",
       });
+      if (scene.didWin) {
+        scene.outcome.setText("YOU WIN");
+      } else {
+        scene.outcome.setColor("#ff0000");
+        scene.outcome.setText("YOU LOSE");
+      }
 
       // popup specs: 25, 25, 750, 550
       // popup specs: x, y, width, height
@@ -79,10 +86,8 @@ export default class WinScene extends Phaser.Scene {
       });
       scene.submitButton.setInteractive();
 
-      let count = 0;
-
       scene.submitButton.on("pointerdown", () => {
-        while (count < 1) {
+        if (scene.scores[scene.socket.id].name.length < 1) {
           const inputText = document.getElementsByName("username")[0].value;
           scene.scores[scene.socket.id].name = inputText;
 
@@ -93,29 +98,46 @@ export default class WinScene extends Phaser.Scene {
           });
 
           document.getElementsByName("username")[0].value = "";
-
-          count++;
         }
       });
 
+      scene.scoreDisplay = scene.add.text(445, 210, "", {
+        fill: "#ffffff",
+        fontSize: "20px",
+      });
+
       scene.socket.on("displayScores", function (updatedScores) {
+        let scoreArr = [];
         let playersInfo = [];
-        console.log("playersInfo", playersInfo);
+
         for (let key in updatedScores) {
-          if (updatedScores[key].name.length > 0) {
-            playersInfo.push(
-              `${updatedScores[key].name}   ${updatedScores[key].points}`
-            );
-            playersInfo.push("\n");
-          }
+          if (updatedScores[key].name) scoreArr.push(updatedScores[key]);
         }
-        scene.add.text(445, 210, playersInfo, {
-          fill: "#ffffff",
-          fontSize: "20px",
+
+        scoreArr = scoreArr.sort(scene.compare);
+
+        scoreArr.forEach((elem) => {
+          playersInfo.push(`${elem.name}   ${elem.points}`);
+          playersInfo.push("\n");
         });
+
+        scene.scoreDisplay.setText(playersInfo);
       });
     } catch (err) {
       console.error(err);
     }
+  }
+
+  compare(a, b) {
+    const scoreA = a.points;
+    const scoreB = b.points;
+
+    let comparison = 0;
+    if (scoreA < scoreB) {
+      comparison = 1;
+    } else if (scoreA > scoreB) {
+      comparison = -1;
+    }
+    return comparison;
   }
 }

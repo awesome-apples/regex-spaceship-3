@@ -4,7 +4,7 @@ const gameRooms = {
   // [roomKey]: {
   // users: [],
   // randomTasks: [],
-  // scores: [],
+  // scores: {},
   // gameScore: 0,
   // players: {},
   // numPlayers: 0
