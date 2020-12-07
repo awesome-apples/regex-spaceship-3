@@ -1,9 +1,9 @@
 import Phaser from "phaser";
 import ScoreBoard from "../entity/ScoreBoard";
 
-export default class WinScene extends Phaser.Scene {
+export default class EndScene extends Phaser.Scene {
   constructor() {
-    super("WinScene");
+    super("EndScene");
     this.state = {};
   }
 
@@ -14,6 +14,7 @@ export default class WinScene extends Phaser.Scene {
     this.gameScore = data.gameScore;
     this.socket = data.socket;
     this.roomKey = data.roomKey;
+    this.didWin = data.didWin;
   }
 
   preload() {
@@ -45,11 +46,17 @@ export default class WinScene extends Phaser.Scene {
       // you win box
       scene.textBox.strokeRect(240, 50, 320, 65);
       scene.textBox.fillRect(240, 50, 320, 65);
-      scene.add.text(310, 65, "YOU WIN", {
+      scene.outcome = scene.add.text(310, 65, "", {
         fill: "#00ff00",
         fontSize: "40px",
         fontStyle: "bold",
       });
+      if (scene.didWin) {
+        scene.outcome.setText("YOU WIN");
+      } else {
+        scene.outcome.setColor("#ff0000");
+        scene.outcome.setText("YOU LOSE");
+      }
 
       // popup specs: 25, 25, 750, 550
       // popup specs: x, y, width, height
@@ -105,16 +112,13 @@ export default class WinScene extends Phaser.Scene {
         let playersInfo = [];
 
         for (let key in updatedScores) {
-          if (updatedScores[key].name)
-            scoreArr.push(updatedScores[key]);
+          if (updatedScores[key].name) scoreArr.push(updatedScores[key]);
         }
 
         scoreArr = scoreArr.sort(scene.compare);
 
         scoreArr.forEach((elem) => {
-          playersInfo.push(
-            `${elem.name}   ${elem.points}`
-          );
+          playersInfo.push(`${elem.name}   ${elem.points}`);
           playersInfo.push("\n");
         });
 
@@ -128,7 +132,7 @@ export default class WinScene extends Phaser.Scene {
   compare(a, b) {
     const scoreA = a.points;
     const scoreB = b.points;
-  
+
     let comparison = 0;
     if (scoreA < scoreB) {
       comparison = 1;

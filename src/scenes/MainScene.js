@@ -109,9 +109,10 @@ export default class MainScene extends Phaser.Scene {
         scene.state.gameScore = gameScore;
         if (scene.state.gameScore >= scene.state.randomTasks.length) {
           scene.scene.stop("RegexScene");
-          scene.scene.launch("WinScene", {
+          scene.scene.launch("EndScene", {
             ...scene.state,
             socket: scene.socket,
+            didWin: true,
           });
           scene.finalTime = scene.initialTime;
           scene.beginTimer = false;
@@ -315,9 +316,10 @@ export default class MainScene extends Phaser.Scene {
       if (this.initialTime === 0) {
         this.beginTimer = false;
         this.scene.stop("RegexScene");
-        this.scene.launch("LoseScene", {
+        this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
+          didWin: false,
         });
       }
     }
