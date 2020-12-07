@@ -96,6 +96,8 @@ module.exports = (io) => {
     //update score
     socket.on("scoreUpdate", function (data) {
       const { scoreObj, roomKey } = data;
+      console.log("gamerooms inside score update", gameRooms);
+      console.log("gamerooms[roomkey] inside score update", gameRooms[roomKey]);
       gameRooms[roomKey].scores[socket.id].points += scoreObj.points;
       if (scoreObj.timeBonus) {
         gameRooms[roomKey].scores[socket.id].points += scoreObj.timeBonus;

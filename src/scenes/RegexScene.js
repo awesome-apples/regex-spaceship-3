@@ -173,10 +173,14 @@ export default class RegexScene extends Phaser.Scene {
               },
               roomKey: scene.roomKey,
             });
+            console.log("room key in score update func", scene.roomKey);
             scene.socket.emit("completedTask", { roomKey: scene.roomKey });
           } else {
             scene.isIncorrect.setVisible(true);
-            scene.socket.emit("scoreUpdate", { points: -5 });
+            scene.socket.emit("scoreUpdate", {
+              scoreObj: { points: -5 },
+              roomKey: scene.roomKey,
+            });
           }
         }
       });
