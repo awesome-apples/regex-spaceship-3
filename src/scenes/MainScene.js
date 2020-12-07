@@ -12,6 +12,7 @@ export default class MainScene extends Phaser.Scene {
       scores: {},
       players: {},
       numPlayers: 0,
+      gameStarted: false,
     };
     this.hasBeenSet = false;
     this.startClickable = true;
@@ -31,8 +32,6 @@ export default class MainScene extends Phaser.Scene {
 
   async create() {
     const scene = this;
-
-    //disable mainscene
     this.add.image(0, 0, "mainroom").setOrigin(0);
 
     //PROGRESS BAR
@@ -50,6 +49,7 @@ export default class MainScene extends Phaser.Scene {
       this.otherPlayers = this.physics.add.group();
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
+
         this.socket.on("setState", function (state) {
           const { roomKey, users, randomTasks, scores, gameScore } = state;
           scene.state.roomKey = roomKey;
@@ -57,6 +57,23 @@ export default class MainScene extends Phaser.Scene {
           scene.state.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
+          scene.roomkeyText = scene.add.text(
+            30,
+            78,
+            `Room Key: ${scene.state.roomKey}`,
+            {
+              fontSize: "20px",
+              fill: "#00ff00",
+            }
+          );
+          console.log("sscene.state.scores in setstate", scene.state.scores);
+          console.log("scene.state.roomkey in set state", scene.state.roomKey);
+          scene.waitingText = scene.add
+            .text(400, 300, "Waiting for more players to join", {
+              fontSize: "20px",
+              fill: "#ff0000",
+            })
+            .setOrigin(0.5);
         });
       }
 
@@ -154,6 +171,7 @@ export default class MainScene extends Phaser.Scene {
       this.controlPanelLeft.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
+          controlPanel: "left",
           randomTask: scene.state.randomTasks[0],
           socket: scene.socket,
         });
@@ -168,6 +186,7 @@ export default class MainScene extends Phaser.Scene {
           ...scene.state,
           randomTask: scene.state.randomTasks[1],
           socket: scene.socket,
+          controlPanel: "right",
         });
         scene.socket.emit("disablePanel", {
           controlPanel: "right",
@@ -186,16 +205,13 @@ export default class MainScene extends Phaser.Scene {
           fill: "#ffffff",
         }
       );
-
-      scene.startText = scene.add.text(400, 300, "START", {
-        fill: "#000000",
-        fontSize: "20px",
-        fontStyle: "bold",
-      });
-      scene.startText.setVisible(false);
+      scene.startButton = scene.add
+        .dom(400, 300, "button", "width: 70px; height: 25px", "START")
+        .setOrigin(0.5);
+      scene.startButton.setVisible(false);
 
       this.socket.on("destroyButton", function () {
-        scene.startText.destroy();
+        scene.startButton.destroy();
       });
 
       this.socket.on("startTimer", function () {
@@ -248,9 +264,10 @@ export default class MainScene extends Phaser.Scene {
 
     if (this.state.numPlayers >= 2 && this.startClickable === true) {
       this.startClickable = false;
-      this.startText.setVisible(true);
-      this.startText.setInteractive();
-      this.startText.on("pointerdown", () => {
+      scene.waitingText.setVisible(false);
+      this.startButton.setVisible(true);
+      this.startButton.setInteractive();
+      this.startButton.on("pointerdown", () => {
         scene.socket.emit("startGame", scene.state.roomKey);
       });
     }

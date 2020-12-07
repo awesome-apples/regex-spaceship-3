@@ -26,7 +26,6 @@ export default class EndScene extends Phaser.Scene {
 
     try {
       //sockets
-      // this.socket = io();
 
       scene.popUp = scene.add.graphics();
       scene.textBox = scene.add.graphics();
