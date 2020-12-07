@@ -10,12 +10,6 @@ const gameRooms = {
   // numPlayers: 0
   // }
 };
-//write join room
-
-//hash table
-//key is the gameroom id
-// it holds and object with the games state
-// const gameRooms= [{gameScore: , roomId: , players, numPlayers}]
 
 module.exports = (io) => {
   io.on("connection", (socket) => {
@@ -23,17 +17,9 @@ module.exports = (io) => {
       `A socket connection to the server has been made: ${socket.id}`
     );
     socket.on("joinRoom", (roomKey) => {
-      console.log("inside joinroom");
-
       socket.join(roomKey);
-      console.log("after joining and the room key", roomKey);
 
       const roomInfo = gameRooms[roomKey];
-      // console.log("game rooms", gameRooms);
-      // console.log("game rooms with room key", gameRooms[roomKey]);
-      // console.log("roomInfo", roomInfo);
-
-      console.log(roomInfo.numPlayers);
 
       roomInfo.players[socket.id] = {
         rotation: 0,
@@ -44,9 +30,8 @@ module.exports = (io) => {
       };
       //add to player to scores obj
       roomInfo.scores[socket.id] = { name: "", points: 0 };
-
       roomInfo.numPlayers = Object.keys(roomInfo.players).length;
-      console.log(roomInfo.numPlayers);
+
       // send the players object to the new player
       socket.emit("currentPlayers", {
         players: roomInfo.players,
@@ -73,22 +58,21 @@ module.exports = (io) => {
           });
         }
       }
-      console.log("gamerooms before room key", gameRooms);
-      console.log("ROOMKEY", roomKey);
 
       const roomInfo = gameRooms[roomKey];
 
-      console.log("user disconnected: ", socket.id);
-      // remove this player from our players object
-      delete roomInfo.players[socket.id];
-      delete roomInfo.scores[socket.id];
-      roomInfo.numPlayers = Object.keys(roomInfo.players).length;
-      console.log(roomInfo.numPlayers);
-      // emit a message to all players to remove this player
-      io.to(roomKey).emit("disconnected", {
-        playerId: socket.id,
-        numPlayers: roomInfo.numPlayers,
-      });
+      if (roomInfo) {
+        console.log("user disconnected: ", socket.id);
+        // remove this player from our players object
+        delete roomInfo.players[socket.id];
+        delete roomInfo.scores[socket.id];
+        roomInfo.numPlayers = Object.keys(roomInfo.players).length;
+        // emit a message to all players to remove this player
+        io.to(roomKey).emit("disconnected", {
+          playerId: socket.id,
+          numPlayers: roomInfo.numPlayers,
+        });
+      }
     });
 
     // when a player moves, update the player data
@@ -112,6 +96,8 @@ module.exports = (io) => {
     //update score
     socket.on("scoreUpdate", function (data) {
       const { scoreObj, roomKey } = data;
+      console.log("gamerooms inside score update", gameRooms);
+      console.log("gamerooms[roomkey] inside score update", gameRooms[roomKey]);
       gameRooms[roomKey].scores[socket.id].points += scoreObj.points;
       if (scoreObj.timeBonus) {
         gameRooms[roomKey].scores[socket.id].points += scoreObj.timeBonus;
@@ -126,7 +112,6 @@ module.exports = (io) => {
     socket.on("sendScores", function (data) {
       const { playerInfo, roomKey } = data;
       gameRooms[roomKey].scores[socket.id] = playerInfo;
-      console.log("socket scores", gameRooms[roomKey].scores);
       io.to(roomKey).emit("displayScores", gameRooms[roomKey].scores);
     });
 
@@ -154,10 +139,10 @@ module.exports = (io) => {
 
     // get a random code for the room
     socket.on("getRoomCode", async function () {
-      console.log("inside get room code");
       let key = codeGenerator();
-      console.log("key", key);
-      Object.keys(gameRooms).includes(key) ? (key = codeGenerator()) : key;
+      while (Object.keys(gameRooms).includes(key)) {
+        key = codeGenerator();
+      }
       gameRooms[key] = {
         roomKey: key,
         randomTasks: [],
@@ -169,9 +154,7 @@ module.exports = (io) => {
       socket.emit("roomCreated", key);
     });
     socket.on("isKeyValid", function (input) {
-      console.log("inside iskeyvalid");
-      console.log("INPUT", input);
-      const keyArray = Object.keys(gameRooms)
+      Object.keys(gameRooms).includes(input)
         ? socket.emit("keyIsValid", input)
         : socket.emit("keyNotValid");
     });

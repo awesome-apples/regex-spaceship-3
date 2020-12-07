@@ -57,6 +57,23 @@ export default class MainScene extends Phaser.Scene {
           scene.state.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
+          scene.roomkeyText = scene.add.text(
+            30,
+            78,
+            `Room Key: ${scene.state.roomKey}`,
+            {
+              fontSize: "20px",
+              fill: "#00ff00",
+            }
+          );
+          console.log("sscene.state.scores in setstate", scene.state.scores);
+          console.log("scene.state.roomkey in set state", scene.state.roomKey);
+          scene.waitingText = scene.add
+            .text(400, 300, "Waiting for more players to join", {
+              fontSize: "20px",
+              fill: "#ff0000",
+            })
+            .setOrigin(0.5);
         });
       }
 
@@ -247,6 +264,7 @@ export default class MainScene extends Phaser.Scene {
 
     if (this.state.numPlayers >= 2 && this.startClickable === true) {
       this.startClickable = false;
+      scene.waitingText.setVisible(false);
       this.startText.setVisible(true);
       this.startText.setInteractive();
       this.startText.on("pointerdown", () => {
