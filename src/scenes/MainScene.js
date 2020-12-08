@@ -196,13 +196,11 @@ export default class MainScene extends Phaser.Scene {
         "controlPanelRight"
       );
 
-      // this.controlPanelMedbay = this.controlPanelGroup.create(
-      //   700,
-      //   200,
-      //   "controlPanelRight"
-      // );
-
-      //dont have a breakroom control panel
+      this.controlPanelMedbay = this.controlPanelGroup.create(
+        700,
+        200,
+        "controlPanelRight"
+      );
 
       this.socket.on("setInactive", function (controlPanel) {
         switch (controlPanel) {
@@ -224,9 +222,9 @@ export default class MainScene extends Phaser.Scene {
           case "lavatory":
             scene.controlPanelLavatory.disableInteractive();
             break;
-          // case "medbay":
-          //   scene.controlPanelMedbay.disableInteractive();
-          //   break;
+          case "medBay":
+            scene.controlPanelMedbay.disableInteractive();
+            break;
           default:
             console.log("no control panel matches to set inactive");
         }
@@ -305,14 +303,17 @@ export default class MainScene extends Phaser.Scene {
         scene.scene.pause("MainScene");
       });
 
-      // this.controlPanelMedbay.on("pointerdown", () => {
-      //   this.scene.launch("RegexScene", {
-      //     ...scene.state,
-      //     controlPanel: "medbay",
-      //     randomTask: scene.state.randomTasks[0],
-      //     socket: scene.socket,
-      //   });
-      // });
+      this.controlPanelMedbay.on("pointerdown", () => {
+        this.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "medBay",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "medBay"
+          ),
+          socket: scene.socket,
+        });
+        scene.scene.pause("MainScene");
+      });
 
       scene.socket.on("activatePanels", function () {
         scene.randomTasks.forEach((task) => {
@@ -341,17 +342,14 @@ export default class MainScene extends Phaser.Scene {
               scene.controlPanelLavatory.setInteractive();
               scene.controlPanelLavatory.setTint(0xb2b037);
               break;
-            // case "medbay":
-            //   scene.controlPanelMedbay.setInteractive();
-            //   scene.controlPanelMedbay.setTint(0xb2b037);
-            //   break;
+            case "medBay":
+              scene.controlPanelMedbay.setInteractive();
+              scene.controlPanelMedbay.setTint(0xb2b037);
+              break;
             default:
               console.log("no control panel matches to set active");
           }
         });
-
-        // scene.controlPanelLavatory.setInteractive();
-        // scene.controlPanelCockpit.setInteractive();
       });
 
       //TIMER

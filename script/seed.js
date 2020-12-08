@@ -38,7 +38,7 @@ async function seed() {
       expectedOutput: "ECOLI",
       possibleSolution: "/[a-z]|\\s/g",
       callback: "(chr) => ''",
-      location: "vendingMachine",
+      location: "medBay",
       category: "replace",
     }),
     Task.create({
@@ -49,7 +49,7 @@ async function seed() {
       expectedOutput: "STREP",
       possibleSolution: "/[a-z]|\\s/g",
       callback: "(chr) => ''",
-      room: "vendingMachine",
+      location: "medBay",
       category: "replace",
     }),
     Task.create({
@@ -61,7 +61,7 @@ async function seed() {
       expectedOutput: "SALMONELLA",
       possibleSolution: "/[a-z]|\\s/g",
       callback: "(chr) => ''",
-      location: "vendingMachine",
+      location: "medBay",
       category: "replace",
     }),
     Task.create({
@@ -72,7 +72,7 @@ async function seed() {
       hint: "/ | / g",
       expectedOutput: "chips, soda, candy",
       possibleSolution: "/chips|soda|candy/g",
-      room: "vendingMachine",
+      location: "vendingMachine",
       category: "match",
     }),
     Task.create({
@@ -83,7 +83,7 @@ async function seed() {
       hint: "/ | / g",
       expectedOutput: "chocolate, potato chips, granola bar",
       possibleSolution: "/potato chips|cookies|granola bar/g",
-      room: "vendingMachine",
+      location: "vendingMachine",
       category: "match",
     }),
     Task.create({
@@ -108,7 +108,7 @@ async function seed() {
         "wire wire wire wire wire wire wire wire wire wire wire wire",
       possibleSolution: "/(bug )/g",
       callback: "(c) => ''",
-      location: "engineRoom",
+      location: "enginelocation",
       category: "replace",
     }),
     Task.create({
