@@ -166,36 +166,42 @@ export default class RegexScene extends Phaser.Scene {
   handleInput(scene, input, randomTask) {
     const regex = new RegExp(input);
     let result = false;
-    if (randomTask.category === "one") {
-      result = scene.validatorOne(regex, randomTask);
-    } else if (randomTask.category === "two") {
-      result = scene.validatorTwo(regex, randomTask);
+    if (randomTask.category === "search") {
+      result = scene.searchValidator(regex, randomTask);
+    } else if (randomTask.category === "replace") {
+      result = scene.replaceValidator(regex, randomTask);
+    } else if (randomTask.category === "match") {
+      result = scene.matchValidator(regex, randomTask);
+    } else if (randomTask.category === "count") {
+      result = scene.countValidator(regex, randomTask);
     }
-    return { text: `expected: potato\nyours: ${input}`, win: result };
+    return {
+      text: `expected: ${randomTask.expectedOutput}\nyours: ${result.output}`,
+      win: result.correct,
+    };
   }
 
-  validatorOne(regex, randomTask) {
-    const matchResult = randomTask.matchArray.every((string) => {
-      if (string.match(regex) === null) {
-        return false;
-      } else {
-        return string.match(regex)[0] === string;
-      }
-    });
-    const skipResult = randomTask.skipArray.every((string) => {
-      if (string.match(regex) === null) {
-        return true;
-      } else {
-        return string.match(regex)[0] !== string;
-      }
-    });
-    const result = matchResult === true && skipResult === true;
-
-    return result;
+  matchValidator(regex, randomTask) {
+    const output = randomTask.string.match(regex);
+    const correct = randomTask.expectedOutput === output;
+    return { correct, output };
   }
-  validatorTwo(regex, randomTask) {
-    //waiting for category two tasks and algorithm
-    const result = false;
-    return result;
+
+  searchValidator(regex, randomTask) {
+    const output = randomTask.string.search(regex);
+    const correct = randomTask.expectedOutput === output;
+    return { correct, output };
+  }
+
+  replaceValidator(regex, randomTask) {
+    const output = randomTask.string.replace(regex, randomTask.callback);
+    const correct = randomTask.expectedOutput === output;
+    return { correct, output };
+  }
+
+  countValidator(regex, randomTask) {
+    const output = randomTask.string.match(regex).length;
+    const correct = randomTask.expectedOutput === output;
+    return { correct, output };
   }
 }

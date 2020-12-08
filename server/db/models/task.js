@@ -5,24 +5,26 @@ const Task = db.define("task", {
   problem: {
     type: Sequelize.TEXT,
   },
-  matchArray: {
-    type: Sequelize.ARRAY(Sequelize.TEXT),
+  string: {
+    type: Sequelize.TEXT,
   },
-  skipArray: {
-    type: Sequelize.ARRAY(Sequelize.TEXT),
+  hint: {
+    type: Sequelize.STRING,
   },
-  possibleSolutions: {
-    type: Sequelize.ARRAY(Sequelize.TEXT),
+  expectedOutput: {
+    type: Sequelize.TEXT,
   },
-  category: {
+  possibleSolution: {
+    type: Sequelize.STRING,
+  },
+  callback: {
     type: Sequelize.STRING,
   },
   room: {
     type: Sequelize.STRING,
   },
-  completed: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
+  category: {
+    type: Sequelize.STRING,
   },
 });
 
