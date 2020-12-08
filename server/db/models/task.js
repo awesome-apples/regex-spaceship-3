@@ -1,7 +1,7 @@
-const Sequelize = require('sequelize');
-const db = require('../db');
+const Sequelize = require("sequelize");
+const db = require("../db");
 
-const Task = db.define('task', {
+const Task = db.define("task", {
   problem: {
     type: Sequelize.TEXT,
   },
@@ -20,7 +20,7 @@ const Task = db.define('task', {
   callback: {
     type: Sequelize.STRING,
   },
-  room: {
+  location: {
     type: Sequelize.STRING,
   },
   category: {
