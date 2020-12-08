@@ -4,14 +4,6 @@ export default class RegexScene extends Phaser.Scene {
   constructor() {
     super("RegexScene");
     this.state = {};
-    // this.randomTask = {
-    //   problem:
-    //     "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
-    //   matchArray: ["1 file found?", "2 files found?", "24 files found?"],
-    //   skipArray: ["No files found."],
-    //   completed: false,
-    //   category: "one",
-    // };
   }
 
   init(data) {
@@ -34,36 +26,12 @@ export default class RegexScene extends Phaser.Scene {
   async create() {
     const scene = this;
 
-    // console.log('random tasks altogether in this scene', this.randomTasks);
-    // console.log('random task in this scene !!', this.randomTask);
-    //get an emition of the persons random task from their socket
-    //assign random task to this.randomTask
-
     try {
-      //sockets
-
-      // scene.graphics = scene.add.graphics();
       scene.graphics = scene.add.image(400, 300, "computer");
-      // scene.graphics2 = scene.add.graphics();
       scene.promptPopup = scene.add.image(270, 295, "popup").setScale(1.05, 2);
       scene.inputPopup = scene.add.image(540, 230, "popup");
       scene.outputPopup = scene.add.image(460, 400, "popup").setScale(1.5, 1);
 
-      // for popup window
-      // scene.graphics.lineStyle(1, 0xffffff);
-      // scene.graphics.fillStyle(0xffffff, 0.5);
-
-      // for boxes
-      // scene.graphics2.lineStyle(1, 0xffffff);
-      // scene.graphics2.fillStyle(0xffffff, 1);
-
-      // popup window
-      // scene.graphics.strokeRect(25, 75, 750, 500);
-      // scene.graphics.fillRect(25, 75, 750, 500);
-
-      // regex problem prompt
-      // scene.graphics2.strokeRect(50, 100, 325, 425);
-      // scene.graphics2.fillRect(50, 100, 325, 425);
       scene.add.text(155, 145, "Error!! Must be resolved!", {
         fill: "#00ff00",
         fontSize: "14px",
@@ -92,8 +60,6 @@ export default class RegexScene extends Phaser.Scene {
       );
 
       // input area
-      // scene.graphics2.strokeRect(425, 100, 325, 200);
-      // scene.graphics2.fillRect(425, 100, 325, 200);
       scene.add.text(428, 152, "Input", {
         fill: "#00ff00",
         fontSize: "12px",
@@ -102,9 +68,6 @@ export default class RegexScene extends Phaser.Scene {
       scene.inputElement = scene.add.dom(597, 264).createFromCache("taskform");
 
       // output area
-      // scene.graphics2.strokeRect(425, 350, 325, 175);
-      // scene.graphics2.fillRect(425, 350, 325, 175);
-
       scene.add.text(290, 323, "Output", {
         fill: "#00ff00",
         fontSize: "12px",
@@ -181,7 +144,7 @@ export default class RegexScene extends Phaser.Scene {
               roomKey: scene.roomKey,
             });
             scene.submitButton.disableInteractive();
-            scene.socket.emit("disablePanelForAll", {
+            scene.socket.emit("disablePanel", {
               controlPanel: scene.controlPanel,
               roomKey: scene.roomKey,
             });

@@ -1,21 +1,21 @@
-'use strict';
+"use strict";
 
-const db = require('../server/db');
-const { User, Task, Game } = require('../server/db/models');
+const db = require("../server/db");
+const { User, Task, Game } = require("../server/db/models");
 
 async function seed() {
   await db.sync({ force: true });
-  console.log('db synced!');
+  console.log("db synced!");
 
   const games = await Promise.all([
-    Game.create({ code: '389573', socketId: 'jdghjkdhkd' }),
-    Game.create({ code: '284759', socketId: 'gfjdykhgkd' }),
+    Game.create({ code: "389573", socketId: "jdghjkdhkd" }),
+    Game.create({ code: "284759", socketId: "gfjdykhgkd" }),
   ]);
 
   const users = await Promise.all([
-    User.create({ username: 'cyberpunkkkk', password: '123', gameId: 1 }),
-    User.create({ username: 'eboy38904', password: '123', gameId: 1 }),
-    User.create({ username: 'sadly', password: '12321', gameId: 2 }),
+    User.create({ username: "cyberpunkkkk", password: "123", gameId: 1 }),
+    User.create({ username: "eboy38904", password: "123", gameId: 1 }),
+    User.create({ username: "sadly", password: "12321", gameId: 2 }),
   ]);
 
   const tasks = await Promise.all([
@@ -26,6 +26,7 @@ async function seed() {
       skipArray: ["a"],
       possibleSolutions: ["aa+b*c+", "a{2,4}b{0,4}c{1,2}"],
       category: "one",
+      room: "breakRoom",
     }),
     Task.create({
       problem:
@@ -34,6 +35,7 @@ async function seed() {
       skipArray: ["wazup"],
       possibleSolutions: ["waz{3,5}up"],
       category: "one",
+      room: "cargoHold",
     }),
     Task.create({
       problem:
@@ -42,6 +44,7 @@ async function seed() {
       skipArray: ["No files found."],
       // possibleSolutions: ['\d+ files? found\?'],
       category: "one",
+      room: "lavatory",
     }),
     Task.create({
       problem:
@@ -50,6 +53,7 @@ async function seed() {
       skipArray: ["4.abc"],
       // possibleSolutions: ['\d\.\s+abc'],
       category: "one",
+      room: "engineRoom",
     }),
     Task.create({
       problem:
@@ -58,7 +62,16 @@ async function seed() {
       skipArray: ["I love logs", "I love cogs"],
       possibleSolutions: ["I love (cats|dogs)"],
       category: "one",
->>>>>>> 0156d2283d954a928ce4e7c0d8296c85b13a8697
+      room: "cockpit",
+    }),
+    Task.create({
+      problem:
+        "Go ahead and try writing a conditional pattern that matches only the lines with small fuzzy creatures below.",
+      matchArray: ["I love cats", "I love dogs"],
+      skipArray: ["I love logs", "I love cogs"],
+      possibleSolutions: ["I love (cats|dogs)"],
+      category: "one",
+      room: "medbay",
     }),
   ]);
 
@@ -69,16 +82,16 @@ async function seed() {
 // This way we can isolate the error handling and exit trapping.
 // The `seed` function is concerned only with modifying the database.
 async function runSeed() {
-  console.log('seeding...');
+  console.log("seeding...");
   try {
     await seed();
   } catch (err) {
     console.error(err);
     process.exitCode = 1;
   } finally {
-    console.log('closing db connection');
+    console.log("closing db connection");
     await db.close();
-    console.log('db connection closed');
+    console.log("db connection closed");
   }
 }
 

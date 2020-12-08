@@ -143,55 +143,162 @@ export default class MainScene extends Phaser.Scene {
       });
 
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
-      this.controlPanelLeft = new ControlPanel(
-        this,
+
+      //make a control panel group for physics
+      this.controlPanelGroup = this.physics.add.staticGroup({
+        classType: ControlPanel,
+      });
+
+      this.controlPanelLavatory = this.controlPanelGroup.create(
         200,
         200,
         "controlPanelLeft"
       );
 
-      this.controlPanelRight = new ControlPanel(
-        this,
-        580,
+      this.controlPanelCockpit = this.controlPanelGroup.create(
+        300,
+        200,
+        "controlPanelLeft"
+      );
+
+      this.controlPanelCargoHold = this.controlPanelGroup.create(
         400,
+        200,
+        "controlPanelLeft"
+      );
+
+      this.controlPanelEngineRoom = this.controlPanelGroup.create(
+        500,
+        200,
+        "controlPanelRight"
+      );
+
+      this.controlPanelBreakroom = this.controlPanelGroup.create(
+        600,
+        200,
+        "controlPanelRight"
+      );
+
+      this.controlPanelMedbay = this.controlPanelGroup.create(
+        700,
+        200,
         "controlPanelRight"
       );
 
       this.socket.on("setInactive", function (controlPanel) {
-        if (controlPanel === "left") {
-          scene.controlPanelLeft.disableInteractive();
-          scene.controlPanelLeft.setTint(0xd86969);
-        } else if (controlPanel === "right") {
-          scene.controlPanelRight.disableInteractive();
-          scene.controlPanelRight.setTint(0xd86969);
+        switch (controlPanel) {
+          case "breakRoom":
+            scene.controlPanelBreakroom.disableInteractive();
+            break;
+          case "engineRoom":
+            scene.controlPanelEngineRoom.disableInteractive();
+            break;
+          case "cargoHold":
+            scene.controlPanelCargoHold.disableInteractive();
+            break;
+          case "cockpit":
+            scene.controlPanelCockpit.disableInteractive();
+            break;
+          case "lavatory":
+            scene.controlPanelLavatory.disableInteractive();
+            break;
+          case "medbay":
+            scene.controlPanelMedbay.disableInteractive();
+            break;
+          default:
+            console.log("no control panel matches to set inactive");
         }
       });
 
       // click on control panels and Regex Scene will launch
-      this.controlPanelLeft.on("pointerdown", () => {
+      this.controlPanelBreakroom.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
-          controlPanel: "left",
+          controlPanel: "breakRoom",
           randomTask: scene.state.randomTasks[0],
           socket: scene.socket,
         });
-        scene.socket.emit("disablePanel", {
-          controlPanel: "left",
-          roomKey: scene.state.roomKey,
+      });
+
+      this.controlPanelEngineRoom.on("pointerdown", () => {
+        this.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "engineRoom",
+          randomTask: scene.state.randomTasks[0],
+          socket: scene.socket,
         });
       });
 
-      this.controlPanelRight.on("pointerdown", () => {
+      this.controlPanelCargoHold.on("pointerdown", () => {
+        this.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "cargoHold",
+          randomTask: scene.state.randomTasks[0],
+          socket: scene.socket,
+        });
+      });
+
+      this.controlPanelCockpit.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
           randomTask: scene.state.randomTasks[1],
           socket: scene.socket,
-          controlPanel: "right",
+          controlPanel: "cockpit",
         });
-        scene.socket.emit("disablePanel", {
-          controlPanel: "right",
-          roomKey: scene.state.roomKey,
+      });
+
+      this.controlPanelLavatory.on("pointerdown", () => {
+        this.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "lavatory",
+          randomTask: scene.state.randomTasks[0],
+          socket: scene.socket,
         });
+      });
+
+      this.controlPanelMedbay.on("pointerdown", () => {
+        this.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "medbay",
+          randomTask: scene.state.randomTasks[0],
+          socket: scene.socket,
+        });
+      });
+
+      scene.socket.on("activatePanels", function () {
+        scene.state.randomTasks.forEach((task) => {
+          switch (task.room) {
+            case "breakRoom":
+              scene.controlPanelBreakroom.setInteractive();
+              scene.controlPanelBreakroom.setTint(0xb2b037);
+              break;
+            case "engineRoom":
+              scene.controlPanelEngineRoom.setInteractive();
+              scene.controlPanelEngineRoom.setTint(0xb2b037);
+              break;
+            case "cargoHold":
+              scene.controlPanelCargoHold.setInteractive();
+              scene.controlPanelCargoHold.setTint(0xb2b037);
+              break;
+            case "cockpit":
+              scene.controlPanelCockpit.setInteractive();
+              scene.controlPanelCockpit.setTint(0xb2b037);
+              break;
+            case "lavatory":
+              scene.controlPanelLavatory.setInteractive();
+              scene.controlPanelLavatory.setTint(0xb2b037);
+              break;
+            case "medbay":
+              scene.controlPanelMedbay.setInteractive();
+              scene.controlPanelMedbay.setTint(0xb2b037);
+              break;
+            default:
+              console.log("no control panel matches to set active");
+          }
+        });
+
+        // scene.controlPanelLavatory.setInteractive();
+        // scene.controlPanelCockpit.setInteractive();
       });
 
       //TIMER
@@ -274,10 +381,36 @@ export default class MainScene extends Phaser.Scene {
     if (this.beginTimer) {
       this.countdown();
     }
-    scene.socket.on("activatePanels", function () {
-      scene.controlPanelLeft.setInteractive();
-      scene.controlPanelRight.setInteractive();
-    });
+    // scene.socket.on("activatePanels", function () {
+
+    //   scene.state.randomTasks.forEach((task) => {
+    //     switch (task.room) {
+    //       case "breakRoom":
+    //         scene.controlPanelBreakroom.setInteractive();
+    //         break;
+    //       case "engineRoom":
+    //         scene.controlPanelEngineRoom.setInteractive();
+    //         break;
+    //       case "cargoHold":
+    //         scene.controlPanelCargoHold.setInteractive();
+    //         break;
+    //       case "cockpit":
+    //         scene.controlPanelCockpit.setInteractive();
+    //         break;
+    //       case "lavatory":
+    //         scene.controlPanelLavatory.setInteractive();
+    //         break;
+    //       case "medbay":
+    //         scene.controlPanelMedbay.setInteractive();
+    //         break;
+    //       default:
+    //         console.log("no control panel matches to set active");
+    //     }
+    //   });
+
+    //   // scene.controlPanelLavatory.setInteractive();
+    //   // scene.controlPanelCockpit.setInteractive();
+    // });
   }
 
   addPlayer(scene, playerInfo) {
