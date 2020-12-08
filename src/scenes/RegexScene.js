@@ -197,6 +197,7 @@ export default class RegexScene extends Phaser.Scene {
 
   searchValidator(regex, randomTask) {
     const output = randomTask.string.search(regex);
+    const outputStr = output.join(", ");
     const correct = randomTask.expectedOutput === output.toString();
     return { correct, output };
   }

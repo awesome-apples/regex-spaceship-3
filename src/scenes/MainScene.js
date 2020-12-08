@@ -377,6 +377,13 @@ export default class MainScene extends Phaser.Scene {
       this.socket.on("startTimer", function () {
         scene.beginTimer = Date.now();
       });
+      scene.instructionsButton = scene.add
+        .dom(650, 570, "button", "width: 100px; height: 25px", "instructions")
+        .setOrigin(0);
+      this.instructionsButton.setInteractive();
+      this.instructionsButton.on("pointerdown", () => {
+        scene.scene.launch("Instructions");
+      });
     } catch (error) {
       console.error(error);
     }

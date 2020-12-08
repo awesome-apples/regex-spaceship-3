@@ -34,9 +34,9 @@ async function seed() {
       problem:
         "The alien has contaminated our samples! The name of the bacteria is hidden in the medical files. Write a regex that matches all the lowercase letters and whitespace in the string below, and we will remove them for you. All thats left will be the name of the bacteria.",
       string: "Emmas health is exCellent her metabOlism and refLexes are quIck",
-      hint: "/ [ ] /",
+      hint: "/ [ ] \\s /",
       expectedOutput: "ECOLI",
-      //possibleSolution: '/[a-z]|\s/g',
+      possibleSolution: "/[a-z]|\\s/g",
       callback: "(chr) => ''",
       location: "vendingMachine",
       category: "replace",
@@ -45,9 +45,21 @@ async function seed() {
       problem:
         "The alien has contaminated our samples! The name of the bacteria is hidden in the medical files. Write a regex that matches all the lowercase letters and whitespace in the string below, and we will remove them for you. All thats left will be the name of the bacteria.",
       string: "Sarahs hearT RatE and blood Pressure are healthy",
-      hint: "/ [ ] /",
+      hint: "/ [ ] \\s /",
       expectedOutput: "STREP",
-      //possibleSolution: '/[a-z]|\s/g',
+      possibleSolution: "/[a-z]|\\s/g",
+      callback: "(chr) => ''",
+      room: "vendingMachine",
+      category: "replace",
+    }),
+    Task.create({
+      problem:
+        "The alien has contaminated our samples! The name of the bacteria is hidden in the medical files. Write a regex that matches all the lowercase letters and whitespace in the string below, and we will remove them for you. All thats left will be the name of the bacteria.",
+      string:
+        "SierrA has Low blood sugar she Must eat snacks OfteN to keEp her LeveLs up",
+      hint: "/ [ ] \\s /",
+      expectedOutput: "SALMONELLA",
+      possibleSolution: "/[a-z]|\\s/g",
       callback: "(chr) => ''",
       location: "vendingMachine",
       category: "replace",
@@ -60,7 +72,7 @@ async function seed() {
       hint: "/ | / g",
       expectedOutput: "chips, soda, candy",
       possibleSolution: "/chips|soda|candy/g",
-      location: "vendingMachine",
+      room: "vendingMachine",
       category: "match",
     }),
     Task.create({
@@ -71,7 +83,7 @@ async function seed() {
       hint: "/ | / g",
       expectedOutput: "chocolate, potato chips, granola bar",
       possibleSolution: "/potato chips|cookies|granola bar/g",
-      location: "vendingMachine",
+      room: "vendingMachine",
       category: "match",
     }),
     Task.create({
