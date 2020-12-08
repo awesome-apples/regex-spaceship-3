@@ -27,7 +27,7 @@ async function seed() {
       hint: "/ / g",
       expectedOutput: "3",
       possibleSolution: "/rations/g",
-      room: "cargoHold",
+      location: "cargoHold",
       category: "count",
     }),
     Task.create({
@@ -38,7 +38,7 @@ async function seed() {
       expectedOutput: "ECOLI",
       //possibleSolution: '/[a-z]|\s/g',
       callback: "(chr) => ''",
-      room: "vendingMachine",
+      location: "vendingMachine",
       category: "replace",
     }),
     Task.create({
@@ -49,7 +49,7 @@ async function seed() {
       expectedOutput: "STREP",
       //possibleSolution: '/[a-z]|\s/g',
       callback: "(chr) => ''",
-      room: "vendingMachine",
+      location: "vendingMachine",
       category: "replace",
     }),
     Task.create({
@@ -58,9 +58,9 @@ async function seed() {
       string:
         "Rocks, meteors, chips, rocks, soda, meteors, candy, rocks, rocks, meteors",
       hint: "/ | / g",
-      expectedOutput: ["chips", "soda", "candy"],
+      expectedOutput: "chips, soda, candy",
       possibleSolution: "/chips|soda|candy/g",
-      room: "vendingMachine",
+      location: "vendingMachine",
       category: "match",
     }),
     Task.create({
@@ -69,9 +69,9 @@ async function seed() {
       string:
         "chocolate, slime, potato chips, cookies, rocks, contract for world domination, granola bar",
       hint: "/ | / g",
-      expectedOutput: ["chocolate", "potato chips", "granola bar"],
+      expectedOutput: "chocolate, potato chips, granola bar",
       possibleSolution: "/potato chips|cookies|granola bar/g",
-      room: "vendingMachine",
+      location: "vendingMachine",
       category: "match",
     }),
     Task.create({
@@ -83,7 +83,7 @@ async function seed() {
       expectedOutput: "Emma January 12, George March 6, Carlos December 6",
       possibleSolution: "/Zviverzxkinzop 8th Lunar Rotation, /g",
       callback: "(alien) => ''",
-      room: "birthdayList",
+      location: "birthdayList",
       category: "replace",
     }),
     Task.create({
@@ -96,7 +96,7 @@ async function seed() {
         "wire wire wire wire wire wire wire wire wire wire wire wire",
       possibleSolution: "/(bug )/g",
       callback: "(c) => ''",
-      room: "engineRoom",
+      location: "engineRoom",
       category: "replace",
     }),
     Task.create({
@@ -109,7 +109,7 @@ async function seed() {
         "empty empty plunged empty empty empty plunged empty empty empty plunged empty empty",
       possibleSolution: "/(clogged)/g",
       callback: "(c) => 'plunged'",
-      room: "lavatory",
+      location: "lavatory",
       category: "replace",
     }),
     Task.create({
@@ -118,9 +118,9 @@ async function seed() {
       string:
         "space space space planet space space meteor space space planet space",
       hint: "/ [ ] /",
-      expectedOutput: "35",
+      expectedOutput: "37",
       possibleSolution: "/[m]/",
-      room: "cockpit",
+      location: "cockpit",
       category: "search",
     }),
     Task.create({
@@ -131,7 +131,7 @@ async function seed() {
       hint: "/ [ ] /",
       expectedOutput: "25",
       possibleSolution: "/[m]/",
-      room: "cockpit",
+      location: "cockpit",
       category: "search",
     }),
   ]);

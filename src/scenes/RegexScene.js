@@ -41,15 +41,7 @@ export default class RegexScene extends Phaser.Scene {
       scene.add.text(
         155,
         170,
-        `${scene.randomTask.problem}
-        Matches: ${scene.randomTask.matchArray.map(
-          (string) => `
-        ${string}`
-        )}
-        Skips:${scene.randomTask.skipArray.map(
-          (string) => `
-        ${string}`
-        )}`,
+        `${scene.randomTask.problem}, ${scene.randomTask.string}`,
         {
           fill: "#00ff00",
           fontSize: "12px",
@@ -81,6 +73,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.exit.setInteractive();
       scene.exit.on("pointerdown", () => {
+        scene.scene.resume("MainScene");
         scene.scene.stop("RegexScene");
       });
 
@@ -164,7 +157,22 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   handleInput(scene, input, randomTask) {
-    const regex = new RegExp(input);
+    const gFlag = /g$/;
+
+    const flag = input.match(gFlag);
+    const modified = input.replace(/\//g, "");
+
+    console.log("modified input inside ", modified);
+    console.log("flag input modified", flag);
+
+    let regex = "";
+
+    if (flag === null) {
+      regex = new RegExp(modified);
+    } else {
+      regex = new RegExp(modified, flag);
+    }
+
     let result = false;
     if (randomTask.category === "search") {
       result = scene.searchValidator(regex, randomTask);
@@ -189,7 +197,7 @@ export default class RegexScene extends Phaser.Scene {
 
   searchValidator(regex, randomTask) {
     const output = randomTask.string.search(regex);
-    const correct = randomTask.expectedOutput === output;
+    const correct = randomTask.expectedOutput === output.toString();
     return { correct, output };
   }
 
@@ -200,8 +208,12 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   countValidator(regex, randomTask) {
-    const output = randomTask.string.match(regex).length;
-    const correct = randomTask.expectedOutput === output;
-    return { correct, output };
+    if (randomTask.string.match(regex)) {
+      const output = randomTask.string.match(regex).length;
+      const correct = randomTask.expectedOutput === output;
+      return { correct, output };
+    } else {
+      return { correct: false, output: "null" };
+    }
   }
 }

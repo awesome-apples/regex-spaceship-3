@@ -3,7 +3,8 @@ const { Task } = require("../db/models");
 const gameRooms = {
   // [roomKey]: {
   // users: [],
-  // randomTasks: [],
+  // allRandomTasks: [],
+  // unassignedRandomTasks: [],
   // scores: {},
   // gameScore: 0,
   // players: {},
@@ -12,7 +13,7 @@ const gameRooms = {
 };
 
 module.exports = (io) => {
-  io.on("connection", (socket) => {
+  io.on("connection", async (socket) => {
     console.log(
       `A socket connection to the server has been made: ${socket.id}`
     );
@@ -20,13 +21,22 @@ module.exports = (io) => {
       socket.join(roomKey);
 
       const roomInfo = gameRooms[roomKey];
+      console.log(
+        "unassigned random tasks in joinroom",
+        gameRooms[roomKey].unassignedRandomTasks
+      );
+      const randomTasksForPlayer = gameRooms[
+        roomKey
+      ].unassignedRandomTasks.pop();
+
+      const playerColor = gameRooms[roomKey].colors.pop();
 
       roomInfo.players[socket.id] = {
         rotation: 0,
         x: Math.floor(Math.random() * 700) + 50,
         y: Math.floor(Math.random() * 500) + 50,
         playerId: socket.id,
-        team: Math.floor(Math.random() * 2) == 0 ? "red" : "blue",
+        team: playerColor,
       };
       //add to player to scores obj
       roomInfo.scores[socket.id] = { name: "", points: 0 };
@@ -38,7 +48,10 @@ module.exports = (io) => {
         numPlayers: roomInfo.numPlayers,
       });
       // set initial state
-      socket.emit("setState", roomInfo);
+      socket.emit("setState", {
+        ...roomInfo,
+        randomTasks: randomTasksForPlayer,
+      });
       // update all other players of the new player
       socket.to(roomKey).emit("newPlayer", {
         playerInfo: roomInfo.players[socket.id],
@@ -116,21 +129,11 @@ module.exports = (io) => {
     });
 
     socket.on("startGame", async function (roomKey) {
-      try {
-        const tasks = await Task.findAll();
-        const randomIdOne = Math.ceil(Math.random() * tasks.length);
-        const randomIdTwo = Math.ceil(Math.random() * tasks.length);
-        const taskOne = await Task.findByPk(randomIdOne);
-        const taskTwo = await Task.findByPk(randomIdTwo);
-        gameRooms[roomKey].randomTasks = [taskOne, taskTwo];
-        gameRooms[roomKey].gameStarted = true;
-        io.to(roomKey).emit("updateState", gameRooms[roomKey]);
-        io.to(roomKey).emit("destroyButton");
-        io.to(roomKey).emit("startTimer");
-        io.to(roomKey).emit("activatePanels");
-      } catch (err) {
-        console.log("error starting game", err);
-      }
+      gameRooms[roomKey].gameStarted = true;
+      io.to(roomKey).emit("updateState", gameRooms[roomKey]);
+      io.to(roomKey).emit("destroyButton");
+      io.to(roomKey).emit("startTimer");
+      io.to(roomKey).emit("activatePanels");
     });
     socket.on("disablePanel", function (data) {
       const { controlPanel, roomKey } = data;
@@ -138,6 +141,7 @@ module.exports = (io) => {
     });
 
     // get a random code for the room
+    // generate random tasks for room
     socket.on("getRoomCode", async function () {
       let key = codeGenerator();
       while (Object.keys(gameRooms).includes(key)) {
@@ -145,13 +149,84 @@ module.exports = (io) => {
       }
       gameRooms[key] = {
         roomKey: key,
-        randomTasks: [],
+        allRandomTasks: [],
+        unassignedRandomTasks: [],
         gameScore: 0,
         scores: {},
         players: {},
         numPlayers: 0,
         gameStarted: false,
       };
+      try {
+        const tasks = await Task.findAll();
+        console.log("tasks in getroomcode", tasks);
+        let randomId = 0;
+
+        const tasksArrOne = [];
+        const tasksArrTwo = [];
+        const tasksArrThree = [];
+
+        while (tasksArrOne.length < 3) {
+          randomId = Math.ceil(Math.random() * tasks.length - 1);
+          if (tasksArrOne.length === 0) {
+            tasksArrOne.push(tasks[randomId]);
+          } else if (
+            tasksArrOne.length &&
+            !tasksArrOne.some(
+              (task) => task.location === tasks[randomId].location
+            )
+          ) {
+            console.log("tasks[randomid]", tasks[randomId]);
+            tasksArrOne.push(tasks[randomId]);
+            console.log("tasks arr one after pushing", tasksArrOne);
+          }
+        }
+        while (tasksArrTwo.length < 3) {
+          randomId = Math.ceil(Math.random() * tasks.length - 1);
+
+          if (tasksArrTwo.length === 0) {
+            tasksArrTwo.push(tasks[randomId]);
+            console.log("first task has been pushed", tasksArrTwo);
+          } else if (
+            tasksArrTwo.length &&
+            !tasksArrTwo.some((task) => {
+              console.log("task inside some", task);
+              console.log("tasks[randomid] inside some", tasks[randomId]);
+              return task.location === tasks[randomId].location;
+            })
+          ) {
+            tasksArrTwo.push(tasks[randomId]);
+          }
+        }
+        while (tasksArrThree.length < 3) {
+          randomId = Math.ceil(Math.random() * tasks.length - 1);
+          if (tasksArrThree.length === 0) {
+            tasksArrThree.push(tasks[randomId]);
+          } else if (
+            tasksArrThree.length &&
+            !tasksArrThree.some(
+              (task) => task.location === tasks[randomId].location
+            )
+          ) {
+            tasksArrThree.push(tasks[randomId]);
+          }
+        }
+
+        gameRooms[key].colors = ["red", "blue", "green"];
+
+        gameRooms[key].allRandomTasks = [
+          ...tasksArrOne,
+          ...tasksArrTwo,
+          ...tasksArrThree,
+        ];
+        gameRooms[key].unassignedRandomTasks = [
+          tasksArrOne,
+          tasksArrTwo,
+          tasksArrThree,
+        ];
+      } catch (err) {
+        console.log("error fetching server state", err);
+      }
       socket.emit("roomCreated", key);
     });
     socket.on("isKeyValid", function (input) {

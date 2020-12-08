@@ -20,7 +20,7 @@ const Task = db.define("task", {
   callback: {
     type: Sequelize.STRING,
   },
-  room: {
+  location: {
     type: Sequelize.STRING,
   },
   category: {

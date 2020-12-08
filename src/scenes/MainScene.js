@@ -7,16 +7,17 @@ export default class MainScene extends Phaser.Scene {
     super("MainScene");
     this.state = {
       roomKey: "",
-      randomTasks: [],
       gameScore: 0,
       scores: {},
       players: {},
       numPlayers: 0,
       gameStarted: false,
+      allRandomTasks: [],
     };
     this.hasBeenSet = false;
     this.startClickable = true;
     this.beginTimer = false;
+    this.randomTasks = [];
   }
 
   preload() {
@@ -51,10 +52,18 @@ export default class MainScene extends Phaser.Scene {
         this.hasBeenSet = true;
 
         this.socket.on("setState", function (state) {
-          const { roomKey, users, randomTasks, scores, gameScore } = state;
+          const {
+            roomKey,
+            users,
+            randomTasks,
+            scores,
+            gameScore,
+            allRandomTasks,
+          } = state;
+          scene.state.allRandomTasks = allRandomTasks;
           scene.state.roomKey = roomKey;
           scene.state.users = users;
-          scene.state.randomTasks = randomTasks;
+          scene.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
           scene.roomkeyText = scene.add.text(
@@ -68,6 +77,8 @@ export default class MainScene extends Phaser.Scene {
           );
           console.log("sscene.state.scores in setstate", scene.state.scores);
           console.log("scene.state.roomkey in set state", scene.state.roomKey);
+          console.log("randomtasks on main", scene.randomTasks);
+          console.log("state on main", scene.state);
           scene.waitingText = scene.add
             .text(400, 300, "Waiting for more players to join", {
               fontSize: "20px",
@@ -79,7 +90,7 @@ export default class MainScene extends Phaser.Scene {
 
       this.socket.on("updateState", function (serverState) {
         scene.state = serverState;
-        scene.progressBar.changeTaskAmount(scene.state.randomTasks.length);
+        scene.progressBar.changeTaskAmount(scene.state.allRandomTasks.length);
       });
 
       this.socket.on("currentPlayers", function (arg) {
@@ -124,7 +135,7 @@ export default class MainScene extends Phaser.Scene {
         const { gameScore } = arg;
         scene.progressBar.increase(gameScore - scene.state.gameScore);
         scene.state.gameScore = gameScore;
-        if (scene.state.gameScore >= scene.state.randomTasks.length) {
+        if (scene.state.gameScore >= scene.state.allRandomTasks.length) {
           scene.scene.stop("RegexScene");
           scene.scene.launch("EndScene", {
             ...scene.state,
@@ -150,6 +161,12 @@ export default class MainScene extends Phaser.Scene {
       });
 
       this.controlPanelLavatory = this.controlPanelGroup.create(
+        100,
+        200,
+        "controlPanelLeft"
+      );
+
+      this.controlPanelBirthdayList = this.controlPanelGroup.create(
         200,
         200,
         "controlPanelLeft"
@@ -173,22 +190,27 @@ export default class MainScene extends Phaser.Scene {
         "controlPanelRight"
       );
 
-      this.controlPanelBreakroom = this.controlPanelGroup.create(
+      this.controlPanelVendingMachine = this.controlPanelGroup.create(
         600,
         200,
         "controlPanelRight"
       );
 
-      this.controlPanelMedbay = this.controlPanelGroup.create(
-        700,
-        200,
-        "controlPanelRight"
-      );
+      // this.controlPanelMedbay = this.controlPanelGroup.create(
+      //   700,
+      //   200,
+      //   "controlPanelRight"
+      // );
+
+      //dont have a breakroom control panel
 
       this.socket.on("setInactive", function (controlPanel) {
         switch (controlPanel) {
-          case "breakRoom":
-            scene.controlPanelBreakroom.disableInteractive();
+          case "vendingMachine":
+            scene.controlPanelVendingMachine.disableInteractive();
+            break;
+          case "birthdayList":
+            scene.controlPanelBirthdayList.disableInteractive();
             break;
           case "engineRoom":
             scene.controlPanelEngineRoom.disableInteractive();
@@ -202,75 +224,106 @@ export default class MainScene extends Phaser.Scene {
           case "lavatory":
             scene.controlPanelLavatory.disableInteractive();
             break;
-          case "medbay":
-            scene.controlPanelMedbay.disableInteractive();
-            break;
+          // case "medbay":
+          //   scene.controlPanelMedbay.disableInteractive();
+          //   break;
           default:
             console.log("no control panel matches to set inactive");
         }
       });
 
       // click on control panels and Regex Scene will launch
-      this.controlPanelBreakroom.on("pointerdown", () => {
+      this.controlPanelVendingMachine.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
-          controlPanel: "breakRoom",
-          randomTask: scene.state.randomTasks[0],
+          controlPanel: "vendingMachine",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "vendingMachine"
+          ),
           socket: scene.socket,
         });
+        scene.scene.pause("MainScene");
+      });
+
+      this.controlPanelBirthdayList.on("pointerdown", () => {
+        this.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "birthdayList",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "birthdayList"
+          ),
+          socket: scene.socket,
+        });
+        scene.scene.pause("MainScene");
       });
 
       this.controlPanelEngineRoom.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
           controlPanel: "engineRoom",
-          randomTask: scene.state.randomTasks[0],
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "engineRoom"
+          ),
           socket: scene.socket,
         });
+        scene.scene.pause("MainScene");
       });
 
       this.controlPanelCargoHold.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
           controlPanel: "cargoHold",
-          randomTask: scene.state.randomTasks[0],
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "cargoHold"
+          ),
           socket: scene.socket,
         });
+        scene.scene.pause("MainScene");
       });
 
       this.controlPanelCockpit.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
-          randomTask: scene.state.randomTasks[1],
-          socket: scene.socket,
           controlPanel: "cockpit",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "cockpit"
+          ),
+          socket: scene.socket,
         });
+        scene.scene.pause("MainScene");
       });
 
       this.controlPanelLavatory.on("pointerdown", () => {
         this.scene.launch("RegexScene", {
           ...scene.state,
           controlPanel: "lavatory",
-          randomTask: scene.state.randomTasks[0],
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "lavatory"
+          ),
           socket: scene.socket,
         });
+        scene.scene.pause("MainScene");
       });
 
-      this.controlPanelMedbay.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "medbay",
-          randomTask: scene.state.randomTasks[0],
-          socket: scene.socket,
-        });
-      });
+      // this.controlPanelMedbay.on("pointerdown", () => {
+      //   this.scene.launch("RegexScene", {
+      //     ...scene.state,
+      //     controlPanel: "medbay",
+      //     randomTask: scene.state.randomTasks[0],
+      //     socket: scene.socket,
+      //   });
+      // });
 
       scene.socket.on("activatePanels", function () {
-        scene.state.randomTasks.forEach((task) => {
-          switch (task.room) {
-            case "breakRoom":
-              scene.controlPanelBreakroom.setInteractive();
-              scene.controlPanelBreakroom.setTint(0xb2b037);
+        scene.randomTasks.forEach((task) => {
+          switch (task.location) {
+            case "vendingMachine":
+              scene.controlPanelVendingMachine.setInteractive();
+              scene.controlPanelVendingMachine.setTint(0xb2b037);
+              break;
+            case "birthdayList":
+              scene.controlPanelBirthdayList.setInteractive();
+              scene.controlPanelBirthdayList.setTint(0xb2b037);
               break;
             case "engineRoom":
               scene.controlPanelEngineRoom.setInteractive();
@@ -288,10 +341,10 @@ export default class MainScene extends Phaser.Scene {
               scene.controlPanelLavatory.setInteractive();
               scene.controlPanelLavatory.setTint(0xb2b037);
               break;
-            case "medbay":
-              scene.controlPanelMedbay.setInteractive();
-              scene.controlPanelMedbay.setTint(0xb2b037);
-              break;
+            // case "medbay":
+            //   scene.controlPanelMedbay.setInteractive();
+            //   scene.controlPanelMedbay.setTint(0xb2b037);
+            //   break;
             default:
               console.log("no control panel matches to set active");
           }
@@ -369,7 +422,7 @@ export default class MainScene extends Phaser.Scene {
       };
     }
 
-    if (this.state.numPlayers >= 2 && this.startClickable === true) {
+    if (this.state.numPlayers >= 3 && this.startClickable === true) {
       this.startClickable = false;
       scene.waitingText.setVisible(false);
       this.startButton.setVisible(true);
@@ -381,36 +434,6 @@ export default class MainScene extends Phaser.Scene {
     if (this.beginTimer) {
       this.countdown();
     }
-    // scene.socket.on("activatePanels", function () {
-
-    //   scene.state.randomTasks.forEach((task) => {
-    //     switch (task.room) {
-    //       case "breakRoom":
-    //         scene.controlPanelBreakroom.setInteractive();
-    //         break;
-    //       case "engineRoom":
-    //         scene.controlPanelEngineRoom.setInteractive();
-    //         break;
-    //       case "cargoHold":
-    //         scene.controlPanelCargoHold.setInteractive();
-    //         break;
-    //       case "cockpit":
-    //         scene.controlPanelCockpit.setInteractive();
-    //         break;
-    //       case "lavatory":
-    //         scene.controlPanelLavatory.setInteractive();
-    //         break;
-    //       case "medbay":
-    //         scene.controlPanelMedbay.setInteractive();
-    //         break;
-    //       default:
-    //         console.log("no control panel matches to set active");
-    //     }
-    //   });
-
-    //   // scene.controlPanelLavatory.setInteractive();
-    //   // scene.controlPanelCockpit.setInteractive();
-    // });
   }
 
   addPlayer(scene, playerInfo) {
@@ -418,10 +441,18 @@ export default class MainScene extends Phaser.Scene {
       .image(playerInfo.x, playerInfo.y, "astronaut")
       .setOrigin(0.5, 0.5)
       .setDisplaySize(43.5, 55.5);
-    if (playerInfo.team === "blue") {
-      scene.astronaut.setTint(0x2796a5);
-    } else {
-      scene.astronaut.setTint(0xd86969);
+    switch (playerInfo.team) {
+      case "red":
+        scene.astronaut.setTint(0xd86969);
+        break;
+      case "blue":
+        scene.astronaut.setTint(0x2796a5);
+        break;
+      case "green":
+        scene.astronaut.setTint(0xabe0a2);
+        break;
+      default:
+        console.log("there was an error assigning player colors");
     }
     scene.astronaut.setDrag(100);
     scene.astronaut.setAngularDrag(100);
@@ -433,10 +464,18 @@ export default class MainScene extends Phaser.Scene {
       .sprite(playerInfo.x, playerInfo.y, "astronaut")
       .setOrigin(0.5, 0.5)
       .setDisplaySize(43.5, 55.5);
-    if (playerInfo.team === "blue") {
-      otherPlayer.setTint(0x2796a5);
-    } else {
-      otherPlayer.setTint(0xd86969);
+    switch (playerInfo.team) {
+      case "red":
+        otherPlayer.setTint(0xd86969);
+        break;
+      case "blue":
+        otherPlayer.setTint(0x2796a5);
+        break;
+      case "green":
+        otherPlayer.setTint(0xabe0a2);
+        break;
+      default:
+        console.log("there was an error assigning player colors");
     }
     otherPlayer.playerId = playerInfo.playerId;
     scene.otherPlayers.add(otherPlayer);
