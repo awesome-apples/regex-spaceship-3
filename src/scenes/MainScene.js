@@ -49,6 +49,9 @@ export default class MainScene extends Phaser.Scene {
   async create() {
     const scene = this;
     this.joined = false;
+
+    const keyObj = scene.input.keyboard.addKey('enter');
+    keyObj.enabled = false;
     // tilemap
     this.map = this.make.tilemap({ key: 'map' });
 
@@ -385,7 +388,8 @@ export default class MainScene extends Phaser.Scene {
       this.timerLabel.setScrollFactor(0);
       scene.startButton = scene.add
         .dom(400, 300, 'button', 'width: 70px; height: 25px', 'START')
-        .setOrigin(0.5);
+        .setOrigin(0.5)
+        .setScrollFactor(0);
       scene.startButton.setVisible(false);
 
       this.socket.on('destroyButton', function () {
