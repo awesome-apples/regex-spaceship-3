@@ -5,23 +5,41 @@ export default class StoryScene extends Phaser.Scene {
   constructor() {
     super("StoryScene");
     this.paragraph = 0;
-    this.typeSpeed = 10;
+    this.typeSpeed = 30;
     this.story = [
       `A kind of long time ago in a galaxy 20 minutes away...you set off with a loyal crew aboard the SS Regular Expressioner (hey, you didn’t name it). Things were going great. You were enjoying the perks like annual company outings to the sun and dehydrated taco Tuesday.`,
-      `But one day... disaster struck! An alien snuck aboard the ship. It began messing with all of the systems in am attempt to sabotage you. Those pesky little stardwellers!`,
+      `But one day... disaster struck! An alien snuck aboard the ship. It began messing with all of the systems in an attempt to sabotage you. Those pesky little stardwellers!`,
       `Now, there’s only one way to repair the SS Regular Expressioner... through the use of regular expressions. Who would’ve thought?!`,
-      `Travel around the spaceship and solve the regular expression riddles in order to fix the damage and not, you know, like get exploded into space or something. Your boss probably wouldn’t be too happy about that.`,
+      `Travel around the spaceship and solve the regular expression riddles in order to fix the damage and not, you know, get exploded into space or something. Your boss probably wouldn’t be too happy about that.`,
     ];
   }
 
   preload() {
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("stars", "assets/backgrounds/stars.png");
+    this.load.audio("startMusic", "audio/Start_Screen.mp3");
+    this.load.audio("typing", "audio/Typing_Text.wav");
+    this.load.audio("click", "audio/Button_Click.wav");
   }
 
   create() {
     const scene = this;
 
+    //add sfx
+    scene.startMusic = scene.sound.add("startMusic", {
+      volume: 1,
+      loop: true,
+    });
+    scene.typing = scene.sound.add("typing", {
+      volume: 0.5,
+      loop: true,
+    });
+    scene.click = scene.sound.add("click");
+
+    //play music
+    scene.startMusic.play();
+
+    //add images
     scene.add.image(-200, 0, "stars").setOrigin(0).setScale(1.6);
     scene.add.image(150, 100, "computer").setOrigin(0).setScale(0.75);
 
@@ -64,11 +82,14 @@ export default class StoryScene extends Phaser.Scene {
       scene.nextContainer.fillStyle(0x2045fa);
     });
     scene.skipText.on("pointerdown", () => {
+      scene.click.play();
+      this.sound.removeAll();
       scene.scene.start("MainScene");
     });
 
     //next button
     scene.nextText.on("pointerdown", () => {
+      scene.click.play();
       if (this.paragraph + 1 === this.story.length - 1) {
         this.nextText.text = "Play";
       }
@@ -84,13 +105,12 @@ export default class StoryScene extends Phaser.Scene {
 
   wrapText(text) {
     const lines = this.storyLabel.getWrappedText(text);
-    console.log("lines", lines);
     const wrappedText = lines.join("\n");
-    console.log("wrapped text", wrappedText);
     this.typeText(wrappedText);
   }
 
   typeText(text) {
+    this.typing.play();
     const length = text.length;
     let i = 0;
     this.time.addEvent({
@@ -105,6 +125,7 @@ export default class StoryScene extends Phaser.Scene {
   }
 
   enableNext() {
+    this.typing.stop();
     this.nextText.setInteractive();
     if (this.paragraph === this.story.length - 1) {
       this.skipContainer.fillStyle(0x03c04a);
@@ -115,6 +136,8 @@ export default class StoryScene extends Phaser.Scene {
         this.skipContainer.fillStyle(0x03c04a);
       });
       this.nextText.on("pointerdown", () => {
+        this.click.play();
+        this.sound.removeAll();
         this.scene.start("MainScene");
       });
     } else {

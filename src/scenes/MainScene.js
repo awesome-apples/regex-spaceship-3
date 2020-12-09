@@ -1,6 +1,7 @@
 import Phaser from "phaser";
 import ProgressBar from "../entity/progressBar";
 import ControlPanel from "../entity/ControlPanel";
+import Speaker from "../entity/Speaker";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -31,6 +32,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   async create() {
+    console.log("in main scene");
     const scene = this;
     this.add.image(0, 0, "mainroom").setOrigin(0);
 
