@@ -555,20 +555,18 @@ export default class MainScene extends Phaser.Scene {
         this.astronaut.anims.play("misa-back-walk", true);
       } else if (this.cursors.down.isDown) {
         this.astronaut.anims.play("misa-front-walk", true);
+      } else {
+        this.astronaut.anims.stop();
+
+        // If we were moving, pick and idle frame to use
+        if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
+        else if (prevVelocity.x > 0)
+          this.astronaut.setTexture("atlas", "misa-right");
+        else if (prevVelocity.y < 0)
+          this.astronaut.setTexture("atlas", "misa-back");
+        else if (prevVelocity.y > 0)
+          this.astronaut.setTexture("atlas", "misa-front");
       }
-
-      // else {
-      //   this.astronaut.stop(null, true);
-
-      //   // If we were moving, pick and idle frame to use
-      //   if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
-      //   else if (prevVelocity.x > 0)
-      //     this.astronaut.setTexture("atlas", "misa-right");
-      //   else if (prevVelocity.y < 0)
-      //     this.astronaut.setTexture("atlas", "misa-back");
-      //   else if (prevVelocity.y > 0)
-      //     this.astronaut.setTexture("atlas", "misa-front");
-      // }
       //CONTROL PANEL OVERLAP
       this.physics.add.overlap(
         scene.astronaut,
