@@ -84,6 +84,7 @@ export default class MainScene extends Phaser.Scene {
       fontSize: "20px",
       fill: "#ffffff",
     });
+    this.progressText.setScrollFactor(0);
 
     scene.progressBar = new ProgressBar(scene, 30, 50);
 
@@ -119,6 +120,7 @@ export default class MainScene extends Phaser.Scene {
               fill: "#00ff00",
             }
           );
+          scene.roomkeyText.setScrollFactor(0);
           //Task List Text
           scene.tasksText = [];
           for (let i = 0; i < scene.randomTasks.length; i++) {
@@ -148,20 +150,18 @@ export default class MainScene extends Phaser.Scene {
                 break;
             }
             scene.tasksText.push({
-              text: scene.add.text(35, y + 25 * i, taskPhrase, {
-                fontSize: "12px",
-                fill: "#000000",
-                fontStyle: "bold",
-              }),
+              text: scene.add
+                .text(35, y + 25 * i, taskPhrase, {
+                  fontSize: "12px",
+                  fill: "#000000",
+                  fontStyle: "bold",
+                })
+                .setScrollFactor(0),
               location: scene.randomTasks[i].location,
             });
           }
-          console.log("sscene.state.scores in setstate", scene.state.scores);
-          console.log("scene.state.roomkey in set state", scene.state.roomKey);
-          console.log("randomtasks on main", scene.randomTasks);
-          console.log("state on main", scene.state);
           scene.waitingText = scene.add
-            .text(400, 300, "Waiting for more players to join", {
+            .text(1354, 393, "Waiting for more players to join", {
               fontSize: "20px",
               fill: "#ff0000",
             })
@@ -309,7 +309,6 @@ export default class MainScene extends Phaser.Scene {
         console.log("inside setInactive listener");
         for (let i = 0; i < scene.tasksText.length; i++) {
           let currentTask = scene.tasksText[i];
-          //NEED TO FIND A WAY TO PASS LOCATION
           if (currentTask.location === controlPanel) {
             console.log("inside color changing if");
             currentTask.text.setText("Completed");
@@ -383,6 +382,7 @@ export default class MainScene extends Phaser.Scene {
           fill: "#ffffff",
         }
       );
+      this.timerLabel.setScrollFactor(0);
       scene.startButton = scene.add
         .dom(400, 300, "button", "width: 70px; height: 25px", "START")
         .setOrigin(0.5);
@@ -402,6 +402,7 @@ export default class MainScene extends Phaser.Scene {
       this.instructionsButton.on("pointerdown", () => {
         scene.scene.launch("Instructions");
       });
+      scene.instructionsButton.setScrollFactor(0);
     } catch (error) {
       console.error(error);
     }
@@ -494,6 +495,7 @@ export default class MainScene extends Phaser.Scene {
     scene.taskListSqr.fillStyle(0xffffff, 0.5);
     scene.taskListSqr.strokeRect(30, 500, 265, 80);
     scene.taskListSqr.fillRect(30, 500, 265, 80);
+    scene.taskListSqr.setScrollFactor(0);
 
     this.astronaut = this.physics.add.sprite(1, 1, "atlas", "misa-front");
     this.astronaut.setVisible(false);
