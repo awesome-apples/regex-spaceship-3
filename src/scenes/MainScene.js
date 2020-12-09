@@ -33,9 +33,9 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("birthdayList", "assets/sprites/birthdayList.png");
     this.load.image("cockpit", "assets/sprites/console_w.png");
     this.load.image("cargoHold", "assets/sprites/cargoHold1.png");
-    this.load.image("engineRoom", "assets/sprites/console_w.png");
+    this.load.image("engineRoom", "assets/sprites/engineroom/engineroom2.png");
     this.load.image("vendingMachine", "assets/sprites/vendingMachine.png");
-    this.load.image("medBay", "assets/sprites/console_w.png");
+    this.load.image("medBay", "assets/sprites/medbay/desk.png");
     this.load.image("star", "assets/star_gold.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
     this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
@@ -273,42 +273,38 @@ export default class MainScene extends Phaser.Scene {
       });
 
       this.controlPanelLavatory = this.controlPanelGroup
-        .create(35, 200, "lavatory")
+        .create(2470, 2444, "lavatory")
         .setScale(0.3);
 
       this.controlPanelBirthdayList = this.controlPanelGroup
-        .create(435, 55, "birthdayList")
+        .create(1486, 1350, "birthdayList")
         .setScale(0.2);
 
       this.controlPanelCockpit = this.controlPanelGroup.create(
-        300,
-        200,
+        3614,
+        1952,
         "cockpit"
       );
 
       this.controlPanelCargoHold = this.controlPanelGroup.create(
-        400,
-        200,
+        2460,
+        1462,
         "cargoHold"
       );
 
-      this.controlPanelEngineRoom = this.controlPanelGroup.create(
-        500,
-        200,
-        "engineRoom"
-      );
+      this.controlPanelEngineRoom = this.controlPanelGroup
+        .create(715, 1878, "engineRoom")
+        .setScale(0.8);
 
       this.controlPanelVendingMachine = this.controlPanelGroup.create(
-        600,
-        200,
+        1310,
+        1300,
         "vendingMachine"
       );
 
-      this.controlPanelMedbay = this.controlPanelGroup.create(
-        700,
-        200,
-        "medBay"
-      );
+      this.controlPanelMedbay = this.controlPanelGroup
+        .create(1936, 2160, "medBay")
+        .setScale(0.8);
 
       this.socket.on("setInactive", function (controlPanel) {
         console.log("inside setInactive listener");
