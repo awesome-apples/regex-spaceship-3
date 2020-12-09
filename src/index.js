@@ -19,7 +19,6 @@ import RegexScene from './scenes/RegexScene';
 import EndScene from './scenes/EndScene';
 import WaitingRoom from './scenes/WaitingRoom';
 import Instructions from './scenes/Instructions';
-import MapScene from "./scenes/MapScene";
 import config from './config/config';
 
 class Game extends Phaser.Game {
@@ -33,7 +32,6 @@ class Game extends Phaser.Game {
     this.scene.add('EndScene', EndScene);
     this.scene.add('WaitingRoom', WaitingRoom);
     this.scene.add('Instructions', Instructions);
-    this.scene.add('MapScene', MapScene);
     
     // Start the game with the mainscene
     // << START GAME WITH MAIN SCENE HERE >>
