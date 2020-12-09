@@ -15,10 +15,22 @@ export default class WaitingRoom extends Phaser.Scene {
     this.load.html("codeform", "assets/text/codeform.html");
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
+
+    this.load.audio("waitingMusic", "audio/Waiting_Room.mp3");
   }
 
   create() {
     const scene = this;
+
+    //music
+    scene.waitingMusic = scene.sound.add("waitingMusic", {
+      volume: 1,
+      loop: true,
+    });
+    scene.waitingMusic.play();
+
+    const keyObj = scene.input.keyboard.addKey("enter");
+    keyObj.enabled = false;
 
     scene.popUp = scene.add.image(400, 300, "computer");
     scene.requestBox = scene.add.image(300, 280, "popup");
