@@ -268,11 +268,11 @@ export default class MainScene extends Phaser.Scene {
       });
 
       this.controlPanelLavatory = this.controlPanelGroup
-        .create(35, 200, "lavatory")
+        .create(2470, 2444, "lavatory")
         .setScale(0.3);
 
       this.controlPanelBirthdayList = this.controlPanelGroup
-        .create(435, 55, "birthdayList")
+        .create(1486, 1350, "birthdayList")
         .setScale(0.2);
 
       this.controlPanelCockpit = this.controlPanelGroup.create(
@@ -294,8 +294,8 @@ export default class MainScene extends Phaser.Scene {
       );
 
       this.controlPanelVendingMachine = this.controlPanelGroup.create(
-        600,
-        200,
+        1310,
+        1300,
         "vendingMachine"
       );
 
