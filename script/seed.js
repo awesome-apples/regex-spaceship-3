@@ -108,7 +108,7 @@ async function seed() {
         "wire wire wire wire wire wire wire wire wire wire wire wire",
       possibleSolution: "/(bug )/g",
       callback: "(c) => ''",
-      location: "enginelocation",
+      location: "engineRoom",
       category: "replace",
     }),
     Task.create({
