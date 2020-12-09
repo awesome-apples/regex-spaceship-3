@@ -379,9 +379,6 @@ export default class MainScene extends Phaser.Scene {
       console.error(error);
     }
 
-    // this.astronaut = this.physics.add.image(1, 1, "astronaut");
-    // this.astronaut.setVisible(false);
-
     scene.controlPanelVendingMachine.on("pointerdown", () => {
       scene.scene.launch("RegexScene", {
         ...scene.state,
@@ -470,6 +467,56 @@ export default class MainScene extends Phaser.Scene {
     scene.taskListSqr.fillStyle(0xffffff, 0.5);
     scene.taskListSqr.strokeRect(30, 500, 265, 80);
     scene.taskListSqr.fillRect(30, 500, 265, 80);
+
+    this.astronaut = this.physics.add.sprite(1, 1, "atlas", "misa-front");
+    this.astronaut.setVisible(false);
+
+    console.log("astronaut on main", this.astronaut);
+
+    this.anims.create({
+      key: "misa-left-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-left-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "misa-right-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-right-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "misa-front-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-front-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "misa-back-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-back-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
   }
 
   update(time) {
@@ -508,18 +555,20 @@ export default class MainScene extends Phaser.Scene {
         this.astronaut.anims.play("misa-back-walk", true);
       } else if (this.cursors.down.isDown) {
         this.astronaut.anims.play("misa-front-walk", true);
-      } else {
-        this.astronaut.anims.stop();
-
-        // If we were moving, pick and idle frame to use
-        if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
-        else if (prevVelocity.x > 0)
-          this.astronaut.setTexture("atlas", "misa-right");
-        else if (prevVelocity.y < 0)
-          this.astronaut.setTexture("atlas", "misa-back");
-        else if (prevVelocity.y > 0)
-          this.astronaut.setTexture("atlas", "misa-front");
       }
+
+      // else {
+      //   this.astronaut.stop(null, true);
+
+      //   // If we were moving, pick and idle frame to use
+      //   if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
+      //   else if (prevVelocity.x > 0)
+      //     this.astronaut.setTexture("atlas", "misa-right");
+      //   else if (prevVelocity.y < 0)
+      //     this.astronaut.setTexture("atlas", "misa-back");
+      //   else if (prevVelocity.y > 0)
+      //     this.astronaut.setTexture("atlas", "misa-front");
+      // }
       //CONTROL PANEL OVERLAP
       this.physics.add.overlap(
         scene.astronaut,
@@ -661,9 +710,11 @@ export default class MainScene extends Phaser.Scene {
 
   addPlayer(scene, playerInfo) {
     scene.astronaut = scene.physics.add
-      .image(playerInfo.x, playerInfo.y, "astronaut")
+      .sprite(playerInfo.x, playerInfo.y, "atlas", "misa-front")
       .setOrigin(0.5, 0.5)
-      .setDisplaySize(43.5, 55.5);
+      .setSize(30, 40)
+      .setOffset(0, 24);
+
     switch (playerInfo.team) {
       case "red":
         scene.astronaut.setTint(0xd86969);
@@ -679,7 +730,7 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
-    scene.createAnims(scene);
+    // scene.createAnims(scene);
 
     scene.camera = scene.cameras.main;
     scene.camera.startFollow(scene.astronaut);
@@ -719,53 +770,8 @@ export default class MainScene extends Phaser.Scene {
     partInSeconds = partInSeconds.toString().padStart(2, "0");
     return `${minutes}:${partInSeconds}`;
   }
-  createAnims(scene) {
-    const anims = scene.anims;
-    anims.create({
-      key: "misa-left-walk",
-      frames: anims.generateFrameNames("atlas", {
-        prefix: "misa-left-walk.",
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: "misa-right-walk",
-      frames: anims.generateFrameNames("atlas", {
-        prefix: "misa-right-walk.",
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: "misa-front-walk",
-      frames: anims.generateFrameNames("atlas", {
-        prefix: "misa-front-walk.",
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: "misa-back-walk",
-      frames: anims.generateFrameNames("atlas", {
-        prefix: "misa-back-walk.",
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-  }
+  // createAnims(scene) {
+  // }
   countdown() {
     const scene = this;
     const currentTime = Date.now();
