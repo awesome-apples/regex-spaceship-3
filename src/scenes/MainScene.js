@@ -81,6 +81,43 @@ export default class MainScene extends Phaser.Scene {
               fill: "#00ff00",
             }
           );
+          //Task List Text
+          scene.tasksText = [];
+          for (let i = 0; i < scene.randomTasks.length; i++) {
+            const y = 508;
+            let taskPhrase;
+            switch (scene.randomTasks[i].nickname) {
+              case "Recount Inventory":
+                taskPhrase = "Recount Inventory in the Cargo Hold";
+                break;
+              case "Sterilize Samples":
+                taskPhrase = "Sterilize Samples in the Med Bay";
+                break;
+              case "Reorganize Snacks":
+                taskPhrase = "Reorganize Snacks in the Break Room";
+                break;
+              case "Check Birthday List":
+                taskPhrase = "Check Birthdays in the Break Room";
+                break;
+              case "Debug Engine":
+                taskPhrase = "Debug Engine in the Engine Room";
+                break;
+              case "Plunge Toilets":
+                taskPhrase = "Plunge Toilets List in the Lavatory";
+                break;
+              case "Unscramble Maps":
+                taskPhrase = "Unscramble Maps List in the Cockpit";
+                break;
+            }
+            scene.tasksText.push({
+              text: scene.add.text(35, y + 25 * i, taskPhrase, {
+                fontSize: "12px",
+                fill: "#000000",
+                fontStyle: "bold",
+              }),
+              location: scene.randomTasks[i].location,
+            });
+          }
           console.log("sscene.state.scores in setstate", scene.state.scores);
           console.log("scene.state.roomkey in set state", scene.state.roomKey);
           console.log("randomtasks on main", scene.randomTasks);
@@ -237,6 +274,15 @@ export default class MainScene extends Phaser.Scene {
       this.controlPanelMedbay = this.physics.add.image(700, 200, "medBay");
 
       this.socket.on("setInactive", function (controlPanel) {
+        console.log("inside setInactive listener");
+        for (let i = 0; i < scene.tasksText.length; i++) {
+          let currentTask = scene.tasksText[i];
+          //NEED TO FIND A WAY TO PASS LOCATION
+          if (currentTask.location === controlPanel) {
+            console.log("inside color changing if");
+            currentTask.text.setText("Completed");
+          }
+        }
         switch (controlPanel) {
           case "vendingMachine":
             scene.controlPanelVendingMachine.disableInteractive();
@@ -318,7 +364,7 @@ export default class MainScene extends Phaser.Scene {
         scene.beginTimer = Date.now();
       });
       scene.instructionsButton = scene.add
-        .dom(650, 570, "button", "width: 100px; height: 25px", "instructions")
+        .dom(680, 550, "button", "width: 100px; height: 25px", "instructions")
         .setOrigin(0);
       this.instructionsButton.setInteractive();
       this.instructionsButton.on("pointerdown", () => {
@@ -410,6 +456,12 @@ export default class MainScene extends Phaser.Scene {
       });
       scene.scene.pause("MainScene");
     });
+    //Task List Square
+    scene.taskListSqr = scene.add.graphics();
+    scene.taskListSqr.lineStyle(1, 0xffffff);
+    scene.taskListSqr.fillStyle(0xffffff, 0.5);
+    scene.taskListSqr.strokeRect(30, 500, 265, 80);
+    scene.taskListSqr.fillRect(30, 500, 265, 80);
   }
 
   update(time) {

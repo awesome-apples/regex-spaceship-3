@@ -21,10 +21,6 @@ module.exports = (io) => {
       socket.join(roomKey);
 
       const roomInfo = gameRooms[roomKey];
-      console.log(
-        "unassigned random tasks in joinroom",
-        gameRooms[roomKey].unassignedRandomTasks
-      );
       const randomTasksForPlayer = gameRooms[
         roomKey
       ].unassignedRandomTasks.pop();
@@ -109,8 +105,6 @@ module.exports = (io) => {
     //update score
     socket.on("scoreUpdate", function (data) {
       const { scoreObj, roomKey } = data;
-      console.log("gamerooms inside score update", gameRooms);
-      console.log("gamerooms[roomkey] inside score update", gameRooms[roomKey]);
       gameRooms[roomKey].scores[socket.id].points += scoreObj.points;
       if (scoreObj.timeBonus) {
         gameRooms[roomKey].scores[socket.id].points += scoreObj.timeBonus;
@@ -130,7 +124,6 @@ module.exports = (io) => {
 
     socket.on("startGame", async function (roomKey) {
       gameRooms[roomKey].gameStarted = true;
-      io.to(roomKey).emit("gameStarted");
       io.to(roomKey).emit("updateState", gameRooms[roomKey]);
       io.to(roomKey).emit("destroyButton");
       io.to(roomKey).emit("startTimer");
@@ -160,7 +153,6 @@ module.exports = (io) => {
       };
       try {
         const tasks = await Task.findAll();
-        console.log("tasks in getroomcode", tasks);
         let randomId = 0;
 
         const tasksArrOne = [];
@@ -177,9 +169,7 @@ module.exports = (io) => {
               (task) => task.location === tasks[randomId].location
             )
           ) {
-            console.log("tasks[randomid]", tasks[randomId]);
             tasksArrOne.push(tasks[randomId]);
-            console.log("tasks arr one after pushing", tasksArrOne);
           }
         }
         while (tasksArrTwo.length < 3) {
@@ -187,12 +177,9 @@ module.exports = (io) => {
 
           if (tasksArrTwo.length === 0) {
             tasksArrTwo.push(tasks[randomId]);
-            console.log("first task has been pushed", tasksArrTwo);
           } else if (
             tasksArrTwo.length &&
             !tasksArrTwo.some((task) => {
-              console.log("task inside some", task);
-              console.log("tasks[randomid] inside some", tasks[randomId]);
               return task.location === tasks[randomId].location;
             })
           ) {
