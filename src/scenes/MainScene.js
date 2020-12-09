@@ -199,79 +199,47 @@ export default class MainScene extends Phaser.Scene {
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
 
       //make a control panel group for physics
-      // this.controlPanelGroup = this.physics.add.staticGroup({
-      //   classType: ControlPanel,
-      // });
+      this.controlPanelGroup = this.physics.add.staticGroup({
+        classType: ControlPanel,
+      });
 
-      // this.controlPanelLavatory = this.controlPanelGroup.create(
-      //   100,
-      //   200,
-      //   "controlPanelLeft"
-      // );
-      this.controlPanelLavatory = this.physics.add
-        .image(35, 200, "lavatory")
+      this.controlPanelLavatory = this.controlPanelGroup
+        .create(35, 200, "lavatory")
         .setScale(0.3);
 
-      // this.controlPanelBirthdayList = this.controlPanelGroup.create(
-      //   200,
-      //   200,
-      //   "controlPanelLeft"
-      // );
-      this.controlPanelBirthdayList = this.physics.add
-        .image(435, 55, "birthdayList")
+      this.controlPanelBirthdayList = this.controlPanelGroup
+        .create(435, 55, "birthdayList")
         .setScale(0.2);
 
-      // this.controlPanelCockpit = this.controlPanelGroup.create(
-      //   300,
-      //   200,
-      //   "controlPanelLeft"
-      // );
+      this.controlPanelCockpit = this.controlPanelGroup.create(
+        300,
+        200,
+        "cockpit"
+      );
 
-      this.controlPanelCockpit = this.physics.add.image(300, 200, "cockpit");
-
-      // this.controlPanelCargoHold = this.controlPanelGroup.create(
-      //   400,
-      //   200,
-      //   "controlPanelLeft"
-      // );
-
-      this.controlPanelCargoHold = this.physics.add.image(
+      this.controlPanelCargoHold = this.controlPanelGroup.create(
         400,
         200,
         "cargoHold"
       );
 
-      // this.controlPanelEngineRoom = this.controlPanelGroup.create(
-      //   500,
-      //   200,
-      //   "controlPanelRight"
-      // );
-
-      this.controlPanelEngineRoom = this.physics.add.image(
+      this.controlPanelEngineRoom = this.controlPanelGroup.create(
         500,
         200,
         "engineRoom"
       );
 
-      // this.controlPanelVendingMachine = this.controlPanelGroup.create(
-      //   600,
-      //   200,
-      //   "controlPanelRight"
-      // );
-
-      this.controlPanelVendingMachine = this.physics.add.image(
+      this.controlPanelVendingMachine = this.controlPanelGroup.create(
         600,
         200,
         "vendingMachine"
       );
 
-      // this.controlPanelMedbay = this.controlPanelGroup.create(
-      //   700,
-      //   200,
-      //   "controlPanelRight"
-      // );
-
-      this.controlPanelMedbay = this.physics.add.image(700, 200, "medBay");
+      this.controlPanelMedbay = this.controlPanelGroup.create(
+        700,
+        200,
+        "medBay"
+      );
 
       this.socket.on("setInactive", function (controlPanel) {
         console.log("inside setInactive listener");
@@ -386,7 +354,7 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
     });
     scene.controlPanelBirthdayList.on("pointerdown", () => {
       scene.scene.launch("RegexScene", {
@@ -397,7 +365,7 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
     });
 
     scene.controlPanelEngineRoom.on("pointerdown", () => {
@@ -409,7 +377,7 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
     });
 
     scene.controlPanelCargoHold.on("pointerdown", () => {
@@ -421,7 +389,7 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
     });
     scene.controlPanelCockpit.on("pointerdown", () => {
       scene.scene.launch("RegexScene", {
@@ -432,7 +400,7 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
     });
     scene.controlPanelLavatory.on("pointerdown", () => {
       scene.scene.launch("RegexScene", {
@@ -443,7 +411,7 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
     });
     scene.controlPanelMedbay.on("pointerdown", () => {
       scene.scene.launch("RegexScene", {
@@ -454,7 +422,10 @@ export default class MainScene extends Phaser.Scene {
         ),
         socket: scene.socket,
       });
-      scene.scene.pause("MainScene");
+      scene.physics.pause();
+    });
+    scene.socket.on("mainSceneResumePhysics", function () {
+      scene.physics.resume();
     });
     //Task List Square
     scene.taskListSqr = scene.add.graphics();

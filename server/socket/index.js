@@ -133,6 +133,10 @@ module.exports = (io) => {
       const { controlPanel, roomKey } = data;
       socket.emit("setInactive", controlPanel);
     });
+    socket.on("resumePhysics", function () {
+      console.log("inside resume physics");
+      socket.emit("mainSceneResumePhysics");
+    });
 
     // get a random code for the room
     // generate random tasks for room
