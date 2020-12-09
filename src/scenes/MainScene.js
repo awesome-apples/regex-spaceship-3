@@ -26,12 +26,12 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 29,
       frameHeight: 37,
     });
-    this.load.image("lavatory", "assets/sprites/console_s.png");
-    this.load.image("birthdayList", "assets/sprites/console_w.png");
+    this.load.image("lavatory", "assets/sprites/lavatory.png");
+    this.load.image("birthdayList", "assets/sprites/birthdayList.png");
     this.load.image("cockpit", "assets/sprites/console_w.png");
-    this.load.image("cargoHold", "assets/sprites/console_w.png");
+    this.load.image("cargoHold", "assets/sprites/cargoHold1.png");
     this.load.image("engineRoom", "assets/sprites/console_w.png");
-    this.load.image("vendingMachine", "assets/sprites/console_w.png");
+    this.load.image("vendingMachine", "assets/sprites/vendingMachine.png");
     this.load.image("medBay", "assets/sprites/console_w.png");
     this.load.image("star", "assets/star_gold.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
@@ -171,18 +171,18 @@ export default class MainScene extends Phaser.Scene {
       //   200,
       //   "controlPanelLeft"
       // );
-      this.controlPanelLavatory = this.physics.add.image(100, 200, "lavatory");
+      this.controlPanelLavatory = this.physics.add
+        .image(35, 200, "lavatory")
+        .setScale(0.3);
 
       // this.controlPanelBirthdayList = this.controlPanelGroup.create(
       //   200,
       //   200,
       //   "controlPanelLeft"
       // );
-      this.controlPanelBirthdayList = this.physics.add.image(
-        200,
-        200,
-        "birthdayList"
-      );
+      this.controlPanelBirthdayList = this.physics.add
+        .image(435, 55, "birthdayList")
+        .setScale(0.2);
 
       // this.controlPanelCockpit = this.controlPanelGroup.create(
       //   300,
@@ -518,6 +518,7 @@ export default class MainScene extends Phaser.Scene {
 
   openRegexScene(astronaut, controlPanel) {
     if (
+      this.state.gameStarted &&
       this.randomTasks.some(
         (task) => task.location === controlPanel.texture.key
       )

@@ -130,6 +130,7 @@ module.exports = (io) => {
 
     socket.on("startGame", async function (roomKey) {
       gameRooms[roomKey].gameStarted = true;
+      io.to(roomKey).emit("gameStarted");
       io.to(roomKey).emit("updateState", gameRooms[roomKey]);
       io.to(roomKey).emit("destroyButton");
       io.to(roomKey).emit("startTimer");
