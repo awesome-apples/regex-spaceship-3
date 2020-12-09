@@ -25,6 +25,8 @@ module.exports = (io) => {
         roomKey
       ].unassignedRandomTasks.pop();
 
+      console.log('gameRooms[roomKey]: ', gameRooms[roomKey])
+      console.log('gameRooms[roomKey].colors: ', gameRooms[roomKey].colors)
       const playerColor = gameRooms[roomKey].colors.pop();
 
       roomInfo.players[socket.id] = {
@@ -141,6 +143,7 @@ module.exports = (io) => {
       while (Object.keys(gameRooms).includes(key)) {
         key = codeGenerator();
       }
+      console.log('key inside getRoomCode', key)
       gameRooms[key] = {
         roomKey: key,
         allRandomTasks: [],

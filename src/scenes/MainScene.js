@@ -77,8 +77,6 @@ export default class MainScene extends Phaser.Scene {
 
     this.SpawnPoint = this.map.getObjectLayer('Spawn Point')['objects'];
 
-    console.log(this.SpawnPoint[0].x, this.SpawnPoint[0].y);
-
     //PROGRESS BAR
     this.progressText = this.add.text(30, 16, 'Progress Tracker', {
       fontSize: '20px',
@@ -669,7 +667,7 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
-    scene.createAnims();
+    scene.createAnims(scene);
 
     scene.camera = scene.cameras.main;
     scene.camera.startFollow(scene.astronaut);
@@ -709,8 +707,8 @@ export default class MainScene extends Phaser.Scene {
     partInSeconds = partInSeconds.toString().padStart(2, '0');
     return `${minutes}:${partInSeconds}`;
   }
-  createAnims() {
-    const anims = this.anims;
+  createAnims(scene) {
+    const anims = scene.anims;
     anims.create({
       key: 'misa-left-walk',
       frames: anims.generateFrameNames('atlas', {
