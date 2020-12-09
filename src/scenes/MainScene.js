@@ -18,6 +18,7 @@ export default class MainScene extends Phaser.Scene {
     this.startClickable = true;
     this.beginTimer = false;
     this.randomTasks = [];
+    this.overlapped = false;
   }
 
   preload() {
@@ -25,8 +26,13 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 29,
       frameHeight: 37,
     });
-    this.load.image("controlPanelLeft", "assets/sprites/console_s.png");
-    this.load.image("controlPanelRight", "assets/sprites/console_w.png");
+    this.load.image("lavatory", "assets/sprites/console_s.png");
+    this.load.image("birthdayList", "assets/sprites/console_w.png");
+    this.load.image("cockpit", "assets/sprites/console_w.png");
+    this.load.image("cargoHold", "assets/sprites/console_w.png");
+    this.load.image("engineRoom", "assets/sprites/console_w.png");
+    this.load.image("vendingMachine", "assets/sprites/console_w.png");
+    this.load.image("medBay", "assets/sprites/console_w.png");
     this.load.image("star", "assets/star_gold.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
   }
@@ -156,51 +162,79 @@ export default class MainScene extends Phaser.Scene {
       //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
 
       //make a control panel group for physics
-      this.controlPanelGroup = this.physics.add.staticGroup({
-        classType: ControlPanel,
-      });
+      // this.controlPanelGroup = this.physics.add.staticGroup({
+      //   classType: ControlPanel,
+      // });
 
-      this.controlPanelLavatory = this.controlPanelGroup.create(
-        100,
+      // this.controlPanelLavatory = this.controlPanelGroup.create(
+      //   100,
+      //   200,
+      //   "controlPanelLeft"
+      // );
+      this.controlPanelLavatory = this.physics.add.image(100, 200, "lavatory");
+
+      // this.controlPanelBirthdayList = this.controlPanelGroup.create(
+      //   200,
+      //   200,
+      //   "controlPanelLeft"
+      // );
+      this.controlPanelBirthdayList = this.physics.add.image(
         200,
-        "controlPanelLeft"
+        200,
+        "birthdayList"
       );
 
-      this.controlPanelBirthdayList = this.controlPanelGroup.create(
-        200,
-        200,
-        "controlPanelLeft"
-      );
+      // this.controlPanelCockpit = this.controlPanelGroup.create(
+      //   300,
+      //   200,
+      //   "controlPanelLeft"
+      // );
 
-      this.controlPanelCockpit = this.controlPanelGroup.create(
-        300,
-        200,
-        "controlPanelLeft"
-      );
+      this.controlPanelCockpit = this.physics.add.image(300, 200, "cockpit");
 
-      this.controlPanelCargoHold = this.controlPanelGroup.create(
+      // this.controlPanelCargoHold = this.controlPanelGroup.create(
+      //   400,
+      //   200,
+      //   "controlPanelLeft"
+      // );
+
+      this.controlPanelCargoHold = this.physics.add.image(
         400,
         200,
-        "controlPanelLeft"
+        "cargoHold"
       );
 
-      this.controlPanelEngineRoom = this.controlPanelGroup.create(
+      // this.controlPanelEngineRoom = this.controlPanelGroup.create(
+      //   500,
+      //   200,
+      //   "controlPanelRight"
+      // );
+
+      this.controlPanelEngineRoom = this.physics.add.image(
         500,
         200,
-        "controlPanelRight"
+        "engineRoom"
       );
 
-      this.controlPanelVendingMachine = this.controlPanelGroup.create(
+      // this.controlPanelVendingMachine = this.controlPanelGroup.create(
+      //   600,
+      //   200,
+      //   "controlPanelRight"
+      // );
+
+      this.controlPanelVendingMachine = this.physics.add.image(
         600,
         200,
-        "controlPanelRight"
+        "vendingMachine"
       );
 
-      this.controlPanelMedbay = this.controlPanelGroup.create(
-        700,
-        200,
-        "controlPanelRight"
-      );
+      // this.controlPanelMedbay = this.controlPanelGroup.create(
+      //   700,
+      //   200,
+      //   "controlPanelRight"
+      // );
+
+      this.controlPanelMedbay = this.physics.add.image(700, 200, "medBay");
 
       this.socket.on("setInactive", function (controlPanel) {
         switch (controlPanel) {
@@ -230,120 +264,28 @@ export default class MainScene extends Phaser.Scene {
         }
       });
 
-      // click on control panels and Regex Scene will launch
-      this.controlPanelVendingMachine.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "vendingMachine",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "vendingMachine"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
-      this.controlPanelBirthdayList.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "birthdayList",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "birthdayList"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
-      this.controlPanelEngineRoom.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "engineRoom",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "engineRoom"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
-      this.controlPanelCargoHold.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "cargoHold",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "cargoHold"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
-      this.controlPanelCockpit.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "cockpit",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "cockpit"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
-      this.controlPanelLavatory.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "lavatory",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "lavatory"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
-      this.controlPanelMedbay.on("pointerdown", () => {
-        this.scene.launch("RegexScene", {
-          ...scene.state,
-          controlPanel: "medBay",
-          randomTask: scene.randomTasks.find(
-            (task) => task.location === "medBay"
-          ),
-          socket: scene.socket,
-        });
-        scene.scene.pause("MainScene");
-      });
-
       scene.socket.on("activatePanels", function () {
         scene.randomTasks.forEach((task) => {
           switch (task.location) {
             case "vendingMachine":
-              scene.controlPanelVendingMachine.setInteractive();
               scene.controlPanelVendingMachine.setTint(0xb2b037);
               break;
             case "birthdayList":
-              scene.controlPanelBirthdayList.setInteractive();
               scene.controlPanelBirthdayList.setTint(0xb2b037);
               break;
             case "engineRoom":
-              scene.controlPanelEngineRoom.setInteractive();
               scene.controlPanelEngineRoom.setTint(0xb2b037);
               break;
             case "cargoHold":
-              scene.controlPanelCargoHold.setInteractive();
               scene.controlPanelCargoHold.setTint(0xb2b037);
               break;
             case "cockpit":
-              scene.controlPanelCockpit.setInteractive();
               scene.controlPanelCockpit.setTint(0xb2b037);
               break;
             case "lavatory":
-              scene.controlPanelLavatory.setInteractive();
               scene.controlPanelLavatory.setTint(0xb2b037);
               break;
             case "medBay":
-              scene.controlPanelMedbay.setInteractive();
               scene.controlPanelMedbay.setTint(0xb2b037);
               break;
             default:
@@ -385,6 +327,89 @@ export default class MainScene extends Phaser.Scene {
     } catch (error) {
       console.error(error);
     }
+
+    // this.astronaut = this.physics.add.image(1, 1, "astronaut");
+    // this.astronaut.setVisible(false);
+
+    scene.controlPanelVendingMachine.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "vendingMachine",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "vendingMachine"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
+    scene.controlPanelBirthdayList.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "birthdayList",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "birthdayList"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
+
+    scene.controlPanelEngineRoom.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "engineRoom",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "engineRoom"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
+
+    scene.controlPanelCargoHold.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "cargoHold",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "cargoHold"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
+    scene.controlPanelCockpit.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "cockpit",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "cockpit"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
+    scene.controlPanelLavatory.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "lavatory",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "lavatory"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
+    scene.controlPanelMedbay.on("pointerdown", () => {
+      scene.scene.launch("RegexScene", {
+        ...scene.state,
+        controlPanel: "medBay",
+        randomTask: scene.randomTasks.find(
+          (task) => task.location === "medBay"
+        ),
+        socket: scene.socket,
+      });
+      scene.scene.pause("MainScene");
+    });
   }
 
   update(time) {
@@ -403,6 +428,56 @@ export default class MainScene extends Phaser.Scene {
       }
 
       this.physics.world.wrap(this.astronaut, 5);
+
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelBirthdayList,
+        scene.openRegexScene,
+        null,
+        scene
+      );
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelCargoHold,
+        scene.openRegexScene,
+        null,
+        this
+      );
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelCockpit,
+        scene.openRegexScene,
+        null,
+        this
+      );
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelEngineRoom,
+        scene.openRegexScene,
+        null,
+        this
+      );
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelLavatory,
+        scene.openRegexScene,
+        null,
+        this
+      );
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelMedbay,
+        scene.openRegexScene,
+        null,
+        this
+      );
+      this.physics.add.overlap(
+        scene.astronaut,
+        scene.controlPanelVendingMachine,
+        scene.openRegexScene,
+        null,
+        this
+      );
 
       // emit player movement
       var x = this.astronaut.x;
@@ -441,6 +516,17 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
+  openRegexScene(astronaut, controlPanel) {
+    if (
+      this.randomTasks.some(
+        (task) => task.location === controlPanel.texture.key
+      )
+    ) {
+      controlPanel.setTint(0xbdef83);
+      controlPanel.setInteractive();
+    }
+  }
+
   addPlayer(scene, playerInfo) {
     scene.astronaut = scene.physics.add
       .image(playerInfo.x, playerInfo.y, "astronaut")
@@ -459,6 +545,7 @@ export default class MainScene extends Phaser.Scene {
       default:
         console.log("there was an error assigning player colors");
     }
+    scene.astronaut.setVisible(true);
     scene.astronaut.setDrag(100);
     scene.astronaut.setAngularDrag(100);
     scene.astronaut.setMaxVelocity(200);
