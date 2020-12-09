@@ -455,51 +455,68 @@ export default class MainScene extends Phaser.Scene {
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelBirthdayList,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         scene
       );
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelCargoHold,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         this
       );
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelCockpit,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         this
       );
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelEngineRoom,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         this
       );
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelLavatory,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         this
       );
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelMedbay,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         this
       );
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelVendingMachine,
-        scene.openRegexScene,
+        scene.highlightControlPanel,
         null,
         this
+      );
+
+      //check to see if they are no longer overlapping
+      scene.checkOverlap(
+        scene,
+        scene.astronaut,
+        scene.controlPanelBirthdayList
+      );
+      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelCargoHold);
+      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelCockpit);
+      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelEngineRoom);
+      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelLavatory);
+      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelMedbay);
+      scene.checkOverlap(
+        scene,
+        scene.astronaut,
+        scene.controlPanelVendingMachine
       );
 
       // emit player movement
@@ -539,7 +556,7 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  openRegexScene(astronaut, controlPanel) {
+  highlightControlPanel(astronaut, controlPanel) {
     if (
       this.state.gameStarted &&
       this.randomTasks.some(
@@ -548,6 +565,28 @@ export default class MainScene extends Phaser.Scene {
     ) {
       controlPanel.setTint(0xbdef83);
       controlPanel.setInteractive();
+    }
+  }
+
+  deactivateControlPanel(controlPanel) {
+    controlPanel.setTint(0xb2b037);
+    controlPanel.disableInteractive();
+  }
+
+  checkOverlap(scene, player, controlPanel) {
+    if (
+      this.state.gameStarted &&
+      this.randomTasks.some(
+        (task) => task.location === controlPanel.texture.key
+      )
+    ) {
+      const boundsPlayer = player.getBounds();
+      const boundsPanel = controlPanel.getBounds();
+      if (
+        !Phaser.Geom.Intersects.RectangleToRectangle(boundsPlayer, boundsPanel)
+      ) {
+        scene.deactivateControlPanel(controlPanel);
+      }
     }
   }
 
