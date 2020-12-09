@@ -19,6 +19,7 @@ export default class MainScene extends Phaser.Scene {
     this.beginTimer = false;
     this.randomTasks = [];
     this.overlapped = false;
+    this.joined = false;
   }
 
   preload() {
@@ -47,7 +48,7 @@ export default class MainScene extends Phaser.Scene {
 
   async create() {
     const scene = this;
-
+    this.joined = false;
     // tilemap
     this.map = this.make.tilemap({ key: "map" });
 
@@ -204,8 +205,34 @@ export default class MainScene extends Phaser.Scene {
       this.socket.on("playerMoved", function (playerInfo) {
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerInfo.playerId === otherPlayer.playerId) {
-            otherPlayer.setRotation(playerInfo.rotation);
+            const oldX = otherPlayer.x;
+            const oldY = otherPlayer.y;
             otherPlayer.setPosition(playerInfo.x, playerInfo.y);
+            if (oldX < playerInfo.x) {
+              otherPlayer.anims.play("misa-right-walk", true);
+            } else if (oldX > playerInfo.x) {
+              otherPlayer.anims.play("misa-left-walk", true);
+            } else if (oldY < playerInfo.y) {
+              otherPlayer.anims.play("misa-front-walk", true);
+            } else if (oldY > playerInfo.y) {
+              otherPlayer.anims.play("misa-back-walk", true);
+            }
+          }
+        });
+      });
+
+      this.socket.on("otherPlayerStopped", function (playerInfo) {
+        scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerInfo.playerId === otherPlayer.playerId) {
+            // const oldX = otherPlayer.x;
+            // const oldY = otherPlayer.y;
+            otherPlayer.anims.stop(null, true);
+            // otherPlayer.setTexture("atlas", "misa-front");
+            // If we were moving, pick and idle frame to use
+            // if (oldX < 0) otherPlayer.setTexture("atlas", "misa-left");
+            // else if (oldX > 0) otherPlayer.setTexture("atlas", "misa-right");
+            // else if (oldY < 0) otherPlayer.setTexture("atlas", "misa-back");
+            // else if (oldY > 0) otherPlayer.setTexture("atlas", "misa-front");
           }
         });
       });
@@ -555,20 +582,18 @@ export default class MainScene extends Phaser.Scene {
         this.astronaut.anims.play("misa-back-walk", true);
       } else if (this.cursors.down.isDown) {
         this.astronaut.anims.play("misa-front-walk", true);
+      } else {
+        this.astronaut.anims.stop(null, true);
+
+        // If we were moving, pick and idle frame to use
+        if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
+        else if (prevVelocity.x > 0)
+          this.astronaut.setTexture("atlas", "misa-right");
+        else if (prevVelocity.y < 0)
+          this.astronaut.setTexture("atlas", "misa-back");
+        else if (prevVelocity.y > 0)
+          this.astronaut.setTexture("atlas", "misa-front");
       }
-
-      // else {
-      //   this.astronaut.stop(null, true);
-
-      //   // If we were moving, pick and idle frame to use
-      //   if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
-      //   else if (prevVelocity.x > 0)
-      //     this.astronaut.setTexture("atlas", "misa-right");
-      //   else if (prevVelocity.y < 0)
-      //     this.astronaut.setTexture("atlas", "misa-back");
-      //   else if (prevVelocity.y > 0)
-      //     this.astronaut.setTexture("atlas", "misa-front");
-      // }
       //CONTROL PANEL OVERLAP
       this.physics.add.overlap(
         scene.astronaut,
@@ -640,12 +665,22 @@ export default class MainScene extends Phaser.Scene {
       // emit player movement
       var x = this.astronaut.x;
       var y = this.astronaut.y;
+
       if (
         this.astronaut.oldPosition &&
         (x !== this.astronaut.oldPosition.x ||
           y !== this.astronaut.oldPosition.y)
       ) {
+        this.moving = true;
         this.socket.emit("playerMovement", {
+          x: this.astronaut.x,
+          y: this.astronaut.y,
+          roomKey: scene.state.roomKey,
+        });
+      } else if (this.joined && this.moving) {
+        this.moving = false;
+        console.log("inside stopping");
+        this.socket.emit("playerStopped", {
           x: this.astronaut.x,
           y: this.astronaut.y,
           roomKey: scene.state.roomKey,
@@ -662,7 +697,7 @@ export default class MainScene extends Phaser.Scene {
 
     if (this.state.numPlayers >= 3 && this.startClickable === true) {
       this.startClickable = false;
-      scene.waitingText.setVisible(false);
+      this.waitingText.setVisible(false);
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
@@ -709,6 +744,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   addPlayer(scene, playerInfo) {
+    scene.joined = true;
     scene.astronaut = scene.physics.add
       .sprite(playerInfo.x, playerInfo.y, "atlas", "misa-front")
       .setOrigin(0.5, 0.5)
@@ -743,10 +779,15 @@ export default class MainScene extends Phaser.Scene {
   }
 
   addOtherPlayers(scene, playerInfo) {
-    const otherPlayer = scene.add
-      .sprite(playerInfo.x, playerInfo.y, "astronaut")
-      .setOrigin(0.5, 0.5)
-      .setDisplaySize(43.5, 55.5);
+    const otherPlayer = scene.add.sprite(
+      playerInfo.x,
+      playerInfo.y,
+      "atlas",
+      "misa-front"
+    );
+    // .setOrigin(0.5, 0.5)
+    // .setSize(30, 40)
+    // .setOffset(0, 24);
     switch (playerInfo.team) {
       case "red":
         otherPlayer.setTint(0xd86969);

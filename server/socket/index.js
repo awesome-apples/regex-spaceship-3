@@ -25,8 +25,8 @@ module.exports = (io) => {
         roomKey
       ].unassignedRandomTasks.pop();
 
-      console.log('gameRooms[roomKey]: ', gameRooms[roomKey])
-      console.log('gameRooms[roomKey].colors: ', gameRooms[roomKey].colors)
+      console.log("gameRooms[roomKey]: ", gameRooms[roomKey]);
+      console.log("gameRooms[roomKey].colors: ", gameRooms[roomKey].colors);
       const playerColor = gameRooms[roomKey].colors.pop();
 
       roomInfo.players[socket.id] = {
@@ -96,6 +96,14 @@ module.exports = (io) => {
         .to(roomKey)
         .emit("playerMoved", gameRooms[roomKey].players[socket.id]);
     });
+    socket.on("playerStopped", function (data) {
+      const { x, y, roomKey } = data;
+      gameRooms[roomKey].players[socket.id].x = x;
+      gameRooms[roomKey].players[socket.id].y = y;
+      socket
+        .to(roomKey)
+        .emit("otherPlayerStopped", gameRooms[roomKey].players[socket.id]);
+    });
     socket.on("completedTask", function (data) {
       const { roomKey } = data;
       gameRooms[roomKey].gameScore++;
@@ -147,7 +155,7 @@ module.exports = (io) => {
       while (Object.keys(gameRooms).includes(key)) {
         key = codeGenerator();
       }
-      console.log('key inside getRoomCode', key)
+      console.log("key inside getRoomCode", key);
       gameRooms[key] = {
         roomKey: key,
         allRandomTasks: [],
