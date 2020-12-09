@@ -27,30 +27,46 @@ async function seed() {
       hint: '/ / g',
       expectedOutput: '3',
       possibleSolution: '/rations/g',
-      room: 'cargoHold',
+      location: 'cargoHold',
       category: 'count',
+      nickname: 'Recount Inventory',
     }),
     Task.create({
       problem:
         'The alien has contaminated our samples! The name of the bacteria is hidden in the medical files. Write a regex that matches all the lowercase letters and whitespace in the string below, and we will remove them for you. All thats left will be the name of the bacteria.',
       string: 'Emmas health is exCellent her metabOlism and refLexes are quIck',
-      hint: '/ [ ] /',
+      hint: '/ [ ] \\s /',
       expectedOutput: 'ECOLI',
-      //possibleSolution: '/[a-z]|\s/g',
+      possibleSolution: '/[a-z]|\\s/g',
       callback: "(chr) => ''",
-      room: 'vendingMachine',
+      location: 'medBay',
       category: 'replace',
+      nickname: 'Sterilize Samples',
     }),
     Task.create({
       problem:
         'The alien has contaminated our samples! The name of the bacteria is hidden in the medical files. Write a regex that matches all the lowercase letters and whitespace in the string below, and we will remove them for you. All thats left will be the name of the bacteria.',
       string: 'Sarahs hearT RatE and blood Pressure are healthy',
-      hint: '/ [ ] /',
+      hint: '/ [ ] \\s /',
       expectedOutput: 'STREP',
-      //possibleSolution: '/[a-z]|\s/g',
+      possibleSolution: '/[a-z]|\\s/g',
       callback: "(chr) => ''",
-      room: 'vendingMachine',
+      location: 'medBay',
       category: 'replace',
+      nickname: 'Sterilize Samples',
+    }),
+    Task.create({
+      problem:
+        'The alien has contaminated our samples! The name of the bacteria is hidden in the medical files. Write a regex that matches all the lowercase letters and whitespace in the string below, and we will remove them for you. All thats left will be the name of the bacteria.',
+      string:
+        'SierrA has Low blood sugar she Must eat snacks OfteN to Ensure her LeveLs Are up',
+      hint: '/ [ ] \\s /',
+      expectedOutput: 'SALMONELLA',
+      possibleSolution: '/[a-z]|\\s/g',
+      callback: "(chr) => ''",
+      location: 'medBay',
+      category: 'replace',
+      nickname: 'Sterilize Samples',
     }),
     Task.create({
       problem:
@@ -58,21 +74,23 @@ async function seed() {
       string:
         'Rocks, meteors, chips, rocks, soda, meteors, candy, rocks, rocks, meteors',
       hint: '/ | / g',
-      expectedOutput: ['chips', 'soda', 'candy'],
+      expectedOutput: 'chips, soda, candy',
       possibleSolution: '/chips|soda|candy/g',
-      room: 'vendingMachine',
+      location: 'vendingMachine',
       category: 'match',
+      nickname: 'Reorganize Snacks',
     }),
     Task.create({
       problem:
         'The alien put a bunch of space junk in our vending machine! It is crucial to keep our crew snacking. Write a regex that returns only the items that should be found in our vending machines.',
       string:
-        'chocolate, slime, potato chips, cookies, rocks, contract for world domination, granola bar',
+        'chocolate, slime, potato chips, rocks, contract for world domination, cookies',
       hint: '/ | / g',
-      expectedOutput: ['chocolate', 'potato chips', 'granola bar'],
-      possibleSolution: '/potato chips|cookies|granola bar/g',
-      room: 'vendingMachine',
+      expectedOutput: 'chocolate, potato chips, cookies',
+      possibleSolution: '/chocolate|potato chips|cookies/g',
+      location: 'vendingMachine',
       category: 'match',
+      nickname: 'Reorganize Snacks',
     }),
     Task.create({
       problem:
@@ -83,12 +101,13 @@ async function seed() {
       expectedOutput: 'Emma January 12, George March 6, Carlos December 6',
       possibleSolution: '/Zviverzxkinzop 8th Lunar Rotation, /g',
       callback: "(alien) => ''",
-      room: 'birthdayList',
+      location: 'birthdayList',
       category: 'replace',
+      nickname: 'Check Birthday List',
     }),
     Task.create({
       problem:
-        'The alien has put a bunch of bugs in our engine! Now bugs are all tangled in our wires. write a regex that finds all instances of the word “bug” and we will pull them out of the engine for you',
+        'The alien has put a bunch of bugs in our engine! Now bugs are all tangled in our wires. write a regex that finds all instances of the word “bug ” and we will pull them out of the engine for you. Be mindful of whitespace!',
       string:
         'wire wire wire wire bug wire wire wire bug wire wire wire bug wire wire',
       hint: '/ ( ) / g',
@@ -96,8 +115,9 @@ async function seed() {
         'wire wire wire wire wire wire wire wire wire wire wire wire',
       possibleSolution: '/(bug )/g',
       callback: "(c) => ''",
-      room: 'engineRoom',
+      location: 'engineRoom',
       category: 'replace',
+      nickname: 'Debug Engine',
     }),
     Task.create({
       problem:
@@ -109,8 +129,9 @@ async function seed() {
         'empty empty plunged empty empty empty plunged empty empty empty plunged empty empty',
       possibleSolution: '/(clogged)/g',
       callback: "(c) => 'plunged'",
-      room: 'lavatory',
+      location: 'lavatory',
       category: 'replace',
+      nickname: 'Plunge Toilets',
     }),
     Task.create({
       problem:
@@ -118,10 +139,11 @@ async function seed() {
       string:
         'space space space planet space space meteor space space planet space',
       hint: '/ [ ] /',
-      expectedOutput: '35',
+      expectedOutput: '37',
       possibleSolution: '/[m]/',
-      room: 'cockpit',
+      location: 'cockpit',
       category: 'search',
+      nickname: 'Unscramble Maps',
     }),
     Task.create({
       problem:
@@ -131,8 +153,9 @@ async function seed() {
       hint: '/ [ ] /',
       expectedOutput: '25',
       possibleSolution: '/[m]/',
-      room: 'cockpit',
+      location: 'cockpit',
       category: 'search',
+      nickname: 'Unscramble Maps',
     }),
   ]);
 

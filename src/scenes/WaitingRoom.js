@@ -29,6 +29,9 @@ export default class WaitingRoom extends Phaser.Scene {
     });
     scene.waitingMusic.play();
 
+    const keyObj = scene.input.keyboard.addKey("enter");
+    keyObj.enabled = false;
+
     scene.popUp = scene.add.image(400, 300, "computer");
     scene.requestBox = scene.add.image(300, 280, "popup");
     scene.enterBox = scene.add.image(500, 350, "popup");

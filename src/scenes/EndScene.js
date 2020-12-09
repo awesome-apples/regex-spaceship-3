@@ -19,33 +19,21 @@ export default class EndScene extends Phaser.Scene {
 
   preload() {
     this.load.html("nameform", "assets/text/nameform.html");
+    this.load.image("computer", "assets/backgrounds/computer.png");
+    this.load.image("popup", "assets/backgrounds/singlepopup.png");
   }
 
   async create() {
     const scene = this;
 
     try {
-      //sockets
+      scene.popUp = scene.add.image(400, 300, "computer");
+      scene.textBoxWindowScores = scene.add
+        .image(510, 315, "popup")
+        .setScale(1.05, 2);
+      scene.textBoxWindow = scene.add.image(280, 295, "popup");
 
-      scene.popUp = scene.add.graphics();
-      scene.textBox = scene.add.graphics();
-
-      // for popup window
-      scene.popUp.lineStyle(1, 0xffffff);
-      scene.popUp.fillStyle(0xffffff, 0.5);
-
-      // for boxes
-      scene.textBox.lineStyle(1, 0xffffff);
-      scene.textBox.fillStyle(0x000000, 1);
-
-      // popup window
-      scene.popUp.strokeRect(25, 25, 750, 550);
-      scene.popUp.fillRect(25, 25, 750, 550);
-
-      // you win box
-      scene.textBox.strokeRect(240, 50, 320, 65);
-      scene.textBox.fillRect(240, 50, 320, 65);
-      scene.outcome = scene.add.text(310, 65, "", {
+      scene.outcome = scene.add.text(310, 80, "", {
         fill: "#00ff00",
         fontSize: "40px",
         fontStyle: "bold",
@@ -57,31 +45,23 @@ export default class EndScene extends Phaser.Scene {
         scene.outcome.setText("YOU LOSE");
       }
 
-      // popup specs: 25, 25, 750, 550
-      // popup specs: x, y, width, height
-
-      // leaderboard box
-      scene.textBox.strokeRect(425, 150, 325, 400);
-      scene.textBox.fillRect(425, 150, 325, 400);
-      scene.add.text(485, 170, "Final Scores", {
-        fill: "#ffffff",
-        fontSize: "30px",
+      scene.add.text(393, 163, "Final Scores", {
+        fill: "#00ff00",
+        fontSize: "18px",
         fontStyle: "bold",
       });
 
-      scene.textBox.strokeRect(50, 200, 325, 200);
-      scene.textBox.fillRect(50, 200, 325, 200);
-      scene.add.text(90, 220, "Enter your name: ", {
-        fill: "#ffffff",
-        fontSize: "25px",
+      scene.add.text(170, 217, "Enter your name: ", {
+        fill: "#00ff00",
+        fontSize: "12px",
         fontStyle: "bold",
       });
 
-      scene.inputElement = scene.add.dom(215, 300).createFromCache("nameform");
+      scene.inputElement = scene.add.dom(290, 300).createFromCache("nameform");
 
-      scene.submitButton = scene.add.text(165, 350, "Submit", {
-        fill: "#ffffff",
-        fontSize: "25px",
+      scene.submitButton = scene.add.text(280, 320, "Submit", {
+        fill: "#00ff00",
+        fontSize: "20px",
         fontStyle: "bold",
       });
       scene.submitButton.setInteractive();
@@ -101,8 +81,8 @@ export default class EndScene extends Phaser.Scene {
         }
       });
 
-      scene.scoreDisplay = scene.add.text(445, 210, "", {
-        fill: "#ffffff",
+      scene.scoreDisplay = scene.add.text(410, 210, "", {
+        fill: "#00ff00",
         fontSize: "20px",
       });
 

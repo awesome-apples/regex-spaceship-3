@@ -4,14 +4,6 @@ export default class RegexScene extends Phaser.Scene {
   constructor() {
     super('RegexScene');
     this.state = {};
-    // this.randomTask = {
-    //   problem:
-    //     "Matching optional characters: Try writing a pattern that uses the optionality metacharacter to match only the lines where one or more files were found.",
-    //   matchArray: ["1 file found?", "2 files found?", "24 files found?"],
-    //   skipArray: ["No files found."],
-    //   completed: false,
-    //   category: "one",
-    // };
   }
 
   init(data) {
@@ -34,36 +26,15 @@ export default class RegexScene extends Phaser.Scene {
   async create() {
     const scene = this;
 
-    // console.log('random tasks altogether in this scene', this.randomTasks);
-    // console.log('random task in this scene !!', this.randomTask);
-    //get an emition of the persons random task from their socket
-    //assign random task to this.randomTask
+    const keyObj = scene.input.keyboard.addKey('enter');
+    keyObj.enabled = false;
 
     try {
-      //sockets
-
-      // scene.graphics = scene.add.graphics();
       scene.graphics = scene.add.image(400, 300, 'computer');
-      // scene.graphics2 = scene.add.graphics();
       scene.promptPopup = scene.add.image(270, 295, 'popup').setScale(1.05, 2);
       scene.inputPopup = scene.add.image(540, 230, 'popup');
       scene.outputPopup = scene.add.image(460, 400, 'popup').setScale(1.5, 1);
 
-      // for popup window
-      // scene.graphics.lineStyle(1, 0xffffff);
-      // scene.graphics.fillStyle(0xffffff, 0.5);
-
-      // for boxes
-      // scene.graphics2.lineStyle(1, 0xffffff);
-      // scene.graphics2.fillStyle(0xffffff, 1);
-
-      // popup window
-      // scene.graphics.strokeRect(25, 75, 750, 500);
-      // scene.graphics.fillRect(25, 75, 750, 500);
-
-      // regex problem prompt
-      // scene.graphics2.strokeRect(50, 100, 325, 425);
-      // scene.graphics2.fillRect(50, 100, 325, 425);
       scene.add.text(155, 145, 'Error!! Must be resolved!', {
         fill: '#00ff00',
         fontSize: '14px',
@@ -73,15 +44,7 @@ export default class RegexScene extends Phaser.Scene {
       scene.add.text(
         155,
         170,
-        `${scene.randomTask.problem}
-        Matches: ${scene.randomTask.matchArray.map(
-          (string) => `
-        ${string}`
-        )}
-        Skips:${scene.randomTask.skipArray.map(
-          (string) => `
-        ${string}`
-        )}`,
+        `${scene.randomTask.problem}, ${scene.randomTask.string}`,
         {
           fill: '#00ff00',
           fontSize: '12px',
@@ -92,8 +55,6 @@ export default class RegexScene extends Phaser.Scene {
       );
 
       // input area
-      // scene.graphics2.strokeRect(425, 100, 325, 200);
-      // scene.graphics2.fillRect(425, 100, 325, 200);
       scene.add.text(428, 152, 'Input', {
         fill: '#00ff00',
         fontSize: '12px',
@@ -102,9 +63,6 @@ export default class RegexScene extends Phaser.Scene {
       scene.inputElement = scene.add.dom(597, 264).createFromCache('taskform');
 
       // output area
-      // scene.graphics2.strokeRect(425, 350, 325, 175);
-      // scene.graphics2.fillRect(425, 350, 325, 175);
-
       scene.add.text(290, 323, 'Output', {
         fill: '#00ff00',
         fontSize: '12px',
@@ -118,6 +76,7 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.exit.setInteractive();
       scene.exit.on('pointerdown', () => {
+        scene.socket.emit('resumePhysics');
         scene.scene.stop('RegexScene');
       });
 
@@ -181,7 +140,7 @@ export default class RegexScene extends Phaser.Scene {
               roomKey: scene.roomKey,
             });
             scene.submitButton.disableInteractive();
-            scene.socket.emit('disablePanelForAll', {
+            scene.socket.emit('disablePanel', {
               controlPanel: scene.controlPanel,
               roomKey: scene.roomKey,
             });
@@ -201,7 +160,19 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   handleInput(scene, input, randomTask) {
-    const regex = new RegExp(input);
+    const gFlag = /g$/;
+
+    const flag = input.match(gFlag);
+    const modified = input.replace(/\/|g$/g, '');
+
+    let regex = '';
+
+    if (flag === null) {
+      regex = new RegExp(modified);
+    } else {
+      regex = new RegExp(modified, flag);
+    }
+
     let result = false;
     if (randomTask.category === 'search') {
       result = scene.searchValidator(regex, randomTask);
@@ -219,26 +190,36 @@ export default class RegexScene extends Phaser.Scene {
   }
 
   matchValidator(regex, randomTask) {
-    const output = randomTask.string.match(regex);
+    let output;
+    if (randomTask.string.match(regex)) {
+      output = randomTask.string.match(regex).join(', ');
+    } else {
+      output = null;
+    }
     const correct = randomTask.expectedOutput === output;
     return { correct, output };
   }
 
   searchValidator(regex, randomTask) {
     const output = randomTask.string.search(regex);
-    const correct = randomTask.expectedOutput === output;
+    const correct = randomTask.expectedOutput === output.toString();
     return { correct, output };
   }
 
   replaceValidator(regex, randomTask) {
-    const output = randomTask.string.replace(regex, randomTask.callback);
+    const callbackFunction = eval(randomTask.callback);
+    const output = randomTask.string.replace(regex, callbackFunction);
     const correct = randomTask.expectedOutput === output;
     return { correct, output };
   }
 
   countValidator(regex, randomTask) {
-    const output = randomTask.string.match(regex).length;
-    const correct = randomTask.expectedOutput === output;
-    return { correct, output };
+    if (randomTask.string.match(regex)) {
+      const output = randomTask.string.match(regex).length;
+      const correct = randomTask.expectedOutput === output.toString();
+      return { correct, output };
+    } else {
+      return { correct: false, output: 'null' };
+    }
   }
 }
