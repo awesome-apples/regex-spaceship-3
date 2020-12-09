@@ -1,4 +1,4 @@
-import "phaser";
+import 'phaser';
 
 export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
@@ -12,7 +12,7 @@ export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
 
     this.draw();
 
-    scene.add.existing(this.bar);
+    scene.add.existing(this.bar).setScrollFactor(0);
   }
 
   changeTaskAmount(newTaskAmount) {

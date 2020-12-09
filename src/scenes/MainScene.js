@@ -87,7 +87,6 @@ export default class MainScene extends Phaser.Scene {
     this.progressText.setScrollFactor(0);
 
     scene.progressBar = new ProgressBar(scene, 30, 50);
-    scene.progressBar.setScrollFactor(0);
 
     try {
       //SOCKET CONNECTIONS
@@ -151,21 +150,16 @@ export default class MainScene extends Phaser.Scene {
                 break;
             }
             scene.tasksText.push({
-              text: scene.add.text(35, y + 25 * i, taskPhrase, {
-                fontSize: '12px',
-                fill: '#000000',
-                fontStyle: 'bold',
-              }),
+              text: scene.add
+                .text(35, y + 25 * i, taskPhrase, {
+                  fontSize: '12px',
+                  fill: '#000000',
+                  fontStyle: 'bold',
+                })
+                .setScrollFactor(0),
               location: scene.randomTasks[i].location,
             });
           }
-          // for (let i = 0; i < scene.tasksText.length; i++) {
-          //   scene.tasksText[i].setScrollFactor(0);
-          // }
-          console.log('sscene.state.scores in setstate', scene.state.scores);
-          console.log('scene.state.roomkey in set state', scene.state.roomKey);
-          console.log('randomtasks on main', scene.randomTasks);
-          console.log('state on main', scene.state);
           scene.waitingText = scene.add
             .text(1354, 393, 'Waiting for more players to join', {
               fontSize: '20px',
@@ -315,7 +309,6 @@ export default class MainScene extends Phaser.Scene {
         console.log('inside setInactive listener');
         for (let i = 0; i < scene.tasksText.length; i++) {
           let currentTask = scene.tasksText[i];
-          //NEED TO FIND A WAY TO PASS LOCATION
           if (currentTask.location === controlPanel) {
             console.log('inside color changing if');
             currentTask.text.setText('Completed');
@@ -755,7 +748,7 @@ export default class MainScene extends Phaser.Scene {
   addPlayer(scene, playerInfo) {
     scene.joined = true;
     scene.astronaut = scene.physics.add
-      .sprite(400, 300, 'atlas', 'misa-front')
+      .sprite(playerInfo.x, playerInfo.y, 'atlas', 'misa-front')
       .setOrigin(0.5, 0.5)
       .setSize(30, 40)
       .setOffset(0, 24);
