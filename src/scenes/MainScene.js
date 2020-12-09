@@ -26,6 +26,7 @@ export default class MainScene extends Phaser.Scene {
       frameWidth: 29,
       frameHeight: 37,
     });
+
     this.load.image("lavatory", "assets/sprites/lavatory.png");
     this.load.image("birthdayList", "assets/sprites/birthdayList.png");
     this.load.image("cockpit", "assets/sprites/console_w.png");
@@ -35,11 +36,47 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("medBay", "assets/sprites/console_w.png");
     this.load.image("star", "assets/star_gold.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
+    this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
+    this.load.tilemapTiledJSON("map", "../assets/map/spaceship.json");
+    this.load.atlas(
+      "atlas",
+      "../assets/atlas/atlas.png",
+      "../assets/atlas/atlas.json"
+    );
   }
 
   async create() {
     const scene = this;
-    this.add.image(0, 0, "mainroom").setOrigin(0);
+
+    // tilemap
+    this.map = this.make.tilemap({ key: "map" });
+
+    this.tileset = this.map.addTilesetImage("spaceship", "tiles");
+
+    this.belowLayer = this.map.createStaticLayer(
+      "Below Player",
+      this.tileset,
+      0,
+      0
+    );
+    this.worldLayer = this.map.createStaticLayer("World", this.tileset, 0, 0);
+    this.wallLayer = this.map.createStaticLayer(
+      "Wall Stuff",
+      this.tileset,
+      0,
+      0
+    );
+    this.aboveLayer = this.map.createStaticLayer(
+      "Above Player",
+      this.tileset,
+      0,
+      0
+    );
+
+    this.worldLayer.setCollisionByProperty({ collides: true });
+    this.wallLayer.setCollisionByProperty({ collides: true });
+
+    this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
     //PROGRESS BAR
     this.progressText = this.add.text(30, 16, "Progress Tracker", {
@@ -342,9 +379,6 @@ export default class MainScene extends Phaser.Scene {
       console.error(error);
     }
 
-    // this.astronaut = this.physics.add.image(1, 1, "astronaut");
-    // this.astronaut.setVisible(false);
-
     scene.controlPanelVendingMachine.on("pointerdown", () => {
       scene.scene.launch("RegexScene", {
         ...scene.state,
@@ -433,25 +467,109 @@ export default class MainScene extends Phaser.Scene {
     scene.taskListSqr.fillStyle(0xffffff, 0.5);
     scene.taskListSqr.strokeRect(30, 500, 265, 80);
     scene.taskListSqr.fillRect(30, 500, 265, 80);
+
+    this.astronaut = this.physics.add.sprite(1, 1, "atlas", "misa-front");
+    this.astronaut.setVisible(false);
+
+    console.log("astronaut on main", this.astronaut);
+
+    this.anims.create({
+      key: "misa-left-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-left-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "misa-right-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-right-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "misa-front-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-front-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "misa-back-walk",
+      frames: this.anims.generateFrameNames("atlas", {
+        prefix: "misa-back-walk.",
+        start: 0,
+        end: 3,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
   }
 
   update(time) {
     const scene = this;
+    //MOVEMENT
     if (this.astronaut) {
+      const speed = 175;
+      const prevVelocity = this.astronaut.body.velocity.clone();
+
+      // Stop any previous movement from the last frame
+      this.astronaut.body.setVelocity(0);
+
+      // Horizontal movement
       if (this.cursors.left.isDown) {
-        this.astronaut.setVelocityX(-150);
+        this.astronaut.body.setVelocityX(-speed);
       } else if (this.cursors.right.isDown) {
-        this.astronaut.setVelocityX(150);
-      } else if (this.cursors.up.isDown) {
-        this.astronaut.setVelocityY(-150);
-      } else if (this.cursors.down.isDown) {
-        this.astronaut.setVelocityY(150);
-      } else {
-        this.astronaut.setVelocity(0);
+        this.astronaut.body.setVelocityX(speed);
       }
 
-      this.physics.world.wrap(this.astronaut, 5);
+      // Vertical movement
+      if (this.cursors.up.isDown) {
+        this.astronaut.body.setVelocityY(-speed);
+      } else if (this.cursors.down.isDown) {
+        this.astronaut.body.setVelocityY(speed);
+      }
 
+      // Normalize and scale the velocity so that astronaut can't move faster along a diagonal
+      this.astronaut.body.velocity.normalize().scale(speed);
+
+      // Update the animation last and give left/right animations precedence over up/down animations
+      if (this.cursors.left.isDown) {
+        this.astronaut.anims.play("misa-left-walk", true);
+      } else if (this.cursors.right.isDown) {
+        this.astronaut.anims.play("misa-right-walk", true);
+      } else if (this.cursors.up.isDown) {
+        this.astronaut.anims.play("misa-back-walk", true);
+      } else if (this.cursors.down.isDown) {
+        this.astronaut.anims.play("misa-front-walk", true);
+      }
+
+      // else {
+      //   this.astronaut.stop(null, true);
+
+      //   // If we were moving, pick and idle frame to use
+      //   if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
+      //   else if (prevVelocity.x > 0)
+      //     this.astronaut.setTexture("atlas", "misa-right");
+      //   else if (prevVelocity.y < 0)
+      //     this.astronaut.setTexture("atlas", "misa-back");
+      //   else if (prevVelocity.y > 0)
+      //     this.astronaut.setTexture("atlas", "misa-front");
+      // }
+      //CONTROL PANEL OVERLAP
       this.physics.add.overlap(
         scene.astronaut,
         scene.controlPanelBirthdayList,
@@ -592,9 +710,11 @@ export default class MainScene extends Phaser.Scene {
 
   addPlayer(scene, playerInfo) {
     scene.astronaut = scene.physics.add
-      .image(playerInfo.x, playerInfo.y, "astronaut")
+      .sprite(playerInfo.x, playerInfo.y, "atlas", "misa-front")
       .setOrigin(0.5, 0.5)
-      .setDisplaySize(43.5, 55.5);
+      .setSize(30, 40)
+      .setOffset(0, 24);
+
     switch (playerInfo.team) {
       case "red":
         scene.astronaut.setTint(0xd86969);
@@ -609,9 +729,17 @@ export default class MainScene extends Phaser.Scene {
         console.log("there was an error assigning player colors");
     }
     scene.astronaut.setVisible(true);
-    scene.astronaut.setDrag(100);
-    scene.astronaut.setAngularDrag(100);
-    scene.astronaut.setMaxVelocity(200);
+    scene.physics.add.collider(scene.astronaut, this.worldLayer);
+    // scene.createAnims(scene);
+
+    scene.camera = scene.cameras.main;
+    scene.camera.startFollow(scene.astronaut);
+    scene.camera.setBounds(
+      0,
+      0,
+      scene.map.widthInPixels,
+      scene.map.heightInPixels
+    );
   }
 
   addOtherPlayers(scene, playerInfo) {
@@ -642,6 +770,8 @@ export default class MainScene extends Phaser.Scene {
     partInSeconds = partInSeconds.toString().padStart(2, "0");
     return `${minutes}:${partInSeconds}`;
   }
+  // createAnims(scene) {
+  // }
   countdown() {
     const scene = this;
     const currentTime = Date.now();
