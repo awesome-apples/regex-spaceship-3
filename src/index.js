@@ -13,13 +13,14 @@ But this hasn't happened yet!
 */
 
 // Bring in all the scenes
-import "phaser";
-import MainScene from "./scenes/MainScene";
-import RegexScene from "./scenes/RegexScene";
-import EndScene from "./scenes/EndScene";
-import WaitingRoom from "./scenes/WaitingRoom";
+import 'phaser';
+import MainScene from './scenes/MainScene';
+import RegexScene from './scenes/RegexScene';
+import EndScene from './scenes/EndScene';
+import WaitingRoom from './scenes/WaitingRoom';
+import Instructions from './scenes/Instructions';
 import MapScene from "./scenes/MapScene";
-import config from "./config/config";
+import config from './config/config';
 
 class Game extends Phaser.Game {
   constructor() {
@@ -27,15 +28,16 @@ class Game extends Phaser.Game {
     super(config);
     // Add all the scenes
     // << ADD ALL SCENES HERE >>
-    this.scene.add("MainScene", MainScene);
-    this.scene.add("RegexScene", RegexScene);
-    this.scene.add("EndScene", EndScene);
-    this.scene.add("WaitingRoom", WaitingRoom);
-    this.scene.add("MapScene", MapScene);
-
+    this.scene.add('MainScene', MainScene);
+    this.scene.add('RegexScene', RegexScene);
+    this.scene.add('EndScene', EndScene);
+    this.scene.add('WaitingRoom', WaitingRoom);
+    this.scene.add('Instructions', Instructions);
+    this.scene.add('MapScene', MapScene);
+    
     // Start the game with the mainscene
     // << START GAME WITH MAIN SCENE HERE >>
-    this.scene.start("MapScene");
+    this.scene.start('MainScene');
     // this.scene.start("WaitingRoom");
   }
 }

@@ -31,6 +31,7 @@ export default class MainScene extends Phaser.Scene {
         this.aboveLayer = this.map.createStaticLayer("Above Player", this.tileset, 0, 0);
 
         this.worldLayer.setCollisionByProperty({ collides: true });
+        this.wallLayer.setCollisionByProperty({ collides: true });
 
         // "Spawn Point" is the name of object layer
         this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];

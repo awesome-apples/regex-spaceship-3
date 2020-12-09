@@ -1,28 +1,33 @@
-const Sequelize = require("sequelize");
-const db = require("../db");
+const Sequelize = require('sequelize');
+const db = require('../db');
 
-const Task = db.define("task", {
+const Task = db.define('task', {
   problem: {
     type: Sequelize.TEXT,
   },
-  matchArray: {
-    type: Sequelize.ARRAY(Sequelize.TEXT),
+  string: {
+    type: Sequelize.TEXT,
   },
-  skipArray: {
-    type: Sequelize.ARRAY(Sequelize.TEXT),
+  hint: {
+    type: Sequelize.STRING,
   },
-  possibleSolutions: {
-    type: Sequelize.ARRAY(Sequelize.TEXT),
+  expectedOutput: {
+    type: Sequelize.TEXT,
   },
-  // difficulty: {
-  //   type: Sequelize.STRING,
-  // },
+  possibleSolution: {
+    type: Sequelize.STRING,
+  },
+  callback: {
+    type: Sequelize.STRING,
+  },
+  location: {
+    type: Sequelize.STRING,
+  },
   category: {
     type: Sequelize.STRING,
   },
-  completed: {
-    type: Sequelize.BOOLEAN,
-    defaultValue: false,
+  nickname: {
+    type: Sequelize.STRING,
   },
 });
 
