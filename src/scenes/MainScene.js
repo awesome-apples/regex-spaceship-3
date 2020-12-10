@@ -342,8 +342,6 @@ export default class MainScene extends Phaser.Scene {
         console.log("update Leaderboard:", scene.state.scores);
       });
 
-      //Was trying to decide whether or not to make this a group. Since they have unique tasks associated with them, I decided not to but would be down to change in the future to keep it DRY
-
       //make a control panel group for physics
       this.controlPanelGroup = this.physics.add.staticGroup({
         classType: ControlPanel,
@@ -464,7 +462,7 @@ export default class MainScene extends Phaser.Scene {
       });
 
       scene.startButton = scene.add
-        .dom(400, 300, "button", "width: 70px; height: 25px", "START")
+        .dom(400, 350, "button", "width: 70px; height: 25px", "START")
         .setOrigin(0.5)
         .setScrollFactor(0);
       scene.startButton.setVisible(false);
