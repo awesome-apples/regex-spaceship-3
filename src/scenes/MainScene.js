@@ -182,25 +182,25 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.setScrollFactor(0);
 
         //MAP BUTTON
-        scene.mapButton = scene.add
-        .dom(680, 500, "button", "width: 100px; height: 25px", "map")
-        .setOrigin(0);
-        scene.mapButton.setInteractive();
+        // scene.mapButton = scene.add
+        // .dom(400, 300, "button", "width: 100px; height: 25px", "map")
+        // .setOrigin(0);
+        // scene.mapButton.setInteractive();
 
-        scene.mapIsOpen = false;
+        // scene.mapIsOpen = false;
 
-        scene.mapButton.on("pointerdown", () => {
-          if (!scene.mapIsOpen) {
-            scene.mapButton.setText("close");
-            scene.mapIsOpen = true;
-            scene.scene.launch("SmallMap");
-          } else {
-            scene.mapButton.setText("map");
-            scene.mapIsOpen = false;
-            scene.scene.stop("SmallMap");
-          }
-        });
-        scene.instructionsButton.setScrollFactor(0);
+        // scene.mapButton.on("pointerdown", () => {
+        //   if (!scene.mapIsOpen) {
+        //     scene.mapButton.setText("close");
+        //     scene.mapIsOpen = true;
+        //     scene.scene.launch("SmallMap");
+        //   } else {
+        //     scene.mapButton.setText("map");
+        //     scene.mapIsOpen = false;
+        //     scene.scene.stop("SmallMap");
+        //   }
+        // });
+        // scene.instructionsButton.setScrollFactor(0);
 
         //TIMER
         scene.initialTime = 400;
