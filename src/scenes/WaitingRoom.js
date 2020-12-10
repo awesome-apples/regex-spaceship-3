@@ -45,19 +45,15 @@ export default class WaitingRoom extends Phaser.Scene {
     this.load.audio("waitingMusic", "audio/Waiting_Room.mp3");
 
     this.load.on("progress", function (value) {
-      console.log(value);
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
 
-    this.load.on("fileprogress", function (file) {
-      console.log(file.src);
-    });
+    this.load.on("fileprogress", function (file) {});
 
     this.load.on("complete", function () {
-      console.log("complete");
       progressBar.destroy();
       progressBox.destroy();
       loadingText.destroy();

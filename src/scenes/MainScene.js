@@ -73,19 +73,15 @@ export default class MainScene extends Phaser.Scene {
     );
 
     this.load.on("progress", function (value) {
-      console.log(value);
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
 
-    this.load.on("fileprogress", function (file) {
-      console.log(file.src);
-    });
+    this.load.on("fileprogress", function (file) {});
 
     this.load.on("complete", function () {
-      console.log("complete");
       progressBar.destroy();
       progressBox.destroy();
       loadingText.destroy();
@@ -94,17 +90,15 @@ export default class MainScene extends Phaser.Scene {
   }
 
   async create() {
-    console.log("in main scene");
     const scene = this;
-    this.joined = false;
 
+    // initialize enter key
     const keyObj = scene.input.keyboard.addKey("enter");
     keyObj.enabled = false;
+
     // tilemap
     this.map = this.make.tilemap({ key: "map" });
-
     this.tileset = this.map.addTilesetImage("spaceship", "tiles");
-
     this.belowLayer = this.map.createStaticLayer(
       "Below Player",
       this.tileset,
@@ -124,19 +118,19 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
-
     this.worldLayer.setCollisionByProperty({ collides: true });
     this.wallLayer.setCollisionByProperty({ collides: true });
-
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
     try {
-      //SOCKET CONNECTIONS
+      //CREATE SOCKET CONNECTION
       this.socket = io();
+      // LAUNCH WAITING ROOM
       scene.scene.launch("WaitingRoom", { socket: scene.socket });
       this.otherPlayers = this.physics.add.group();
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
+        // JOINED ROOM - SET STATE
         this.socket.on("setState", function (state) {
           const {
             roomKey,
@@ -146,12 +140,16 @@ export default class MainScene extends Phaser.Scene {
             gameScore,
             allRandomTasks,
           } = state;
+
+          // STATE
           scene.state.allRandomTasks = allRandomTasks;
           scene.state.roomKey = roomKey;
           scene.state.users = users;
           scene.randomTasks = randomTasks;
           scene.state.scores = scores;
           scene.state.gameScore = gameScore;
+
+          // ROOM KEY
           scene.roomkeyText = scene.add.text(
             30,
             78,
@@ -200,7 +198,7 @@ export default class MainScene extends Phaser.Scene {
           scene.progressText.setScrollFactor(0);
           scene.progressBar = new ProgressBar(scene, 30, 50);
 
-          //Task List Square
+          //ASSIGNED TASK LIST GRAPHICS RECTANGLE
           scene.taskListSqr = scene.add.graphics();
           scene.taskListSqr.lineStyle(1, 0xffffff);
           scene.taskListSqr.fillStyle(0xffffff, 0.5);
@@ -208,7 +206,7 @@ export default class MainScene extends Phaser.Scene {
           scene.taskListSqr.fillRect(30, 500, 265, 80);
           scene.taskListSqr.setScrollFactor(0);
 
-          //Task List Text
+          //ASSIGNED TASK LIST TEXT
           scene.tasksText = [];
           for (let i = 0; i < scene.randomTasks.length; i++) {
             const y = 508;
@@ -247,15 +245,19 @@ export default class MainScene extends Phaser.Scene {
               location: scene.randomTasks[i].location,
             });
           }
+          //SET WAITING FOR MORE PLAYERS TEXT
           scene.waitingText.setVisible(true);
         });
       }
 
+      // CREATE WAITING FOR MORE PLAYERS TEXT
+      // (avoids setvisible loading error)
       scene.waitingText = scene.add
-        .text(1354, 393, "Waiting for more players to join", {
+        .text(400, 393, "Waiting for more players to join", {
           fontSize: "20px",
           fill: "#ff0000",
         })
+        .setScrollFactor(0)
         .setOrigin(0.5);
       scene.waitingText.setVisible(false);
 
@@ -264,6 +266,7 @@ export default class MainScene extends Phaser.Scene {
         scene.progressBar.changeTaskAmount(scene.state.allRandomTasks.length);
       });
 
+      // PLAYERS
       this.socket.on("currentPlayers", function (arg) {
         const { players, numPlayers } = arg;
         scene.state.numPlayers = numPlayers;
@@ -280,16 +283,6 @@ export default class MainScene extends Phaser.Scene {
         const { playerInfo, numPlayers } = arg;
         scene.addOtherPlayers(scene, playerInfo);
         scene.state.numPlayers = numPlayers;
-      });
-
-      this.socket.on("disconnected", function (arg) {
-        const { playerId, numPlayers } = arg;
-        scene.state.numPlayers = numPlayers;
-        scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
-          if (playerId === otherPlayer.playerId) {
-            otherPlayer.destroy();
-          }
-        });
       });
 
       this.socket.on("playerMoved", function (playerInfo) {
@@ -320,6 +313,18 @@ export default class MainScene extends Phaser.Scene {
       });
       this.cursors = this.input.keyboard.createCursorKeys();
 
+      // DISCONNECT
+      this.socket.on("disconnected", function (arg) {
+        const { playerId, numPlayers } = arg;
+        scene.state.numPlayers = numPlayers;
+        scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerId === otherPlayer.playerId) {
+            otherPlayer.destroy();
+          }
+        });
+      });
+
+      // PROGRESS BAR UPDATE
       this.socket.on("progressUpdate", function (arg) {
         const { gameScore } = arg;
         scene.progressBar.increase(gameScore - scene.state.gameScore);
@@ -336,60 +341,165 @@ export default class MainScene extends Phaser.Scene {
         }
       });
 
-      //update leaderboard scores for everyone
+      //LEADERBOARD SCORES UPDATE
       this.socket.on("updateLeaderboard", function (serverScores) {
         scene.state.scores = serverScores;
-        console.log("update Leaderboard:", scene.state.scores);
       });
 
-      //make a control panel group for physics
+      // CONTROL PANELS
       this.controlPanelGroup = this.physics.add.staticGroup({
         classType: ControlPanel,
       });
-
       this.controlPanelLavatory = this.controlPanelGroup
         .create(2470, 2444, "lavatory")
         .setScale(0.3);
-
       this.controlPanelBirthdayList = this.controlPanelGroup
         .create(1486, 1350, "birthdayList")
         .setScale(0.2);
-
       this.controlPanelCockpit = this.controlPanelGroup.create(
         3614,
         1952,
         "cockpit"
       );
-
       this.controlPanelCargoHold = this.controlPanelGroup.create(
         2460,
         1462,
         "cargoHold"
       );
-
       this.controlPanelEngineRoom = this.controlPanelGroup
         .create(715, 1878, "engineRoom")
         .setScale(0.8);
-
       this.controlPanelVendingMachine = this.controlPanelGroup.create(
         1310,
         1300,
         "vendingMachine"
       );
-
       this.controlPanelMedbay = this.controlPanelGroup
         .create(1936, 2160, "medBay")
         .setScale(0.8);
 
+      // CONTROL PANELS: INTERACTIVITY
+      scene.controlPanelVendingMachine.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "vendingMachine",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "vendingMachine"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+      scene.controlPanelBirthdayList.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "birthdayList",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "birthdayList"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+
+      scene.controlPanelEngineRoom.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "engineRoom",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "engineRoom"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+
+      scene.controlPanelCargoHold.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "cargoHold",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "cargoHold"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+      scene.controlPanelCockpit.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "cockpit",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "cockpit"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+      scene.controlPanelLavatory.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "lavatory",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "lavatory"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+      scene.controlPanelMedbay.on("pointerdown", () => {
+        scene.scene.launch("RegexScene", {
+          ...scene.state,
+          controlPanel: "medBay",
+          randomTask: scene.randomTasks.find(
+            (task) => task.location === "medBay"
+          ),
+          socket: scene.socket,
+        });
+        scene.physics.pause();
+      });
+
+      // TINT ASSIGNED PANELS
+      scene.socket.on("activatePanels", function () {
+        scene.randomTasks.forEach((task) => {
+          switch (task.location) {
+            case "vendingMachine":
+              scene.controlPanelVendingMachine.setTint(0xb2b037);
+              break;
+            case "birthdayList":
+              scene.controlPanelBirthdayList.setTint(0xb2b037);
+              break;
+            case "engineRoom":
+              scene.controlPanelEngineRoom.setTint(0xb2b037);
+              break;
+            case "cargoHold":
+              scene.controlPanelCargoHold.setTint(0xb2b037);
+              break;
+            case "cockpit":
+              scene.controlPanelCockpit.setTint(0xb2b037);
+              break;
+            case "lavatory":
+              scene.controlPanelLavatory.setTint(0xb2b037);
+              break;
+            case "medBay":
+              scene.controlPanelMedbay.setTint(0xb2b037);
+              break;
+            default:
+              console.log("no control panel matches to set active");
+          }
+        });
+      });
+
+      // IF TASK COMPLETED
       this.socket.on("setInactive", function (controlPanel) {
-        console.log("inside setInactive listener");
+        // MARK COMPLETE
         for (let i = 0; i < scene.tasksText.length; i++) {
           let currentTask = scene.tasksText[i];
           if (currentTask.location === controlPanel) {
-            console.log("inside color changing if");
             currentTask.text.setText("Completed");
           }
         }
+        // CLEAR PANEL TINT
         switch (controlPanel) {
           case "vendingMachine":
             scene.controlPanelVendingMachine.disableInteractive();
@@ -431,46 +541,19 @@ export default class MainScene extends Phaser.Scene {
         }
       });
 
-      scene.socket.on("activatePanels", function () {
-        scene.randomTasks.forEach((task) => {
-          switch (task.location) {
-            case "vendingMachine":
-              scene.controlPanelVendingMachine.setTint(0xb2b037);
-              break;
-            case "birthdayList":
-              scene.controlPanelBirthdayList.setTint(0xb2b037);
-              break;
-            case "engineRoom":
-              scene.controlPanelEngineRoom.setTint(0xb2b037);
-              break;
-            case "cargoHold":
-              scene.controlPanelCargoHold.setTint(0xb2b037);
-              break;
-            case "cockpit":
-              scene.controlPanelCockpit.setTint(0xb2b037);
-              break;
-            case "lavatory":
-              scene.controlPanelLavatory.setTint(0xb2b037);
-              break;
-            case "medBay":
-              scene.controlPanelMedbay.setTint(0xb2b037);
-              break;
-            default:
-              console.log("no control panel matches to set active");
-          }
-        });
-      });
+      // START GAME FUNCTIONALITY:
 
+      // START BUTTON
       scene.startButton = scene.add
         .dom(400, 350, "button", "width: 70px; height: 25px", "START")
         .setOrigin(0.5)
         .setScrollFactor(0);
       scene.startButton.setVisible(false);
-
       this.socket.on("destroyButton", function () {
         scene.startButton.destroy();
       });
 
+      // START TIMER
       this.socket.on("startTimer", function () {
         scene.beginTimer = Date.now();
       });
@@ -478,92 +561,16 @@ export default class MainScene extends Phaser.Scene {
       console.error(error);
     }
 
-    scene.controlPanelVendingMachine.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "vendingMachine",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "vendingMachine"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
-    scene.controlPanelBirthdayList.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "birthdayList",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "birthdayList"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
-
-    scene.controlPanelEngineRoom.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "engineRoom",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "engineRoom"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
-
-    scene.controlPanelCargoHold.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "cargoHold",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "cargoHold"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
-    scene.controlPanelCockpit.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "cockpit",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "cockpit"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
-    scene.controlPanelLavatory.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "lavatory",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "lavatory"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
-    scene.controlPanelMedbay.on("pointerdown", () => {
-      scene.scene.launch("RegexScene", {
-        ...scene.state,
-        controlPanel: "medBay",
-        randomTask: scene.randomTasks.find(
-          (task) => task.location === "medBay"
-        ),
-        socket: scene.socket,
-      });
-      scene.physics.pause();
-    });
+    // RESUME PHYSICS: CLOSED REGEXSCENE
     scene.socket.on("mainSceneResumePhysics", function () {
       scene.physics.resume();
     });
 
+    // ASTRONAUT
     this.astronaut = this.physics.add.sprite(1, 1, "atlas", "misa-front");
     this.astronaut.setVisible(false);
 
+    // ANIMATIONS
     this.anims.create({
       key: "misa-left-walk",
       frames: this.anims.generateFrameNames("atlas", {
@@ -610,33 +617,29 @@ export default class MainScene extends Phaser.Scene {
     });
   }
 
+  //UPDATE
   update(time) {
     const scene = this;
     //MOVEMENT
     if (this.astronaut) {
       const speed = 175;
       const prevVelocity = this.astronaut.body.velocity.clone();
-
       // Stop any previous movement from the last frame
       this.astronaut.body.setVelocity(0);
-
       // Horizontal movement
       if (this.cursors.left.isDown) {
         this.astronaut.body.setVelocityX(-speed);
       } else if (this.cursors.right.isDown) {
         this.astronaut.body.setVelocityX(speed);
       }
-
       // Vertical movement
       if (this.cursors.up.isDown) {
         this.astronaut.body.setVelocityY(-speed);
       } else if (this.cursors.down.isDown) {
         this.astronaut.body.setVelocityY(speed);
       }
-
       // Normalize and scale the velocity so that astronaut can't move faster along a diagonal
       this.astronaut.body.velocity.normalize().scale(speed);
-
       // Update the animation last and give left/right animations precedence over up/down animations
       if (this.cursors.left.isDown) {
         this.astronaut.anims.play("misa-left-walk", true);
@@ -648,7 +651,6 @@ export default class MainScene extends Phaser.Scene {
         this.astronaut.anims.play("misa-front-walk", true);
       } else {
         this.astronaut.anims.stop(null, true);
-
         // If we were moving, pick and idle frame to use
         if (prevVelocity.x < 0) this.astronaut.setTexture("atlas", "misa-left");
         else if (prevVelocity.x > 0)
@@ -658,78 +660,9 @@ export default class MainScene extends Phaser.Scene {
         else if (prevVelocity.y > 0)
           this.astronaut.setTexture("atlas", "misa-front");
       }
-      //CONTROL PANEL OVERLAP
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelBirthdayList,
-        scene.highlightControlPanel,
-        null,
-        scene
-      );
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelCargoHold,
-        scene.highlightControlPanel,
-        null,
-        this
-      );
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelCockpit,
-        scene.highlightControlPanel,
-        null,
-        this
-      );
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelEngineRoom,
-        scene.highlightControlPanel,
-        null,
-        this
-      );
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelLavatory,
-        scene.highlightControlPanel,
-        null,
-        this
-      );
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelMedbay,
-        scene.highlightControlPanel,
-        null,
-        this
-      );
-      this.physics.add.overlap(
-        scene.astronaut,
-        scene.controlPanelVendingMachine,
-        scene.highlightControlPanel,
-        null,
-        this
-      );
-
-      //check to see if they are no longer overlapping
-      scene.checkOverlap(
-        scene,
-        scene.astronaut,
-        scene.controlPanelBirthdayList
-      );
-      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelCargoHold);
-      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelCockpit);
-      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelEngineRoom);
-      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelLavatory);
-      scene.checkOverlap(scene, scene.astronaut, scene.controlPanelMedbay);
-      scene.checkOverlap(
-        scene,
-        scene.astronaut,
-        scene.controlPanelVendingMachine
-      );
-
       // emit player movement
       var x = this.astronaut.x;
       var y = this.astronaut.y;
-
       if (
         this.astronaut.oldPosition &&
         (x !== this.astronaut.oldPosition.x ||
@@ -741,16 +674,15 @@ export default class MainScene extends Phaser.Scene {
           y: this.astronaut.y,
           roomKey: scene.state.roomKey,
         });
+        // emit player stopped
       } else if (this.joined && this.moving) {
         this.moving = false;
-        console.log("inside stopping");
         this.socket.emit("playerStopped", {
           x: this.astronaut.x,
           y: this.astronaut.y,
           roomKey: scene.state.roomKey,
         });
       }
-
       // save old position data
       this.astronaut.oldPosition = {
         x: this.astronaut.x,
@@ -759,6 +691,71 @@ export default class MainScene extends Phaser.Scene {
       };
     }
 
+    //CONTROL PANEL OVERLAPS
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelBirthdayList,
+      scene.highlightControlPanel,
+      null,
+      scene
+    );
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelCargoHold,
+      scene.highlightControlPanel,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelCockpit,
+      scene.highlightControlPanel,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelEngineRoom,
+      scene.highlightControlPanel,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelLavatory,
+      scene.highlightControlPanel,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelMedbay,
+      scene.highlightControlPanel,
+      null,
+      this
+    );
+    this.physics.add.overlap(
+      scene.astronaut,
+      scene.controlPanelVendingMachine,
+      scene.highlightControlPanel,
+      null,
+      this
+    );
+
+    //CONTROL PANEL: NOT OVERLAPPED
+    scene.checkOverlap(scene, scene.astronaut, scene.controlPanelBirthdayList);
+    scene.checkOverlap(scene, scene.astronaut, scene.controlPanelCargoHold);
+    scene.checkOverlap(scene, scene.astronaut, scene.controlPanelCockpit);
+    scene.checkOverlap(scene, scene.astronaut, scene.controlPanelEngineRoom);
+    scene.checkOverlap(scene, scene.astronaut, scene.controlPanelLavatory);
+    scene.checkOverlap(scene, scene.astronaut, scene.controlPanelMedbay);
+    scene.checkOverlap(
+      scene,
+      scene.astronaut,
+      scene.controlPanelVendingMachine
+    );
+
+    // START BUTTON VISIBLE
     if (this.state.numPlayers >= 3 && this.startClickable === true) {
       this.startClickable = false;
       this.waitingText.setVisible(false);
@@ -960,8 +957,7 @@ export default class MainScene extends Phaser.Scene {
     partInSeconds = partInSeconds.toString().padStart(2, "0");
     return `${minutes}:${partInSeconds}`;
   }
-  // createAnims(scene) {
-  // }
+
   countdown() {
     const scene = this;
     const currentTime = Date.now();
@@ -979,7 +975,7 @@ export default class MainScene extends Phaser.Scene {
       this.beginTimer = currentTime;
       if (this.initialTime === 0) {
         this.beginTimer = false;
-        this.scene.stop("MainScene");
+        scene.physics.pause();
         this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
