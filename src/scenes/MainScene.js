@@ -24,6 +24,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
+    //LOADING SCREEN
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -51,11 +52,11 @@ export default class MainScene extends Phaser.Scene {
     });
     percentText.setOrigin(0.5, 0.5);
 
+    //TEXTURES
     this.load.spritesheet("astronaut", "assets/spritesheets/astronaut3.png", {
       frameWidth: 29,
       frameHeight: 37,
     });
-
     this.load.image("lavatory", "assets/sprites/lavatory.png");
     this.load.image("birthdayList", "assets/sprites/birthdayList.png");
     this.load.image("cockpit", "assets/sprites/console_w.png");
@@ -72,15 +73,14 @@ export default class MainScene extends Phaser.Scene {
       "../assets/atlas/atlas.json"
     );
 
+    //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
-
     this.load.on("fileprogress", function (file) {});
-
     this.load.on("complete", function () {
       progressBar.destroy();
       progressBox.destroy();
@@ -271,20 +271,17 @@ export default class MainScene extends Phaser.Scene {
           });
         }
         //SET WAITING FOR MORE PLAYERS TEXT
-        scene.waitingText.setVisible(true);
+        // if (scene.startClickable) {
+        //   scene.waitingText = scene.add
+        //     .text(400, 393, 'Waiting for more players to join', {
+        //       fontSize: '20px',
+        //       fill: '#ff0000',
+        //     })
+        //     .setScrollFactor(0)
+        //     .setOrigin(0.5);
+        // }
       });
     }
-
-    // CREATE WAITING FOR MORE PLAYERS TEXT
-    // (avoids setvisible loading error)
-    scene.waitingText = scene.add
-      .text(400, 393, "Waiting for more players to join", {
-        fontSize: "20px",
-        fill: "#ff0000",
-      })
-      .setScrollFactor(0)
-      .setOrigin(0.5);
-    scene.waitingText.setVisible(false);
 
     this.socket.on("updateState", function (serverState) {
       scene.state = serverState;
@@ -342,6 +339,9 @@ export default class MainScene extends Phaser.Scene {
     this.socket.on("disconnected", function (arg) {
       const { playerId, numPlayers } = arg;
       scene.state.numPlayers = numPlayers;
+      if (scene.gameStarted) {
+        scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
+      }
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
@@ -534,7 +534,6 @@ export default class MainScene extends Phaser.Scene {
           scene.vendingMachineStatus = true;
           break;
         case "birthdayList":
-          console.log("inside birthday list case to clear tint");
           scene.controlPanelBirthdayList.disableInteractive();
           scene.controlPanelBirthdayList.clearTint();
           scene.birthdayListStatus = true;
@@ -781,14 +780,28 @@ export default class MainScene extends Phaser.Scene {
     );
 
     // START BUTTON VISIBLE
-    if (this.state.numPlayers >= 3 && this.startClickable === true) {
-      this.startClickable = false;
-      this.waitingText.destroy();
+    if (
+      this.state.numPlayers >= 3 &&
+      this.startClickable === true &&
+      this.startButton
+    ) {
+      // if (this.waitingText) {
+      //   this.waitingText.setVisible(false);
+      // }
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
         scene.socket.emit("startGame", scene.state.roomKey);
       });
+      this.startClickable = false;
+    }
+    if (this.state.numPlayers < 3 && this.joined) {
+      this.startButton.disableInteractive();
+      this.startButton.setVisible(false);
+      this.startClickable = true;
+      // if (this.waitingText) {
+      //   this.waitingText.setVisible(true);
+      // }
     }
     if (this.beginTimer) {
       this.countdown();
@@ -811,10 +824,6 @@ export default class MainScene extends Phaser.Scene {
           break;
         case "birthdayList":
           if (!this.birthdayListStatus) {
-            console.log(
-              "inside birthday list overlap/settint and interactive, this.birthdayliststatus:",
-              this.birthdayListStatus
-            );
             controlPanel.setTint(0xbdef83);
             controlPanel.setInteractive();
           }

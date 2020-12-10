@@ -12,6 +12,7 @@ export default class WaitingRoom extends Phaser.Scene {
   }
 
   preload() {
+    //LOADING SCREEN BAR
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -39,20 +40,20 @@ export default class WaitingRoom extends Phaser.Scene {
     });
     percentText.setOrigin(0.5, 0.5);
 
+    //TEXTURES
     this.load.html("codeform", "assets/text/codeform.html");
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
     this.load.audio("waitingMusic", "audio/Waiting_Room.mp3");
 
+    //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
-
     this.load.on("fileprogress", function (file) {});
-
     this.load.on("complete", function () {
       progressBar.destroy();
       progressBox.destroy();
@@ -64,7 +65,7 @@ export default class WaitingRoom extends Phaser.Scene {
   create() {
     const scene = this;
 
-    //music
+    //MUSIC
     scene.waitingMusic = scene.sound.add("waitingMusic", {
       volume: 1,
       loop: true,
@@ -78,7 +79,7 @@ export default class WaitingRoom extends Phaser.Scene {
     scene.requestBox = scene.add.image(300, 280, "popup");
     scene.enterBox = scene.add.image(500, 350, "popup");
 
-    //title
+    //TITLE
     scene.title = scene.add.text(125, 83, "RegEx Spaceship", {
       fill: "#00ff00",
       fontSize: "32px",
@@ -89,7 +90,7 @@ export default class WaitingRoom extends Phaser.Scene {
       .dom(280, 320, "button", "width: 150px; height: 25px", "Request Room Key")
       .setOrigin(0.5);
 
-    //right popup
+    //RIGHT POPUP
     scene.inputElement = scene.add.dom(500, 400).createFromCache("codeform");
     scene.inputElement.addListener("click");
     scene.inputElement.on("click", function (event) {
@@ -100,22 +101,25 @@ export default class WaitingRoom extends Phaser.Scene {
       }
     });
 
+    //REQUEST ROOMKEY BUTTON
     scene.requestButton.setInteractive();
     scene.requestButton.on("pointerdown", () => {
       scene.socket.emit("getRoomCode");
       scene.requestButton.disableInteractive();
     });
 
+    //INVALID ROOMKEY TEXT
     scene.notValidText = scene.add.text(400, 350, "", {
       fill: "#ff0000",
       fontSize: "15px",
     });
+    //ROOMKEY TEXT
     scene.roomKeyText = scene.add.text(210, 250, "", {
       fill: "#00ff00",
       fontSize: "30px",
       fontStyle: "bold",
     });
-
+    //SOCKETS
     scene.socket.on("roomCreated", function (roomKey) {
       scene.roomKey = roomKey;
       scene.roomKeyText.setText(scene.roomKey);
@@ -128,9 +132,7 @@ export default class WaitingRoom extends Phaser.Scene {
       scene.scene.stop("WaitingRoom");
     });
     scene.socket.on("gameAlreadyStarted", function () {
-      console.log("inside already started listener");
       scene.notValidText.setText("Game has already begun");
     });
   }
-  update() {}
 }

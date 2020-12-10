@@ -70,8 +70,6 @@ export default class EndScene extends Phaser.Scene {
         if (scene.scores[scene.socket.id].name.length < 1) {
           const inputText = document.getElementsByName("username")[0].value;
           scene.scores[scene.socket.id].name = inputText;
-
-          console.log("playerInfo", scene.scores[scene.socket.id]);
           scene.socket.emit("sendScores", {
             playerInfo: scene.scores[scene.socket.id],
             roomKey: scene.roomKey,
