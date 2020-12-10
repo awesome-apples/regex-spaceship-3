@@ -335,7 +335,9 @@ export default class MainScene extends Phaser.Scene {
       scene.progressBar.increase(gameScore - scene.state.gameScore);
       scene.state.gameScore = gameScore;
       if (scene.state.gameScore >= scene.state.allRandomTasks.length) {
+        scene.instructionsButton.destroy();
         scene.scene.stop("RegexScene");
+        scene.physics.pause();
         scene.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
@@ -512,6 +514,7 @@ export default class MainScene extends Phaser.Scene {
           scene.vendingMachineStatus = true;
           break;
         case "birthdayList":
+          console.log("inside birthday list case to clear tint");
           scene.controlPanelBirthdayList.disableInteractive();
           scene.controlPanelBirthdayList.clearTint();
           scene.birthdayListStatus = true;
@@ -624,7 +627,7 @@ export default class MainScene extends Phaser.Scene {
     const scene = this;
     //MOVEMENT
     if (this.astronaut) {
-      const speed = 175;
+      const speed = 225;
       const prevVelocity = this.astronaut.body.velocity.clone();
       // Stop any previous movement from the last frame
       this.astronaut.body.setVelocity(0);
@@ -788,9 +791,14 @@ export default class MainScene extends Phaser.Scene {
           break;
         case "birthdayList":
           if (!this.birthdayListStatus) {
+            console.log(
+              "inside birthday list overlap/settint and interactive, this.birthdayliststatus:",
+              this.birthdayListStatus
+            );
             controlPanel.setTint(0xbdef83);
             controlPanel.setInteractive();
           }
+          break;
         case "engineRoom":
           if (!this.engineRoomStatus) {
             controlPanel.setTint(0xbdef83);
@@ -837,9 +845,14 @@ export default class MainScene extends Phaser.Scene {
         break;
       case "birthdayList":
         if (!this.birthdayListStatus) {
+          console.log(
+            "inside deactivate set tingt red: this.birthdayliststatus",
+            this.birthdayListStatus
+          );
           controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
+        break;
       case "engineRoom":
         if (!this.engineRoomStatus) {
           controlPanel.setTint(0xff0000);
@@ -976,6 +989,7 @@ export default class MainScene extends Phaser.Scene {
       }
       this.beginTimer = currentTime;
       if (this.initialTime === 0) {
+        scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
         this.scene.launch("EndScene", {
