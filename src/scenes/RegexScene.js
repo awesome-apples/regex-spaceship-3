@@ -46,18 +46,22 @@ export default class RegexScene extends Phaser.Scene {
       });
 
       // TASK PROBLEM TEXT
-      scene.add.text(
-        155,
-        210,
-        `${scene.randomTask.problem}, ${scene.randomTask.string}`,
-        {
-          fill: '#00ff00',
-          fontSize: '12px',
-          fontStyle: 'bold',
-          align: 'left',
-          wordWrap: { width: 240, height: 445, useAdvancedWrap: true },
-        }
-      );
+      scene.add.text(155, 210, `${scene.randomTask.problem}`, {
+        fill: '#00ff00',
+        fontSize: '12px',
+        fontStyle: 'bold',
+        align: 'left',
+        wordWrap: { width: 240, height: 445, useAdvancedWrap: true },
+      });
+
+      // GIVEN STRING TEXT
+      scene.add.text(155, 400, `"${scene.randomTask.string}"`, {
+        fill: '#00ff00',
+        fontSize: '12px',
+        fontStyle: 'bold',
+        align: 'left',
+        wordWrap: { width: 220, height: 445, useAdvancedWrap: true },
+      });
 
       // input area
       scene.add.text(428, 182, 'Input', {
@@ -99,6 +103,36 @@ export default class RegexScene extends Phaser.Scene {
       scene.returnContainer.on('pointerdown', () => {
         scene.socket.emit('resumePhysics');
         scene.scene.stop('RegexScene');
+      });
+
+      //HINT BUTTON
+      scene.returnContainer = scene.add.rexRoundRectangle(
+        610,
+        320,
+        80,
+        25,
+        5,
+        0xfa8128
+      );
+      scene.returnText = scene.add.text(593, 315, 'Hint', {
+        fill: '#000000',
+        fontSize: '15px',
+        fontStyle: 'bold',
+      });
+
+      scene.returnContainer.setInteractive();
+      scene.returnContainer.on('pointerover', () => {
+        scene.returnContainer.setFillStyle(0xfaa562);
+      });
+      scene.returnContainer.on('pointerout', () => {
+        scene.returnContainer.setFillStyle(0xfa8128);
+      });
+      scene.returnContainer.on('pointerdown', () => {
+        scene.add.text(425, 315, `Try these: ${scene.randomTask.hint}`, {
+          fill: '#00ff00',
+          fontSize: '12px',
+          fontStyle: 'bold',
+        });
       });
 
       scene.outputText = scene.add.text(360, 373, '', {
@@ -274,7 +308,7 @@ export default class RegexScene extends Phaser.Scene {
     }
 
     return {
-      text: `expected: ${randomTask.expectedOutput}\nyours: ${result.output}`,
+      text: `expected: ${randomTask.expectedOutput}\n\nyours: ${result.output}`,
       win: result.correct,
     };
   }
