@@ -13,6 +13,9 @@ export default class StoryScene extends Phaser.Scene {
       `Travel around the spaceship and solve the regular expression riddles in order to fix the damage and not, you know, get exploded into space or something. Your boss probably wouldn’t be too happy about that.`,
     ];
   }
+  init(data) {
+    this.socket = data.socket;
+  }
 
   preload() {
     //LOADING SCREEN
@@ -133,7 +136,6 @@ export default class StoryScene extends Phaser.Scene {
     //skip button
     scene.skipContainer.setInteractive();
     scene.skipContainer.on("pointerover", () => {
-      console.log("over");
       scene.skipContainer.setFillStyle(0x2075fa);
     });
     scene.skipContainer.on("pointerout", () => {
@@ -142,7 +144,7 @@ export default class StoryScene extends Phaser.Scene {
     scene.skipContainer.on("pointerdown", () => {
       scene.click.play();
       this.sound.removeAll();
-      scene.scene.start("MainScene");
+      scene.scene.start("MainScene", { socket: scene.socket });
     });
 
     //next button
@@ -183,6 +185,7 @@ export default class StoryScene extends Phaser.Scene {
   }
 
   enableNext() {
+    const scene = this;
     this.typing.stop();
     this.nextContainer.setInteractive();
     if (this.paragraph === this.story.length - 1) {
@@ -196,7 +199,7 @@ export default class StoryScene extends Phaser.Scene {
       this.nextContainer.on("pointerdown", () => {
         this.click.play();
         this.sound.removeAll();
-        this.scene.start("MainScene");
+        this.scene.start("MainScene", { socket: scene.socket });
       });
     } else {
       this.nextContainer.setFillStyle(0xebd405);

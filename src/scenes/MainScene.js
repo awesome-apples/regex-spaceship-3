@@ -23,6 +23,10 @@ export default class MainScene extends Phaser.Scene {
     this.joined = false;
   }
 
+  init(data) {
+    this.socket = data.socket;
+  }
+
   preload() {
     //LOADING SCREEN
     var progressBar = this.add.graphics();
@@ -123,8 +127,6 @@ export default class MainScene extends Phaser.Scene {
     this.wallLayer.setCollisionByProperty({ collides: true });
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
-    //CREATE SOCKET CONNECTION
-    this.socket = io();
     // LAUNCH WAITING ROOM
     scene.scene.launch("WaitingRoom", { socket: scene.socket });
     this.otherPlayers = this.physics.add.group();
@@ -162,22 +164,11 @@ export default class MainScene extends Phaser.Scene {
         scene.roomkeyText.setScrollFactor(0);
 
         //INSTRUCTIONS BUTTON
-        //old
-        // scene.instructionsButton = scene.add
-        //   .dom(680, 550, "button", "width: 100px; height: 25px", "instructions")
-        //   .setOrigin(0);
-        // scene.instructionsButton.setInteractive();
-        // scene.instructionsButton.on("pointerdown", () => {
-        //   scene.scene.launch("Instructions");
-        // });
-        // scene.instructionsButton.setScrollFactor(0);
-
-        //new
         scene.instructionsButton = scene.add
           .image(734, 545, "instructions")
           .setScrollFactor(0)
           .setScale(0.15);
-        scene.add
+        scene.instructionsText = scene.add
           .text(700, 570, "Instructions", {
             fill: "#ffffff",
             fontSize: "10px",
@@ -186,41 +177,38 @@ export default class MainScene extends Phaser.Scene {
           .setScrollFactor(0);
 
         scene.instructionsButton.setInteractive();
-
         scene.instructionsAreOpen = false;
 
         scene.instructionsButton.on("pointerdown", () => {
-          if (!scene.instructionsAreOpen) {
-            scene.instructionsButton.setText("close");
-            scene.instructionsAreOpen = true;
-            scene.scene.launch("Instructions");
-          } else {
-            scene.instructionsButton.setText("instructions");
-            scene.instructionsAreOpen = false;
-            scene.scene.stop("Instructions");
-          }
+          scene.scene.launch("Instructions");
         });
 
         //MAP BUTTON
+        scene.mapButton = scene.add
+          .image(734, 485, "instructions")
+          .setScrollFactor(0)
+          .setScale(0.15);
+        scene.mapText = scene.add
+          .text(700, 510, "Map", {
+            fill: "#ffffff",
+            fontSize: "10px",
+            fontStyle: "bold",
+          })
+          .setScrollFactor(0);
+
+        scene.mapButton.setInteractive();
+        scene.mapButton.on("pointerdown", () => {
+          scene.scene.launch("SmallMap");
+        });
+
         // scene.mapButton = scene.add
-        // .dom(400, 300, "button", "width: 100px; height: 25px", "map")
-        // .setOrigin(0);
+        //   .dom(400, 300, "button", "width: 100px; height: 25px", "map")
+        //   .setOrigin(0)
+        //   .setScrollFactor(0);
         // scene.mapButton.setInteractive();
-
-        // scene.mapIsOpen = false;
-
         // scene.mapButton.on("pointerdown", () => {
-        //   if (!scene.mapIsOpen) {
-        //     scene.mapButton.setText("close");
-        //     scene.mapIsOpen = true;
-        //     scene.scene.launch("SmallMap");
-        //   } else {
-        //     scene.mapButton.setText("map");
-        //     scene.mapIsOpen = false;
-        //     scene.scene.stop("SmallMap");
-        //   }
+        //   scene.scene.launch("SmallMap");
         // });
-        // scene.instructionsButton.setScrollFactor(0);
 
         //TIMER
         scene.initialTime = 400;

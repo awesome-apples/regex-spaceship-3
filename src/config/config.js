@@ -1,5 +1,4 @@
 // import FgScene from "../scenes/FgScene";
-
 // import FgScene from "../scenes/FgScene";
 
 import RoundRectanglePlugin from "phaser3-rex-plugins/plugins/roundrectangle-plugin.js";
@@ -13,12 +12,13 @@ export default {
     pixelArt: true,
   },
   scale: {
-    parent: 'mygame',
-    autoCenter: true,
+    parent: "mygame",
+    // autoCenter: true,
+    autoCenter: Phaser.Scale.CENTER_HORIZONTALLY,
   },
   //  We will be expanding physics later
   physics: {
-    default: 'arcade',
+    default: "arcade",
     arcade: {
       gravity: { y: 0 }, // Game objects will be pulled down along the y-axis
       // The number 1500 is arbitrary. The higher, the stronger the pull.
@@ -43,8 +43,8 @@ export default {
   health: 0,
   pointsText: 0,
   healthText: 0,
-  playerTime: '',
+  playerTime: "",
   beginTime: 0,
-  usernameOne: '',
+  usernameOne: "",
   login: false,
 };
