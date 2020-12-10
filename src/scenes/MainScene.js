@@ -28,6 +28,28 @@ export default class MainScene extends Phaser.Scene {
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
     progressBox.fillRect(240, 270, 320, 50);
+    var width = this.cameras.main.width;
+    var height = this.cameras.main.height;
+    var loadingText = this.make.text({
+      x: width / 2,
+      y: height / 2 - 50,
+      text: "Loading...",
+      style: {
+        font: "20px monospace",
+        fill: "#ffffff",
+      },
+    });
+    loadingText.setOrigin(0.5, 0.5);
+    var percentText = this.make.text({
+      x: width / 2,
+      y: height / 2 - 5,
+      text: "0%",
+      style: {
+        font: "18px monospace",
+        fill: "#ffffff",
+      },
+    });
+    percentText.setOrigin(0.5, 0.5);
 
     this.load.spritesheet("astronaut", "assets/spritesheets/astronaut3.png", {
       frameWidth: 29,
@@ -52,6 +74,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.load.on("progress", function (value) {
       console.log(value);
+      percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
@@ -65,6 +88,8 @@ export default class MainScene extends Phaser.Scene {
       console.log("complete");
       progressBar.destroy();
       progressBox.destroy();
+      loadingText.destroy();
+      percentText.destroy();
     });
   }
 
@@ -105,15 +130,6 @@ export default class MainScene extends Phaser.Scene {
 
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
-    //PROGRESS BAR
-    this.progressText = this.add.text(30, 16, "Progress Tracker", {
-      fontSize: "20px",
-      fill: "#ffffff",
-    });
-    this.progressText.setScrollFactor(0);
-
-    scene.progressBar = new ProgressBar(scene, 30, 50);
-
     try {
       //SOCKET CONNECTIONS
       this.socket = io();
@@ -121,7 +137,6 @@ export default class MainScene extends Phaser.Scene {
       this.otherPlayers = this.physics.add.group();
       if (!this.hasBeenSet) {
         this.hasBeenSet = true;
-
         this.socket.on("setState", function (state) {
           const {
             roomKey,
@@ -147,6 +162,52 @@ export default class MainScene extends Phaser.Scene {
             }
           );
           scene.roomkeyText.setScrollFactor(0);
+
+          //INSTRUCTIONS BUTTON
+          scene.instructionsButton = scene.add
+            .dom(
+              680,
+              550,
+              "button",
+              "width: 100px; height: 25px",
+              "instructions"
+            )
+            .setOrigin(0);
+          scene.instructionsButton.setInteractive();
+          scene.instructionsButton.on("pointerdown", () => {
+            scene.scene.launch("Instructions");
+          });
+          scene.instructionsButton.setScrollFactor(0);
+
+          //TIMER
+          scene.initialTime = 120;
+          scene.timerLabel = scene.add.text(
+            680,
+            16,
+            scene.formatTime(scene.initialTime),
+            {
+              fontSize: "32px",
+              fill: "#ffffff",
+            }
+          );
+          scene.timerLabel.setScrollFactor(0);
+
+          //PROGRESS BAR
+          scene.progressText = scene.add.text(30, 16, "Progress Tracker", {
+            fontSize: "20px",
+            fill: "#ffffff",
+          });
+          scene.progressText.setScrollFactor(0);
+          scene.progressBar = new ProgressBar(scene, 30, 50);
+
+          //Task List Square
+          scene.taskListSqr = scene.add.graphics();
+          scene.taskListSqr.lineStyle(1, 0xffffff);
+          scene.taskListSqr.fillStyle(0xffffff, 0.5);
+          scene.taskListSqr.strokeRect(30, 500, 265, 80);
+          scene.taskListSqr.fillRect(30, 500, 265, 80);
+          scene.taskListSqr.setScrollFactor(0);
+
           //Task List Text
           scene.tasksText = [];
           for (let i = 0; i < scene.randomTasks.length; i++) {
@@ -250,15 +311,7 @@ export default class MainScene extends Phaser.Scene {
       this.socket.on("otherPlayerStopped", function (playerInfo) {
         scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
           if (playerInfo.playerId === otherPlayer.playerId) {
-            // const oldX = otherPlayer.x;
-            // const oldY = otherPlayer.y;
             otherPlayer.anims.stop(null, true);
-            // otherPlayer.setTexture("atlas", "misa-front");
-            // If we were moving, pick and idle frame to use
-            // if (oldX < 0) otherPlayer.setTexture("atlas", "misa-left");
-            // else if (oldX > 0) otherPlayer.setTexture("atlas", "misa-right");
-            // else if (oldY < 0) otherPlayer.setTexture("atlas", "misa-back");
-            // else if (oldY > 0) otherPlayer.setTexture("atlas", "misa-front");
           }
         });
       });
@@ -393,18 +446,6 @@ export default class MainScene extends Phaser.Scene {
         });
       });
 
-      //TIMER
-      this.initialTime = 120;
-      this.timerLabel = this.add.text(
-        680,
-        16,
-        this.formatTime(this.initialTime),
-        {
-          fontSize: "32px",
-          fill: "#ffffff",
-        }
-      );
-      this.timerLabel.setScrollFactor(0);
       scene.startButton = scene.add
         .dom(400, 300, "button", "width: 70px; height: 25px", "START")
         .setOrigin(0.5)
@@ -418,14 +459,6 @@ export default class MainScene extends Phaser.Scene {
       this.socket.on("startTimer", function () {
         scene.beginTimer = Date.now();
       });
-      scene.instructionsButton = scene.add
-        .dom(680, 550, "button", "width: 100px; height: 25px", "instructions")
-        .setOrigin(0);
-      this.instructionsButton.setInteractive();
-      this.instructionsButton.on("pointerdown", () => {
-        scene.scene.launch("Instructions");
-      });
-      scene.instructionsButton.setScrollFactor(0);
     } catch (error) {
       console.error(error);
     }
@@ -512,18 +545,9 @@ export default class MainScene extends Phaser.Scene {
     scene.socket.on("mainSceneResumePhysics", function () {
       scene.physics.resume();
     });
-    //Task List Square
-    scene.taskListSqr = scene.add.graphics();
-    scene.taskListSqr.lineStyle(1, 0xffffff);
-    scene.taskListSqr.fillStyle(0xffffff, 0.5);
-    scene.taskListSqr.strokeRect(30, 500, 265, 80);
-    scene.taskListSqr.fillRect(30, 500, 265, 80);
-    scene.taskListSqr.setScrollFactor(0);
 
     this.astronaut = this.physics.add.sprite(1, 1, "atlas", "misa-front");
     this.astronaut.setVisible(false);
-
-    console.log("astronaut on main", this.astronaut);
 
     this.anims.create({
       key: "misa-left-walk",
