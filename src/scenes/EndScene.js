@@ -21,10 +21,13 @@ export default class EndScene extends Phaser.Scene {
     this.load.html("nameform", "assets/text/nameform.html");
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
+    this.load.audio("click", "audio/Button_Click.wav");
   }
 
   async create() {
     const scene = this;
+
+    scene.click = scene.sound.add("click");
 
     try {
       scene.popUp = scene.add.image(400, 300, "computer");
@@ -88,6 +91,7 @@ export default class EndScene extends Phaser.Scene {
       });
 
       scene.endSubmitContainer.on("pointerdown", () => {
+        scene.click.play();
         if (scene.scores[scene.socket.id].name.length < 1) {
           const inputText = document.getElementsByName("username")[0].value;
           scene.scores[scene.socket.id].name = inputText;

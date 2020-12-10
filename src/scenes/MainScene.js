@@ -88,10 +88,32 @@ export default class MainScene extends Phaser.Scene {
       loadingText.destroy();
       percentText.destroy();
     });
+
+    //AUDIO
+    this.load.audio("click", "audio/Button_Click.wav");
+    this.load.audio("timerAlert", "audio/Timer_Alert.mp3");
+    this.load.audio("birthdaySFX", "audio/ControlPanel/Birthday.wav");
+    this.load.audio("cargoSFX", "audio/ControlPanel/Cargo.wav");
+    this.load.audio("cockpitSFX", "audio/ControlPanel/Cockpit.wav");
+    this.load.audio("engineSFX", "audio/ControlPanel/Engine.wav");
+    this.load.audio("lavatorySFX", "audio/ControlPanel/Lavatory.mp3");
+    this.load.audio("medbaySFX", "audio/ControlPanel/Medbay.wav");
+    this.load.audio("vendingSFX", "audio/ControlPanel/Vending.wav");
   }
 
   create() {
     const scene = this;
+
+    scene.click = scene.sound.add("click");
+    scene.timerAlert = scene.sound.add("timerAlert");
+
+    scene.birthdaySFX = scene.sound.add("birthdaySFX");
+    scene.cargoSFX = scene.sound.add("cargoSFX");
+    scene.cockpitSFX = scene.sound.add("cockpitSFX", { volume: 1.25 });
+    scene.engineSFX = scene.sound.add("engineSFX");
+    scene.lavatorySFX = scene.sound.add("lavatorySFX");
+    scene.medbaySFX = scene.sound.add("medbaySFX");
+    scene.vendingSFX = scene.sound.add("vendingSFX", { volume: 1.75 });
 
     // initialize enter key
     const keyObj = scene.input.keyboard.addKey("enter");
@@ -177,7 +199,7 @@ export default class MainScene extends Phaser.Scene {
           .image(734, 545, "instructions")
           .setScrollFactor(0)
           .setScale(0.15);
-        scene.add
+        scene.instructionsButtonText = scene.add
           .text(700, 570, "Instructions", {
             fill: "#ffffff",
             fontSize: "10px",
@@ -190,12 +212,13 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsAreOpen = false;
 
         scene.instructionsButton.on("pointerdown", () => {
+          scene.click.play();
           if (!scene.instructionsAreOpen) {
-            scene.instructionsButton.setText("close");
+            scene.instructionsButtonText.setText("close");
             scene.instructionsAreOpen = true;
             scene.scene.launch("Instructions");
           } else {
-            scene.instructionsButton.setText("instructions");
+            scene.instructionsButtonText.setText("instructions");
             scene.instructionsAreOpen = false;
             scene.scene.stop("Instructions");
           }
@@ -427,6 +450,7 @@ export default class MainScene extends Phaser.Scene {
 
     // CONTROL PANELS: INTERACTIVITY
     scene.controlPanelVendingMachine.on("pointerdown", () => {
+      scene.vendingSFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "vendingMachine",
@@ -438,6 +462,7 @@ export default class MainScene extends Phaser.Scene {
       scene.physics.pause();
     });
     scene.controlPanelBirthdayList.on("pointerdown", () => {
+      scene.birthdaySFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "birthdayList",
@@ -450,6 +475,7 @@ export default class MainScene extends Phaser.Scene {
     });
 
     scene.controlPanelEngineRoom.on("pointerdown", () => {
+      scene.engineSFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "engineRoom",
@@ -462,6 +488,7 @@ export default class MainScene extends Phaser.Scene {
     });
 
     scene.controlPanelCargoHold.on("pointerdown", () => {
+      scene.cargoSFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "cargoHold",
@@ -473,6 +500,7 @@ export default class MainScene extends Phaser.Scene {
       scene.physics.pause();
     });
     scene.controlPanelCockpit.on("pointerdown", () => {
+      scene.cockpitSFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "cockpit",
@@ -484,6 +512,7 @@ export default class MainScene extends Phaser.Scene {
       scene.physics.pause();
     });
     scene.controlPanelLavatory.on("pointerdown", () => {
+      scene.lavatorySFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "lavatory",
@@ -495,6 +524,7 @@ export default class MainScene extends Phaser.Scene {
       scene.physics.pause();
     });
     scene.controlPanelMedbay.on("pointerdown", () => {
+      scene.medbaySFX.play();
       scene.scene.launch("RegexScene", {
         ...scene.state,
         controlPanel: "medBay",
@@ -811,6 +841,7 @@ export default class MainScene extends Phaser.Scene {
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
+        scene.click.play();
         scene.socket.emit("startGame", scene.state.roomKey);
       });
       this.startClickable = false;
@@ -1027,6 +1058,7 @@ export default class MainScene extends Phaser.Scene {
 
       this.timerLabel.setText(this.formatTime(this.initialTime));
       if (this.initialTime === 10) {
+        scene.timerAlert.play();
         this.timerLabel.setStyle({ fill: "#ff0000" });
       }
       this.beginTimer = currentTime;

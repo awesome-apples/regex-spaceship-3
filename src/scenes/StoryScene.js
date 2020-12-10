@@ -141,7 +141,8 @@ export default class StoryScene extends Phaser.Scene {
     });
     scene.skipContainer.on("pointerdown", () => {
       scene.click.play();
-      this.sound.removeAll();
+      scene.sound.removeByKey("typing");
+      scene.sound.removeByKey("startMusic");
       scene.scene.start("MainScene");
     });
 
