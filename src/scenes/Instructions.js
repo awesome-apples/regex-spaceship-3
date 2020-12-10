@@ -32,15 +32,5 @@ export default class Instructions extends Phaser.Scene {
         wordWrap: { width: 480, height: 445, useAdvancedWrap: true },
       }
     );
-
-    scene.exit = scene.add.text(130, 490, 'Return', {
-      fill: '#00ff00',
-      fontSize: '30px',
-      fontStyle: 'bold',
-    });
-    scene.exit.setInteractive();
-    scene.exit.on('pointerdown', () => {
-      scene.scene.stop('Instructions');
-    });
   }
 }
