@@ -165,8 +165,20 @@ export default class MainScene extends Phaser.Scene {
           .dom(680, 550, "button", "width: 100px; height: 25px", "instructions")
           .setOrigin(0);
         scene.instructionsButton.setInteractive();
+
+        scene.isOpen = false;
+
         scene.instructionsButton.on("pointerdown", () => {
-          scene.scene.launch("Instructions");
+          if (!scene.isOpen) {
+            scene.instructionsButton.setText("close")
+            scene.isOpen = true;
+            scene.scene.launch("Instructions");
+          }
+          else {
+            scene.instructionsButton.setText("instructions")
+            scene.isOpen = false;
+            scene.scene.stop('Instructions');
+          }
         });
         scene.instructionsButton.setScrollFactor(0);
 
