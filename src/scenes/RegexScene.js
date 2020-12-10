@@ -45,6 +45,7 @@ export default class RegexScene extends Phaser.Scene {
         fontStyle: 'bold',
       });
 
+      // TASK PROBLEM TEXT
       scene.add.text(
         155,
         210,
@@ -73,13 +74,29 @@ export default class RegexScene extends Phaser.Scene {
         fontStyle: 'bold',
       });
 
-      scene.exit = scene.add.text(130, 480, 'Return', {
-        fill: '#00ff00',
-        fontSize: '30px',
+      //RETURN BUTTON
+      scene.returnContainer = scene.add.rexRoundRectangle(
+        175,
+        502,
+        80,
+        25,
+        5,
+        0xfa8128
+      );
+      scene.returnText = scene.add.text(147, 493, 'Return', {
+        fill: '#000000',
+        fontSize: '15px',
         fontStyle: 'bold',
       });
-      scene.exit.setInteractive();
-      scene.exit.on('pointerdown', () => {
+
+      scene.returnContainer.setInteractive();
+      scene.returnContainer.on('pointerover', () => {
+        scene.returnContainer.setFillStyle(0xfaa562);
+      });
+      scene.returnContainer.on('pointerout', () => {
+        scene.returnContainer.setFillStyle(0xfa8128);
+      });
+      scene.returnContainer.on('pointerdown', () => {
         scene.socket.emit('resumePhysics');
         scene.scene.stop('RegexScene');
       });
@@ -108,19 +125,35 @@ export default class RegexScene extends Phaser.Scene {
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
 
+      // TIME BONUS
       scene.timeBonus = 0;
       scene.socket.on('sendTimeToRegex', function (time) {
         scene.timeBonus = time;
       });
 
-      scene.submitButton = scene.add.text(570, 480, 'Submit', {
-        fill: '#00ff00',
-        fontSize: '30px',
+      // SUBMIT BUTTON
+      scene.submitContainer = scene.add.rexRoundRectangle(
+        620,
+        502,
+        80,
+        25,
+        5,
+        0xa06deb
+      );
+      scene.submitText = scene.add.text(593, 493, 'Submit', {
+        fill: '#000000',
+        fontSize: '15px',
         fontStyle: 'bold',
       });
-      scene.submitButton.setInteractive();
 
-      scene.submitButton.on('pointerdown', () => {
+      scene.submitContainer.setInteractive();
+      scene.submitContainer.on('pointerover', () => {
+        scene.submitContainer.setFillStyle(0xaf8feb);
+      });
+      scene.submitContainer.on('pointerout', () => {
+        scene.submitContainer.setFillStyle(0xa06deb);
+      });
+      scene.submitContainer.on('pointerdown', () => {
         const inputText = scene.inputElement.getChildByName('code');
         scene.isCorrect.setVisible(false);
         scene.isIncorrect.setVisible(false);
@@ -158,11 +191,58 @@ export default class RegexScene extends Phaser.Scene {
           }
         }
       });
+
+      //old submit button
+      // scene.submitButton = scene.add.text(570, 490, "Submit", {
+      //   fill: "#00ff00",
+      //   fontSize: "30px",
+      //   fontStyle: "bold",
+      // });
+      // scene.submitButton.setInteractive();
+
+      // scene.submitButton.on("pointerdown", () => {
+      //   const inputText = scene.inputElement.getChildByName("code");
+      //   scene.isCorrect.setVisible(false);
+      //   scene.isIncorrect.setVisible(false);
+
+      //   if (inputText.value !== "") {
+      //     scene.output = scene.handleInput(
+      //       scene,
+      //       inputText.value,
+      //       scene.randomTask
+      //     );
+      //     scene.outputText.setText(scene.output.text);
+      //     scene.outputText.setVisible(true);
+
+      //     if (scene.output.win) {
+      //       scene.isCorrect.setVisible(true);
+      //       scene.socket.emit("scoreUpdate", {
+      //         scoreObj: {
+      //           points: 50,
+      //           timeBonus: scene.timeBonus,
+      //         },
+      //         roomKey: scene.roomKey,
+      //       });
+      //       scene.submitButton.disableInteractive();
+      //       scene.socket.emit("disablePanel", {
+      //         controlPanel: scene.controlPanel,
+      //         roomKey: scene.roomKey,
+      //       });
+      //       scene.socket.emit("completedTask", { roomKey: scene.roomKey });
+      //     } else {
+      //       scene.isIncorrect.setVisible(true);
+      //       scene.socket.emit("scoreUpdate", {
+      //         scoreObj: { points: -5 },
+      //         roomKey: scene.roomKey,
+      //       });
+      //     }
+      //   }
+      // });
     } catch (err) {
-      console.error(err);
+      next(err);
     }
   }
-
+  // PROCESS INPUT TEXT
   handleInput(scene, input, randomTask) {
     const gFlag = /g$/;
 
@@ -198,7 +278,7 @@ export default class RegexScene extends Phaser.Scene {
       win: result.correct,
     };
   }
-
+  // VALIDATORS
   matchValidator(regex, randomTask) {
     let output;
     if (randomTask.string.match(regex)) {

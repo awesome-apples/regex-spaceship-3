@@ -59,19 +59,38 @@ export default class EndScene extends Phaser.Scene {
 
       scene.inputElement = scene.add.dom(290, 300).createFromCache("nameform");
 
-      scene.submitButton = scene.add.text(280, 320, "Submit", {
-        fill: "#00ff00",
-        fontSize: "20px",
+      // scene.submitButton = scene.add.text(280, 320, "Submit", {
+      //   fill: "#00ff00",
+      //   fontSize: "20px",
+      //   fontStyle: "bold",
+      // });
+
+      scene.endSubmitContainer = scene.add.rexRoundRectangle(
+        286,
+        340,
+        80,
+        25,
+        5,
+        0x2fc1ff
+      );
+      scene.endSubmitText = scene.add.text(260, 333, "Submit", {
+        fill: "#000000",
+        fontSize: "15px",
         fontStyle: "bold",
       });
-      scene.submitButton.setInteractive();
 
-      scene.submitButton.on("pointerdown", () => {
+      scene.endSubmitContainer.setInteractive();
+      scene.endSubmitContainer.on("pointerover", () => {
+        scene.endSubmitContainer.setFillStyle(0x7ed5ff);
+      });
+      scene.endSubmitContainer.on("pointerout", () => {
+        scene.endSubmitContainer.setFillStyle(0x2fc1ff);
+      });
+
+      scene.endSubmitContainer.on("pointerdown", () => {
         if (scene.scores[scene.socket.id].name.length < 1) {
           const inputText = document.getElementsByName("username")[0].value;
           scene.scores[scene.socket.id].name = inputText;
-
-          console.log("playerInfo", scene.scores[scene.socket.id]);
           scene.socket.emit("sendScores", {
             playerInfo: scene.scores[scene.socket.id],
             roomKey: scene.roomKey,

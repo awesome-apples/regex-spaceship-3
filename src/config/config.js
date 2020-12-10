@@ -2,6 +2,8 @@
 
 // import FgScene from "../scenes/FgScene";
 
+import RoundRectanglePlugin from "phaser3-rex-plugins/plugins/roundrectangle-plugin.js";
+
 export default {
   type: Phaser.AUTO, // Specify the underlying browser rendering engine (AUTO, CANVAS, WEBGL)
   // AUTO will attempt to use WEBGL, but if not available it'll default to CANVAS
@@ -23,6 +25,15 @@ export default {
       // A negative value will pull game objects up along the y-axis
       debug: false, // Whether physics engine should run in debug mode
     },
+  },
+  plugins: {
+    global: [
+      {
+        key: "rexRoundRectanglePlugin",
+        plugin: RoundRectanglePlugin,
+        start: true,
+      },
+    ],
   },
   dom: {
     createContainer: true,

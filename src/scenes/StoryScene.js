@@ -15,6 +15,7 @@ export default class StoryScene extends Phaser.Scene {
   }
 
   preload() {
+    //LOADING SCREEN
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -41,21 +42,21 @@ export default class StoryScene extends Phaser.Scene {
       },
     });
     percentText.setOrigin(0.5, 0.5);
+    //TEXTURES
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("stars", "assets/backgrounds/stars.png");
     this.load.audio("startMusic", "audio/Start_Screen.mp3");
     this.load.audio("typing", "audio/Typing_Text.wav");
     this.load.audio("click", "audio/Button_Click.wav");
 
+    //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
-
     this.load.on("fileprogress", function (file) {});
-
     this.load.on("complete", function () {
       progressBar.destroy();
       progressBox.destroy();
@@ -98,17 +99,31 @@ export default class StoryScene extends Phaser.Scene {
 
     //BUTTONS
     //create buttons
-    scene.skipContainer = scene.add.graphics();
-    scene.skipContainer.fillRoundedRect(225, 450, 70, 25, 5);
-    scene.skipContainer.fillStyle(0x616161);
+    scene.skipContainer = scene.add.rexRoundRectangle(
+      260,
+      463,
+      70,
+      25,
+      5,
+      0x2045fa
+    );
+    // scene.skipContainer.fillStyle(0x2045fa);
+    // scene.skipContainer.fillRoundedRect(225, 450, 70, 25, 5);
     scene.skipText = scene.add.text(241, 455, "Skip", {
       fill: "#000000",
       fontSize: "15px",
     });
 
-    scene.nextContainer = scene.add.graphics();
-    scene.nextContainer.fillRoundedRect(540, 450, 70, 25, 5);
-    scene.nextContainer.fillStyle(0x2045fa);
+    scene.nextContainer = scene.add.rexRoundRectangle(
+      575,
+      463,
+      70,
+      25,
+      5,
+      0x616161
+    );
+    // scene.nextContainer.fillStyle(0x616161);
+    // scene.nextContainer.fillRoundedRect(540, 450, 70, 25, 5);
     scene.nextText = scene.add.text(558, 455, "Next", {
       fill: "#000000",
       fontSize: "15px",
@@ -116,28 +131,29 @@ export default class StoryScene extends Phaser.Scene {
 
     //make buttons interactive
     //skip button
-    scene.skipText.setInteractive();
-    scene.skipText.on("pointerover", () => {
-      scene.nextContainer.fillStyle(0x2075fa);
+    scene.skipContainer.setInteractive();
+    scene.skipContainer.on("pointerover", () => {
+      console.log("over");
+      scene.skipContainer.setFillStyle(0x2075fa);
     });
-    scene.skipText.on("pointerout", () => {
-      scene.nextContainer.fillStyle(0x2045fa);
+    scene.skipContainer.on("pointerout", () => {
+      scene.skipContainer.setFillStyle(0x2045fa);
     });
-    scene.skipText.on("pointerdown", () => {
+    scene.skipContainer.on("pointerdown", () => {
       scene.click.play();
       this.sound.removeAll();
       scene.scene.start("MainScene");
     });
 
     //next button
-    scene.nextText.on("pointerdown", () => {
+    scene.nextContainer.on("pointerdown", () => {
       scene.click.play();
       if (this.paragraph + 1 === this.story.length - 1) {
         this.nextText.text = "Play";
       }
       scene.storyLabel.text = "";
-      scene.nextText.removeInteractive();
-      scene.skipContainer.fillStyle(0x616161);
+      scene.nextContainer.removeInteractive();
+      scene.nextContainer.setFillStyle(0x616161);
       scene.wrapText(this.story[++this.paragraph]);
     });
 
@@ -168,27 +184,27 @@ export default class StoryScene extends Phaser.Scene {
 
   enableNext() {
     this.typing.stop();
-    this.nextText.setInteractive();
+    this.nextContainer.setInteractive();
     if (this.paragraph === this.story.length - 1) {
-      this.skipContainer.fillStyle(0x03c04a);
-      this.nextText.on("pointerover", () => {
-        this.skipContainer.fillStyle(0x04d153);
+      this.nextContainer.setFillStyle(0x03c04a);
+      this.nextContainer.on("pointerover", () => {
+        this.nextContainer.setFillStyle(0x04d153);
       });
-      this.nextText.on("pointerout", () => {
-        this.skipContainer.fillStyle(0x03c04a);
+      this.nextContainer.on("pointerout", () => {
+        this.nextContainer.fillStyle(0x03c04a);
       });
-      this.nextText.on("pointerdown", () => {
+      this.nextContainer.on("pointerdown", () => {
         this.click.play();
         this.sound.removeAll();
         this.scene.start("MainScene");
       });
     } else {
-      this.skipContainer.fillStyle(0xebd405);
-      this.nextText.on("pointerover", () => {
-        this.skipContainer.fillStyle(0xffe605);
+      this.nextContainer.setFillStyle(0xebd405);
+      this.nextContainer.on("pointerover", () => {
+        this.nextContainer.setFillStyle(0xffe605);
       });
-      this.nextText.on("pointerout", () => {
-        this.skipContainer.fillStyle(0xebd405);
+      this.nextContainer.on("pointerout", () => {
+        this.nextContainer.setFillStyle(0xebd405);
       });
     }
   }
