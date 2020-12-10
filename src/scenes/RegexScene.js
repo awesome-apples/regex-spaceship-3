@@ -35,12 +35,14 @@ export default class RegexScene extends Phaser.Scene {
       scene.inputPopup = scene.add.image(540, 230, "popup");
       scene.outputPopup = scene.add.image(460, 400, "popup").setScale(1.5, 1);
 
+      // PROMPT TEXT
       scene.add.text(155, 145, "Error! Must be resolved!", {
         fill: "#00ff00",
         fontSize: "14px",
         fontStyle: "bold",
       });
 
+      // TASK PROBLEM TEXT
       scene.add.text(
         155,
         170,
@@ -54,7 +56,7 @@ export default class RegexScene extends Phaser.Scene {
         }
       );
 
-      // input area
+      // INPUT AREA
       scene.add.text(428, 152, "Input", {
         fill: "#00ff00",
         fontSize: "12px",
@@ -62,14 +64,14 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.inputElement = scene.add.dom(597, 264).createFromCache("taskform");
 
-      // output area
+      // OUTPUT AREA
       scene.add.text(290, 323, "Output", {
         fill: "#00ff00",
         fontSize: "12px",
         fontStyle: "bold",
       });
 
-      //Return button
+      //RETURN BUTTON
       scene.returnContainer = scene.add.rexRoundRectangle(
         175,
         502,
@@ -96,7 +98,7 @@ export default class RegexScene extends Phaser.Scene {
         scene.scene.stop("RegexScene");
       });
 
-      //output text
+      // OUTPUT TEXT
       scene.outputText = scene.add.text(290, 340, "", {
         fill: "#00ff00",
         fontSize: "12px",
@@ -106,12 +108,15 @@ export default class RegexScene extends Phaser.Scene {
       });
       scene.outputText.setVisible(false);
 
+      // CORRECT TEXT
       scene.isCorrect = scene.add.text(350, 490, "Correct", {
         fill: "#00ff00",
         fontSize: "30px",
         fontStyle: "bold",
         boundsAlignH: "center",
       });
+
+      // INCORRECT TEXT
       scene.isIncorrect = scene.add.text(320, 490, "Incorrect", {
         fill: "#ff0000",
         fontSize: "30px",
@@ -121,12 +126,13 @@ export default class RegexScene extends Phaser.Scene {
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
 
+      // TIME BONUS
       scene.timeBonus = 0;
       scene.socket.on("sendTimeToRegex", function (time) {
         scene.timeBonus = time;
       });
 
-      //submit button
+      // SUBMIT BUTTON
       scene.submitContainer = scene.add.rexRoundRectangle(
         620,
         502,
@@ -234,10 +240,10 @@ export default class RegexScene extends Phaser.Scene {
       //   }
       // });
     } catch (err) {
-      console.error(err);
+      next(err);
     }
   }
-
+  // PROCESS INPUT TEXT
   handleInput(scene, input, randomTask) {
     const gFlag = /g$/;
 
@@ -267,7 +273,7 @@ export default class RegexScene extends Phaser.Scene {
       win: result.correct,
     };
   }
-
+  // VALIDATORS
   matchValidator(regex, randomTask) {
     let output;
     if (randomTask.string.match(regex)) {

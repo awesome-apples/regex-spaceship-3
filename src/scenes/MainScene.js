@@ -24,6 +24,7 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
+    //LOADING SCREEN
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -51,11 +52,11 @@ export default class MainScene extends Phaser.Scene {
     });
     percentText.setOrigin(0.5, 0.5);
 
+    //TEXTURES
     this.load.spritesheet("astronaut", "assets/spritesheets/astronaut3.png", {
       frameWidth: 29,
       frameHeight: 37,
     });
-
     this.load.image("lavatory", "assets/sprites/lavatory.png");
     this.load.image("birthdayList", "assets/sprites/birthdayList.png");
     this.load.image("cockpit", "assets/sprites/console_w.png");
@@ -73,15 +74,14 @@ export default class MainScene extends Phaser.Scene {
       "../assets/atlas/atlas.json"
     );
 
+    //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
-
     this.load.on("fileprogress", function (file) {});
-
     this.load.on("complete", function () {
       progressBar.destroy();
       progressBox.destroy();
@@ -186,13 +186,44 @@ export default class MainScene extends Phaser.Scene {
           .setScrollFactor(0);
 
         scene.instructionsButton.setInteractive();
+
+        scene.instructionsAreOpen = false;
+
         scene.instructionsButton.on("pointerdown", () => {
-          scene.scene.launch("Instructions");
+          if (!scene.instructionsAreOpen) {
+            scene.instructionsButton.setText("close");
+            scene.instructionsAreOpen = true;
+            scene.scene.launch("Instructions");
+          } else {
+            scene.instructionsButton.setText("instructions");
+            scene.instructionsAreOpen = false;
+            scene.scene.stop("Instructions");
+          }
         });
 
+        //MAP BUTTON
+        // scene.mapButton = scene.add
+        // .dom(400, 300, "button", "width: 100px; height: 25px", "map")
+        // .setOrigin(0);
+        // scene.mapButton.setInteractive();
+
+        // scene.mapIsOpen = false;
+
+        // scene.mapButton.on("pointerdown", () => {
+        //   if (!scene.mapIsOpen) {
+        //     scene.mapButton.setText("close");
+        //     scene.mapIsOpen = true;
+        //     scene.scene.launch("SmallMap");
+        //   } else {
+        //     scene.mapButton.setText("map");
+        //     scene.mapIsOpen = false;
+        //     scene.scene.stop("SmallMap");
+        //   }
+        // });
+        // scene.instructionsButton.setScrollFactor(0);
+
         //TIMER
-        scene.initialTime = 5;
-        //120
+        scene.initialTime = 400;
         scene.timerLabel = scene.add.text(
           680,
           16,
@@ -260,20 +291,17 @@ export default class MainScene extends Phaser.Scene {
           });
         }
         //SET WAITING FOR MORE PLAYERS TEXT
-        scene.waitingText.setVisible(true);
+        // if (scene.startClickable) {
+        //   scene.waitingText = scene.add
+        //     .text(400, 393, 'Waiting for more players to join', {
+        //       fontSize: '20px',
+        //       fill: '#ff0000',
+        //     })
+        //     .setScrollFactor(0)
+        //     .setOrigin(0.5);
+        // }
       });
     }
-
-    // CREATE WAITING FOR MORE PLAYERS TEXT
-    // (avoids setvisible loading error)
-    scene.waitingText = scene.add
-      .text(400, 393, "Waiting for more players to join", {
-        fontSize: "20px",
-        fill: "#ff0000",
-      })
-      .setScrollFactor(0)
-      .setOrigin(0.5);
-    scene.waitingText.setVisible(false);
 
     this.socket.on("updateState", function (serverState) {
       scene.state = serverState;
@@ -331,6 +359,9 @@ export default class MainScene extends Phaser.Scene {
     this.socket.on("disconnected", function (arg) {
       const { playerId, numPlayers } = arg;
       scene.state.numPlayers = numPlayers;
+      if (scene.gameStarted) {
+        scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
+      }
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
@@ -344,7 +375,9 @@ export default class MainScene extends Phaser.Scene {
       scene.progressBar.increase(gameScore - scene.state.gameScore);
       scene.state.gameScore = gameScore;
       if (scene.state.gameScore >= scene.state.allRandomTasks.length) {
+        scene.instructionsButton.destroy();
         scene.scene.stop("RegexScene");
+        scene.physics.pause();
         scene.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
@@ -478,25 +511,25 @@ export default class MainScene extends Phaser.Scene {
       scene.randomTasks.forEach((task) => {
         switch (task.location) {
           case "vendingMachine":
-            scene.controlPanelVendingMachine.setTint(0xb2b037);
+            scene.controlPanelVendingMachine.setTint(0xff0000);
             break;
           case "birthdayList":
-            scene.controlPanelBirthdayList.setTint(0xb2b037);
+            scene.controlPanelBirthdayList.setTint(0xff0000);
             break;
           case "engineRoom":
-            scene.controlPanelEngineRoom.setTint(0xb2b037);
+            scene.controlPanelEngineRoom.setTint(0xff0000);
             break;
           case "cargoHold":
-            scene.controlPanelCargoHold.setTint(0xb2b037);
+            scene.controlPanelCargoHold.setTint(0xff0000);
             break;
           case "cockpit":
-            scene.controlPanelCockpit.setTint(0xb2b037);
+            scene.controlPanelCockpit.setTint(0xff0000);
             break;
           case "lavatory":
-            scene.controlPanelLavatory.setTint(0xb2b037);
+            scene.controlPanelLavatory.setTint(0xff0000);
             break;
           case "medBay":
-            scene.controlPanelMedbay.setTint(0xb2b037);
+            scene.controlPanelMedbay.setTint(0xff0000);
             break;
           default:
             console.log("no control panel matches to set active");
@@ -633,7 +666,7 @@ export default class MainScene extends Phaser.Scene {
     const scene = this;
     //MOVEMENT
     if (this.astronaut) {
-      const speed = 175;
+      const speed = 225;
       const prevVelocity = this.astronaut.body.velocity.clone();
       // Stop any previous movement from the last frame
       this.astronaut.body.setVelocity(0);
@@ -767,14 +800,28 @@ export default class MainScene extends Phaser.Scene {
     );
 
     // START BUTTON VISIBLE
-    if (this.state.numPlayers >= 3 && this.startClickable === true) {
-      this.startClickable = false;
-      this.waitingText.setVisible(false);
+    if (
+      this.state.numPlayers >= 3 &&
+      this.startClickable === true &&
+      this.startButton
+    ) {
+      // if (this.waitingText) {
+      //   this.waitingText.setVisible(false);
+      // }
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
         scene.socket.emit("startGame", scene.state.roomKey);
       });
+      this.startClickable = false;
+    }
+    if (this.state.numPlayers < 3 && this.joined) {
+      this.startButton.disableInteractive();
+      this.startButton.setVisible(false);
+      this.startClickable = true;
+      // if (this.waitingText) {
+      //   this.waitingText.setVisible(true);
+      // }
     }
     if (this.beginTimer) {
       this.countdown();
@@ -800,6 +847,7 @@ export default class MainScene extends Phaser.Scene {
             controlPanel.setTint(0xbdef83);
             controlPanel.setInteractive();
           }
+          break;
         case "engineRoom":
           if (!this.engineRoomStatus) {
             controlPanel.setTint(0xbdef83);
@@ -840,42 +888,43 @@ export default class MainScene extends Phaser.Scene {
     switch (controlPanel.texture.key) {
       case "vendingMachine":
         if (!this.vendingMachineStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "birthdayList":
         if (!this.birthdayListStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
+        break;
       case "engineRoom":
         if (!this.engineRoomStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "cargoHold":
         if (!this.cargoHoldStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "cockpit":
         if (!this.cockpitStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "lavatory":
         if (!this.lavatoryStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "medBay":
         if (!this.medbayStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
@@ -923,8 +972,8 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
-    // scene.createAnims(scene);
 
+    //CAMERA
     scene.camera = scene.cameras.main;
     scene.camera.startFollow(scene.astronaut);
     scene.camera.setBounds(
@@ -942,9 +991,6 @@ export default class MainScene extends Phaser.Scene {
       "atlas",
       "misa-front"
     );
-    // .setOrigin(0.5, 0.5)
-    // .setSize(30, 40)
-    // .setOffset(0, 24);
     switch (playerInfo.team) {
       case "red":
         otherPlayer.setTint(0xd86969);
@@ -985,6 +1031,7 @@ export default class MainScene extends Phaser.Scene {
       }
       this.beginTimer = currentTime;
       if (this.initialTime === 0) {
+        scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
         this.scene.launch("EndScene", {

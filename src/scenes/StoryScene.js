@@ -15,6 +15,7 @@ export default class StoryScene extends Phaser.Scene {
   }
 
   preload() {
+    //LOADING SCREEN
     var progressBar = this.add.graphics();
     var progressBox = this.add.graphics();
     progressBox.fillStyle(0x222222, 0.8);
@@ -41,21 +42,21 @@ export default class StoryScene extends Phaser.Scene {
       },
     });
     percentText.setOrigin(0.5, 0.5);
+    //TEXTURES
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("stars", "assets/backgrounds/stars.png");
     this.load.audio("startMusic", "audio/Start_Screen.mp3");
     this.load.audio("typing", "audio/Typing_Text.wav");
     this.load.audio("click", "audio/Button_Click.wav");
 
+    //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
       percentText.setText(parseInt(value * 100) + "%");
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
       progressBar.fillRect(250, 280, 300 * value, 30);
     });
-
     this.load.on("fileprogress", function (file) {});
-
     this.load.on("complete", function () {
       progressBar.destroy();
       progressBox.destroy();
