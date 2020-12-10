@@ -170,14 +170,13 @@ export default class MainScene extends Phaser.Scene {
 
         scene.instructionsButton.on("pointerdown", () => {
           if (!scene.isOpen) {
-            scene.instructionsButton.setText("close")
+            scene.instructionsButton.setText("close");
             scene.isOpen = true;
             scene.scene.launch("Instructions");
-          }
-          else {
-            scene.instructionsButton.setText("instructions")
+          } else {
+            scene.instructionsButton.setText("instructions");
             scene.isOpen = false;
-            scene.scene.stop('Instructions');
+            scene.scene.stop("Instructions");
           }
         });
         scene.instructionsButton.setScrollFactor(0);
@@ -763,7 +762,7 @@ export default class MainScene extends Phaser.Scene {
     // START BUTTON VISIBLE
     if (this.state.numPlayers >= 3 && this.startClickable === true) {
       this.startClickable = false;
-      this.waitingText.setVisible(false);
+      this.waitingText.destroy();
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
@@ -845,10 +844,6 @@ export default class MainScene extends Phaser.Scene {
         break;
       case "birthdayList":
         if (!this.birthdayListStatus) {
-          console.log(
-            "inside deactivate set tingt red: this.birthdayliststatus",
-            this.birthdayListStatus
-          );
           controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
@@ -927,8 +922,8 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
-    // scene.createAnims(scene);
 
+    //CAMERA
     scene.camera = scene.cameras.main;
     scene.camera.startFollow(scene.astronaut);
     scene.camera.setBounds(
@@ -946,9 +941,6 @@ export default class MainScene extends Phaser.Scene {
       "atlas",
       "misa-front"
     );
-    // .setOrigin(0.5, 0.5)
-    // .setSize(30, 40)
-    // .setOffset(0, 24);
     switch (playerInfo.team) {
       case "red":
         otherPlayer.setTint(0xd86969);
