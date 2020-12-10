@@ -137,6 +137,7 @@ module.exports = (io) => {
     });
     socket.on("disablePanel", function (data) {
       const { controlPanel, roomKey } = data;
+      console.log("control panel in disablePanel", controlPanel);
       socket.emit("setInactive", controlPanel);
     });
     socket.on("resumePhysics", function () {
