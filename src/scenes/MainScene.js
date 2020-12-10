@@ -65,6 +65,7 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("medBay", "assets/sprites/medbay/desk.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
     this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
+    this.load.image("instructions", "assets/sprites/folder.png");
     this.load.tilemapTiledJSON("map", "../assets/map/spaceship.json");
     this.load.atlas(
       "atlas",
@@ -161,17 +162,37 @@ export default class MainScene extends Phaser.Scene {
         scene.roomkeyText.setScrollFactor(0);
 
         //INSTRUCTIONS BUTTON
+        //old
+        // scene.instructionsButton = scene.add
+        //   .dom(680, 550, "button", "width: 100px; height: 25px", "instructions")
+        //   .setOrigin(0);
+        // scene.instructionsButton.setInteractive();
+        // scene.instructionsButton.on("pointerdown", () => {
+        //   scene.scene.launch("Instructions");
+        // });
+        // scene.instructionsButton.setScrollFactor(0);
+
+        //new
         scene.instructionsButton = scene.add
-          .dom(680, 550, "button", "width: 100px; height: 25px", "instructions")
-          .setOrigin(0);
+          .image(734, 545, "instructions")
+          .setScrollFactor(0)
+          .setScale(0.15);
+        scene.add
+          .text(700, 570, "Instructions", {
+            fill: "#ffffff",
+            fontSize: "10px",
+            fontStyle: "bold",
+          })
+          .setScrollFactor(0);
+
         scene.instructionsButton.setInteractive();
         scene.instructionsButton.on("pointerdown", () => {
           scene.scene.launch("Instructions");
         });
-        scene.instructionsButton.setScrollFactor(0);
 
         //TIMER
-        scene.initialTime = 120;
+        scene.initialTime = 5;
+        //120
         scene.timerLabel = scene.add.text(
           680,
           16,
