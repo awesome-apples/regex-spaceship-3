@@ -250,15 +250,15 @@ export default class MainScene extends Phaser.Scene {
           });
         }
         //SET WAITING FOR MORE PLAYERS TEXT
-        if (scene.startClickable) {
-          scene.waitingText = scene.add
-            .text(400, 393, 'Waiting for more players to join', {
-              fontSize: '20px',
-              fill: '#ff0000',
-            })
-            .setScrollFactor(0)
-            .setOrigin(0.5);
-        }
+        // if (scene.startClickable) {
+        //   scene.waitingText = scene.add
+        //     .text(400, 393, 'Waiting for more players to join', {
+        //       fontSize: '20px',
+        //       fill: '#ff0000',
+        //     })
+        //     .setScrollFactor(0)
+        //     .setOrigin(0.5);
+        // }
       });
     }
 
@@ -318,6 +318,9 @@ export default class MainScene extends Phaser.Scene {
     this.socket.on('disconnected', function (arg) {
       const { playerId, numPlayers } = arg;
       scene.state.numPlayers = numPlayers;
+      if (scene.gameStarted) {
+        scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
+      }
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
@@ -756,12 +759,17 @@ export default class MainScene extends Phaser.Scene {
     );
 
     // START BUTTON VISIBLE
-    if (this.state.numPlayers >= 3 && this.startClickable === true) {
+    if (
+      this.state.numPlayers >= 3 &&
+      this.startClickable === true &&
+      this.startButton
+    ) {
+      console.log('numPlayers should be more than 3', this.state.numPlayers);
       console.log('inside of startclickable if');
-      if (this.waitingText) {
-        console.log('inside of waitingtext if');
-        this.waitingText.setVisible(false);
-      }
+      // if (this.waitingText) {
+      //   console.log('inside of waitingtext if');
+      //   this.waitingText.setVisible(false);
+      // }
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on('pointerdown', () => {
@@ -770,12 +778,13 @@ export default class MainScene extends Phaser.Scene {
       this.startClickable = false;
     }
     if (this.state.numPlayers < 3 && this.joined) {
-      console.log('numPlayers', this.state.numPlayers);
+      console.log('numPlayers should be less than 3', this.state.numPlayers);
       this.startButton.disableInteractive();
       this.startButton.setVisible(false);
-      if (this.waitingText) {
-        this.waitingText.setVisible(true);
-      }
+      this.startClickable = true;
+      // if (this.waitingText) {
+      //   this.waitingText.setVisible(true);
+      // }
     }
     if (this.beginTimer) {
       this.countdown();
