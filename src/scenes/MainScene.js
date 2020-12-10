@@ -247,14 +247,17 @@ export default class MainScene extends Phaser.Scene {
               location: scene.randomTasks[i].location,
             });
           }
-          scene.waitingText = scene.add
-            .text(1354, 393, "Waiting for more players to join", {
-              fontSize: "20px",
-              fill: "#ff0000",
-            })
-            .setOrigin(0.5);
+          scene.waitingText.setVisible(true);
         });
       }
+
+      scene.waitingText = scene.add
+        .text(1354, 393, "Waiting for more players to join", {
+          fontSize: "20px",
+          fill: "#ff0000",
+        })
+        .setOrigin(0.5);
+      scene.waitingText.setVisible(false);
 
       this.socket.on("updateState", function (serverState) {
         scene.state = serverState;
@@ -392,24 +395,38 @@ export default class MainScene extends Phaser.Scene {
         switch (controlPanel) {
           case "vendingMachine":
             scene.controlPanelVendingMachine.disableInteractive();
+            scene.controlPanelVendingMachine.clearTint();
+            scene.vendingMachineStatus = true;
             break;
           case "birthdayList":
             scene.controlPanelBirthdayList.disableInteractive();
+            scene.controlPanelBirthdayList.clearTint();
+            scene.birthdayListStatus = true;
             break;
           case "engineRoom":
             scene.controlPanelEngineRoom.disableInteractive();
+            scene.controlPanelEngineRoom.clearTint();
+            scene.engineRoomStatus = true;
             break;
           case "cargoHold":
             scene.controlPanelCargoHold.disableInteractive();
+            scene.controlPanelCargoHold.clearTint();
+            scene.cargoHoldStatus = true;
             break;
           case "cockpit":
             scene.controlPanelCockpit.disableInteractive();
+            scene.controlPanelCockpit.clearTint();
+            scene.cockpitStatus = true;
             break;
           case "lavatory":
             scene.controlPanelLavatory.disableInteractive();
+            scene.controlPanelLavatory.clearTint();
+            scene.lavatoryStatus = true;
             break;
           case "medBay":
             scene.controlPanelMedbay.disableInteractive();
+            scene.controlPanelMedbay.clearTint();
+            scene.medbayStatus = true;
             break;
           default:
             console.log("no control panel matches to set inactive");
@@ -765,14 +782,99 @@ export default class MainScene extends Phaser.Scene {
         (task) => task.location === controlPanel.texture.key
       )
     ) {
-      controlPanel.setTint(0xbdef83);
-      controlPanel.setInteractive();
+      switch (controlPanel.texture.key) {
+        case "vendingMachine":
+          if (!this.vendingMachineStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+          break;
+        case "birthdayList":
+          if (!this.birthdayListStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+        case "engineRoom":
+          if (!this.engineRoomStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+          break;
+        case "cargoHold":
+          if (!this.cargoHoldStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+          break;
+        case "cockpit":
+          if (!this.cockpitStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+          break;
+        case "lavatory":
+          if (!this.lavatoryStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+          break;
+        case "medBay":
+          if (!this.medbayStatus) {
+            controlPanel.setTint(0xbdef83);
+            controlPanel.setInteractive();
+          }
+          break;
+        default:
+          console.log("error activating panel");
+      }
     }
   }
 
   deactivateControlPanel(controlPanel) {
-    controlPanel.setTint(0xb2b037);
-    controlPanel.disableInteractive();
+    switch (controlPanel.texture.key) {
+      case "vendingMachine":
+        if (!this.vendingMachineStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+        break;
+      case "birthdayList":
+        if (!this.birthdayListStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+      case "engineRoom":
+        if (!this.engineRoomStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+        break;
+      case "cargoHold":
+        if (!this.cargoHoldStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+        break;
+      case "cockpit":
+        if (!this.cockpitStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+        break;
+      case "lavatory":
+        if (!this.lavatoryStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+        break;
+      case "medBay":
+        if (!this.medbayStatus) {
+          controlPanel.setTint(0xb2b037);
+          controlPanel.disableInteractive();
+        }
+        break;
+      default:
+    }
   }
 
   checkOverlap(scene, player, controlPanel) {
@@ -879,7 +981,7 @@ export default class MainScene extends Phaser.Scene {
       this.beginTimer = currentTime;
       if (this.initialTime === 0) {
         this.beginTimer = false;
-        this.scene.stop("RegexScene");
+        this.scene.stop("MainScene");
         this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
