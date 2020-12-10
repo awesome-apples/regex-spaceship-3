@@ -171,7 +171,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.setScrollFactor(0);
 
         //TIMER
-        scene.initialTime = 120;
+        scene.initialTime = 400;
         scene.timerLabel = scene.add.text(
           680,
           16,
@@ -457,25 +457,25 @@ export default class MainScene extends Phaser.Scene {
       scene.randomTasks.forEach((task) => {
         switch (task.location) {
           case "vendingMachine":
-            scene.controlPanelVendingMachine.setTint(0xb2b037);
+            scene.controlPanelVendingMachine.setTint(0xff0000);
             break;
           case "birthdayList":
-            scene.controlPanelBirthdayList.setTint(0xb2b037);
+            scene.controlPanelBirthdayList.setTint(0xff0000);
             break;
           case "engineRoom":
-            scene.controlPanelEngineRoom.setTint(0xb2b037);
+            scene.controlPanelEngineRoom.setTint(0xff0000);
             break;
           case "cargoHold":
-            scene.controlPanelCargoHold.setTint(0xb2b037);
+            scene.controlPanelCargoHold.setTint(0xff0000);
             break;
           case "cockpit":
-            scene.controlPanelCockpit.setTint(0xb2b037);
+            scene.controlPanelCockpit.setTint(0xff0000);
             break;
           case "lavatory":
-            scene.controlPanelLavatory.setTint(0xb2b037);
+            scene.controlPanelLavatory.setTint(0xff0000);
             break;
           case "medBay":
-            scene.controlPanelMedbay.setTint(0xb2b037);
+            scene.controlPanelMedbay.setTint(0xff0000);
             break;
           default:
             console.log("no control panel matches to set active");
@@ -819,42 +819,42 @@ export default class MainScene extends Phaser.Scene {
     switch (controlPanel.texture.key) {
       case "vendingMachine":
         if (!this.vendingMachineStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "birthdayList":
         if (!this.birthdayListStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
       case "engineRoom":
         if (!this.engineRoomStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "cargoHold":
         if (!this.cargoHoldStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "cockpit":
         if (!this.cockpitStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "lavatory":
         if (!this.lavatoryStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
       case "medBay":
         if (!this.medbayStatus) {
-          controlPanel.setTint(0xb2b037);
+          controlPanel.setTint(0xff0000);
           controlPanel.disableInteractive();
         }
         break;
