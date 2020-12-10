@@ -23,10 +23,22 @@ export default class Instructions extends Phaser.Scene {
     scene.add.text(
       155,
       140,
-      '-You must complete your tasks before time runs out. \n\n\n-Use the arrow keys to run around the ship and find the locations of your tasks. \n\n\n\n-When you approach the console at that location, a pop up will appear. \n\n\n-Use your knowledge of regular expressions to complete your task. \n\n\n-If you don’t finish all the tasks before time runs out, you’ll be lost in space forever!',
+      'Gameplay \n\n-Use the arrow keys to walk to the room your task is in. \n\n-Walk up to the red highlighted item. \n\n-When you are touching the item, it will turn green, this means you can click it with your mouse. \n\n-A pop up will appear. You can put your answer in the input tab.',
       {
         fill: '#00ff00',
-        fontSize: '20px',
+        fontSize: '15px',
+        fontStyle: 'bold',
+        align: 'left',
+        wordWrap: { width: 480, height: 445, useAdvancedWrap: true },
+      }
+    );
+    scene.add.text(
+      155,
+      320,
+      'RegEx Basics \n\n-All regular expressions start and end with / \n\n-RegEx will find the first instance of what you are looking for, unless you put a g after your closing / (this is called the global flag) \n\n-\\s represents whitespace \n\n-[ ] will look for all the characters you put within it, in any order \n\n- | represents "or"',
+      {
+        fill: '#00ff00',
+        fontSize: '15px',
         fontStyle: 'bold',
         align: 'left',
         wordWrap: { width: 480, height: 445, useAdvancedWrap: true },

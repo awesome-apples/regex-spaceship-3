@@ -30,12 +30,16 @@ export default class RegexScene extends Phaser.Scene {
     keyObj.enabled = false;
 
     try {
-      scene.graphics = scene.add.image(400, 300, 'computer');
-      scene.promptPopup = scene.add.image(270, 295, 'popup').setScale(1.05, 2);
-      scene.inputPopup = scene.add.image(540, 230, 'popup');
-      scene.outputPopup = scene.add.image(460, 400, 'popup').setScale(1.5, 1);
+      scene.graphics = scene.add.image(400, 320, 'computer').setScale(1, 0.85);
+      scene.promptPopup = scene.add
+        .image(270, 315, 'popup')
+        .setScale(1.05, 1.7);
+      scene.inputPopup = scene.add.image(540, 260, 'popup');
+      scene.outputPopup = scene.add
+        .image(500, 410, 'popup')
+        .setScale(1.2, 0.75);
 
-      scene.add.text(155, 145, 'Error!! Must be resolved!', {
+      scene.add.text(155, 185, 'Error!! Must be resolved!', {
         fill: '#00ff00',
         fontSize: '14px',
         fontStyle: 'bold',
@@ -43,7 +47,7 @@ export default class RegexScene extends Phaser.Scene {
 
       scene.add.text(
         155,
-        170,
+        210,
         `${scene.randomTask.problem}, ${scene.randomTask.string}`,
         {
           fill: '#00ff00',
@@ -55,21 +59,21 @@ export default class RegexScene extends Phaser.Scene {
       );
 
       // input area
-      scene.add.text(428, 152, 'Input', {
+      scene.add.text(428, 182, 'Input', {
         fill: '#00ff00',
         fontSize: '12px',
         fontStyle: 'bold',
       });
-      scene.inputElement = scene.add.dom(597, 264).createFromCache('taskform');
+      scene.inputElement = scene.add.dom(597, 294).createFromCache('taskform');
 
       // output area
-      scene.add.text(290, 323, 'Output', {
+      scene.add.text(360, 350, 'Output', {
         fill: '#00ff00',
         fontSize: '12px',
         fontStyle: 'bold',
       });
 
-      scene.exit = scene.add.text(130, 490, 'Return', {
+      scene.exit = scene.add.text(130, 480, 'Return', {
         fill: '#00ff00',
         fontSize: '30px',
         fontStyle: 'bold',
@@ -80,22 +84,22 @@ export default class RegexScene extends Phaser.Scene {
         scene.scene.stop('RegexScene');
       });
 
-      scene.outputText = scene.add.text(290, 340, '', {
+      scene.outputText = scene.add.text(360, 373, '', {
         fill: '#00ff00',
         fontSize: '12px',
         fontStyle: 'bold',
         align: 'left',
-        wordWrap: { width: 450, height: 190, useAdvancedWrap: true },
+        wordWrap: { width: 290, height: 300, useAdvancedWrap: true },
       });
       scene.outputText.setVisible(false);
 
-      scene.isCorrect = scene.add.text(350, 490, 'Correct', {
+      scene.isCorrect = scene.add.text(350, 480, 'Correct', {
         fill: '#00ff00',
         fontSize: '30px',
         fontStyle: 'bold',
         boundsAlignH: 'center',
       });
-      scene.isIncorrect = scene.add.text(320, 490, 'Incorrect', {
+      scene.isIncorrect = scene.add.text(320, 480, 'Incorrect', {
         fill: '#ff0000',
         fontSize: '30px',
         fontStyle: 'bold',
@@ -109,7 +113,7 @@ export default class RegexScene extends Phaser.Scene {
         scene.timeBonus = time;
       });
 
-      scene.submitButton = scene.add.text(570, 490, 'Submit', {
+      scene.submitButton = scene.add.text(570, 480, 'Submit', {
         fill: '#00ff00',
         fontSize: '30px',
         fontStyle: 'bold',
@@ -166,23 +170,29 @@ export default class RegexScene extends Phaser.Scene {
     const modified = input.replace(/\/|g$/g, '');
 
     let regex = '';
-
-    if (flag === null) {
-      regex = new RegExp(modified);
-    } else {
-      regex = new RegExp(modified, flag);
-    }
-
     let result = false;
-    if (randomTask.category === 'search') {
-      result = scene.searchValidator(regex, randomTask);
-    } else if (randomTask.category === 'replace') {
-      result = scene.replaceValidator(regex, randomTask);
-    } else if (randomTask.category === 'match') {
-      result = scene.matchValidator(regex, randomTask);
-    } else if (randomTask.category === 'count') {
-      result = scene.countValidator(regex, randomTask);
+    try {
+      if (flag === null) {
+        regex = new RegExp(modified);
+      } else {
+        regex = new RegExp(modified, flag);
+      }
+    } catch (error) {
+      result = { correct: false, output: 'null' };
     }
+
+    if (!result) {
+      if (randomTask.category === 'search') {
+        result = scene.searchValidator(regex, randomTask);
+      } else if (randomTask.category === 'replace') {
+        result = scene.replaceValidator(regex, randomTask);
+      } else if (randomTask.category === 'match') {
+        result = scene.matchValidator(regex, randomTask);
+      } else if (randomTask.category === 'count') {
+        result = scene.countValidator(regex, randomTask);
+      }
+    }
+
     return {
       text: `expected: ${randomTask.expectedOutput}\nyours: ${result.output}`,
       win: result.correct,

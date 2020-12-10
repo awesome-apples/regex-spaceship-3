@@ -160,6 +160,25 @@ export default class MainScene extends Phaser.Scene {
         );
         scene.roomkeyText.setScrollFactor(0);
 
+        //NEED 3 PLAYERS poster
+        scene.needPlayersPoster = scene.add.graphics();
+        scene.needPlayersPoster.lineStyle(1, 0x000000);
+        scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
+        scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
+        scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
+        scene.needPlayersText = scene.add.text(
+          1070,
+          273,
+          'You can start when 3 players enter the game',
+          {
+            fill: '#ff0000',
+            fontSize: '12px',
+            fontStyle: 'bold',
+            align: 'center',
+            wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
+          }
+        );
+
         //INSTRUCTIONS BUTTON
         scene.instructionsButton = scene.add
           .dom(680, 550, 'button', 'width: 100px; height: 25px', 'instructions')
@@ -182,7 +201,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.setScrollFactor(0);
 
         //TIMER
-        scene.initialTime = 400;
+        scene.initialTime = 600;
         scene.timerLabel = scene.add.text(
           680,
           16,
@@ -764,8 +783,6 @@ export default class MainScene extends Phaser.Scene {
       this.startClickable === true &&
       this.startButton
     ) {
-      console.log('numPlayers should be more than 3', this.state.numPlayers);
-      console.log('inside of startclickable if');
       // if (this.waitingText) {
       //   console.log('inside of waitingtext if');
       //   this.waitingText.setVisible(false);
