@@ -24,6 +24,11 @@ export default class MainScene extends Phaser.Scene {
   }
 
   preload() {
+    var progressBar = this.add.graphics();
+    var progressBox = this.add.graphics();
+    progressBox.fillStyle(0x222222, 0.8);
+    progressBox.fillRect(240, 270, 320, 50);
+
     this.load.spritesheet("astronaut", "assets/spritesheets/astronaut3.png", {
       frameWidth: 29,
       frameHeight: 37,
@@ -36,7 +41,6 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("engineRoom", "assets/sprites/engineroom/engineroom2.png");
     this.load.image("vendingMachine", "assets/sprites/vendingMachine.png");
     this.load.image("medBay", "assets/sprites/medbay/desk.png");
-    this.load.image("star", "assets/star_gold.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
     this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
     this.load.tilemapTiledJSON("map", "../assets/map/spaceship.json");
@@ -45,6 +49,23 @@ export default class MainScene extends Phaser.Scene {
       "../assets/atlas/atlas.png",
       "../assets/atlas/atlas.json"
     );
+
+    this.load.on("progress", function (value) {
+      console.log(value);
+      progressBar.clear();
+      progressBar.fillStyle(0xffffff, 1);
+      progressBar.fillRect(250, 280, 300 * value, 30);
+    });
+
+    this.load.on("fileprogress", function (file) {
+      console.log(file.src);
+    });
+
+    this.load.on("complete", function () {
+      console.log("complete");
+      progressBar.destroy();
+      progressBox.destroy();
+    });
   }
 
   async create() {

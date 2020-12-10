@@ -20,10 +20,17 @@ module.exports = (io) => {
     socket.on("joinRoom", (roomKey) => {
       socket.join(roomKey);
 
+      console.log("room key in join room", roomKey);
+
       const roomInfo = gameRooms[roomKey];
+
+      console.log("roominfo inside join room", roomInfo);
+
       const randomTasksForPlayer = gameRooms[
         roomKey
       ].unassignedRandomTasks.pop();
+
+      console.log("random tasks for player", randomTasksForPlayer);
 
       const playerColor = gameRooms[roomKey].colors.pop();
 
