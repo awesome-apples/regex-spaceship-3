@@ -29,6 +29,8 @@ class Game extends Phaser.Game {
     super(config);
     // Add all the scenes
     // << ADD ALL SCENES HERE >>
+    this.socket = io();
+
     this.scene.add("MainScene", MainScene);
     this.scene.add("RegexScene", RegexScene);
     this.scene.add("EndScene", EndScene);
@@ -39,8 +41,11 @@ class Game extends Phaser.Game {
 
     // Start the game with the mainscene
     // << START GAME WITH MAIN SCENE HERE >>
-    this.scene.start("StoryScene");
-    // this.scene.start("WaitingRoom");
+    this.scene.start("StoryScene", { socket: this.socket });
+
+    this.socket.on("gameRestarting", function () {
+      window.onload();
+    });
   }
 }
 // Create new instance of game

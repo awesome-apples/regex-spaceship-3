@@ -23,6 +23,10 @@ export default class MainScene extends Phaser.Scene {
     this.joined = false;
   }
 
+  init(data) {
+    this.socket = data.socket;
+  }
+
   preload() {
     //LOADING SCREEN
     var progressBar = this.add.graphics();
@@ -123,8 +127,6 @@ export default class MainScene extends Phaser.Scene {
     this.wallLayer.setCollisionByProperty({ collides: true });
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
-    //CREATE SOCKET CONNECTION
-    this.socket = io();
     // LAUNCH WAITING ROOM
     scene.scene.launch("WaitingRoom", { socket: scene.socket });
     this.otherPlayers = this.physics.add.group();
