@@ -139,14 +139,15 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
-    this.aboveLayer = this.map.createStaticLayer(
-      "Above Player",
+    this.waitingRoomWall = this.map.createDynamicLayer(
+      "Waiting Room Wall",
       this.tileset,
       0,
       0
     );
     this.worldLayer.setCollisionByProperty({ collides: true });
     this.wallLayer.setCollisionByProperty({ collides: true });
+    this.waitingRoomWall.setCollisionByProperty({ collides: true });
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
     // LAUNCH WAITING ROOM
@@ -649,6 +650,10 @@ export default class MainScene extends Phaser.Scene {
       .setScrollFactor(0);
     scene.startButton.setVisible(false);
     this.socket.on("destroyButton", function () {
+      scene.waitingRoomWall.removeTileAt(27, 15);
+      scene.waitingRoomWall.removeTileAt(28, 15);
+      scene.waitingRoomWall.removeTileAt(29, 15);
+      scene.waitingRoomWall.removeTileAt(30, 15);
       scene.startButton.destroy();
     });
 
@@ -1025,6 +1030,7 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
+    scene.physics.add.collider(scene.astronaut, scene.waitingRoomWall);
 
     //CAMERA
     scene.camera = scene.cameras.main;
