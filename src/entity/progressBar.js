@@ -1,4 +1,4 @@
-import 'phaser';
+import "phaser";
 
 export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, x, y) {
@@ -8,7 +8,7 @@ export default class ProgressBar extends Phaser.Physics.Arcade.Sprite {
     this.x = x;
     this.y = y;
     this.value = 0;
-    this.taskAmount = 0;
+    this.taskAmount = 9;
 
     this.draw();
 
