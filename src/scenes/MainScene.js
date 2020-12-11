@@ -80,6 +80,7 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("speakerOff", "assets/sprites/speaker_off.png");
     this.load.image("volumeUp", "assets/sprites/volume_up.png");
     this.load.image("volumeDown", "assets/sprites/volume_down.png");
+    this.load.image("startButton", "assets/sprites/startButton.png");
 
     //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
@@ -108,6 +109,7 @@ export default class MainScene extends Phaser.Scene {
     this.load.audio("lavatorySFX", "audio/ControlPanel/Lavatory.mp3");
     this.load.audio("medbaySFX", "audio/ControlPanel/Medbay.wav");
     this.load.audio("vendingSFX", "audio/ControlPanel/Vending.wav");
+    this.load.audio("folderFlip", "audio/Folder_Flip.wav");
   }
 
   create() {
@@ -120,7 +122,8 @@ export default class MainScene extends Phaser.Scene {
     scene.music.play();
 
     scene.click = scene.sound.add("click");
-    scene.timerAlert = scene.sound.add("timerAlert");
+    scene.timerAlert = scene.sound.add("timerAlert", { volume: 0.75 });
+    scene.folderFlip = scene.sound.add("folderFlip", { volume: 0.75 });
 
     scene.birthdaySFX = scene.sound.add("birthdaySFX");
     scene.cargoSFX = scene.sound.add("cargoSFX");
@@ -234,6 +237,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsAreOpen = false;
 
         scene.instructionsButton.on("pointerdown", () => {
+          scene.folderFlip.play();
           scene.scene.launch("Instructions");
         });
 
@@ -252,6 +256,7 @@ export default class MainScene extends Phaser.Scene {
 
         scene.mapButton.setInteractive();
         scene.mapButton.on("pointerdown", () => {
+          scene.folderFlip.play();
           scene.scene.launch("SmallMap");
         });
 
@@ -704,9 +709,11 @@ export default class MainScene extends Phaser.Scene {
 
     // START BUTTON
     scene.startButton = scene.add
-      .dom(400, 350, "button", "width: 70px; height: 25px", "START")
+      .image(400, 350, "startButton")
       .setOrigin(0.5)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setScale(0.2);
+
     scene.startButton.setVisible(false);
     this.socket.on("destroyButton", function () {
       scene.waitingRoomWall.removeTileAt(27, 15);
@@ -1140,6 +1147,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
+        scene.music.stop();
         this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
