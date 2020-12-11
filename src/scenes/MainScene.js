@@ -186,24 +186,24 @@ export default class MainScene extends Phaser.Scene {
         );
         scene.roomkeyText.setScrollFactor(0);
 
-        //NEED 3 PLAYERS poster
-        scene.needPlayersPoster = scene.add.graphics();
-        scene.needPlayersPoster.lineStyle(1, 0x000000);
-        scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
-        scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
-        scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
-        scene.needPlayersText = scene.add.text(
-          1070,
-          273,
-          "You can start when 3 players enter the game",
-          {
-            fill: "#ff0000",
-            fontSize: "12px",
-            fontStyle: "bold",
-            align: "center",
-            wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
-          }
-        );
+        // //NEED 3 PLAYERS poster
+        // scene.needPlayersPoster = scene.add.graphics();
+        // scene.needPlayersPoster.lineStyle(1, 0x000000);
+        // scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
+        // scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
+        // scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
+        // scene.needPlayersText = scene.add.text(
+        //   1070,
+        //   273,
+        //   "You can start when 3 players enter the game",
+        //   {
+        //     fill: "#ff0000",
+        //     fontSize: "12px",
+        //     fontStyle: "bold",
+        //     align: "center",
+        //     wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
+        //   }
+        // );
 
         //INSTRUCTIONS BUTTON
         scene.instructionsButton = scene.add
@@ -244,7 +244,7 @@ export default class MainScene extends Phaser.Scene {
         });
 
         //TIMER
-        scene.initialTime = 600;
+        scene.initialTime = 0;
         scene.timerLabel = scene.add.text(
           680,
           16,
@@ -255,6 +255,7 @@ export default class MainScene extends Phaser.Scene {
           }
         );
         scene.timerLabel.setScrollFactor(0);
+        scene.timerLabel.setVisible(false);
 
         //PROGRESS BAR
         scene.progressText = scene.add.text(30, 16, "Progress Tracker", {
@@ -311,16 +312,6 @@ export default class MainScene extends Phaser.Scene {
             location: scene.randomTasks[i].location,
           });
         }
-        //SET WAITING FOR MORE PLAYERS TEXT
-        // if (scene.startClickable) {
-        //   scene.waitingText = scene.add
-        //     .text(400, 393, 'Waiting for more players to join', {
-        //       fontSize: '20px',
-        //       fill: '#ff0000',
-        //     })
-        //     .setScrollFactor(0)
-        //     .setOrigin(0.5);
-        // }
       });
     }
 
@@ -637,7 +628,9 @@ export default class MainScene extends Phaser.Scene {
 
     // START TIMER
     this.socket.on("startTimer", function () {
+      scene.initialTime = scene.state.numPlayers * 180;
       scene.beginTimer = Date.now();
+      scene.timerLabel.setVisible(true);
     });
 
     // RESUME PHYSICS: CLOSED REGEXSCENE
