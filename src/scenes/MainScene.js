@@ -1144,6 +1144,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
+        scene.scene.stop("RegexScene");
         scene.music.stop();
         this.scene.launch("EndScene", {
           ...scene.state,
