@@ -126,6 +126,7 @@ export default class MainScene extends Phaser.Scene {
     // tilemap
     this.map = this.make.tilemap({ key: "map" });
     this.tileset = this.map.addTilesetImage("spaceship", "tiles");
+    this.tileset2 = this.map.addTilesetImage("Images", "tiles");
     this.belowLayer = this.map.createStaticLayer(
       "Below Player",
       this.tileset,
@@ -139,6 +140,12 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
+    // this.decorations = this.map.createDynamicLayer(
+    //   "Decorations",
+    //   this.tileset2,
+    //   0,
+    //   0
+    // );
     this.aboveLayer = this.map.createStaticLayer(
       "Above Player",
       this.tileset,
@@ -148,6 +155,9 @@ export default class MainScene extends Phaser.Scene {
     this.worldLayer.setCollisionByProperty({ collides: true });
     this.wallLayer.setCollisionByProperty({ collides: true });
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
+    this.decorations = this.map.getObjectLayer("Decorations")["objects"];
+    console.log('decorations', this.decorations)
+    //this.decorations.setCollisionByProperty({ collides: true });
 
     // LAUNCH WAITING ROOM
     scene.scene.launch("WaitingRoom", { socket: scene.socket });
@@ -1025,6 +1035,7 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
+    // scene.physics.add.collider(scene.astronaut, this.decorations);
 
     //CAMERA
     scene.camera = scene.cameras.main;
