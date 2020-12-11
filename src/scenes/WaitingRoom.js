@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { func } from "prop-types";
 
 export default class WaitingRoom extends Phaser.Scene {
   constructor() {
@@ -149,6 +150,9 @@ export default class WaitingRoom extends Phaser.Scene {
     });
     scene.socket.on("gameAlreadyStarted", function () {
       scene.notValidText.setText("Game has already begun");
+    });
+    scene.socket.on("gameAlreadyFull", function () {
+      scene.notValidText.setText("Game is already full");
     });
   }
 }
