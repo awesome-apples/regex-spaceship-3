@@ -243,15 +243,6 @@ export default class MainScene extends Phaser.Scene {
           scene.scene.launch("SmallMap");
         });
 
-        // scene.mapButton = scene.add
-        //   .dom(400, 300, "button", "width: 100px; height: 25px", "map")
-        //   .setOrigin(0)
-        //   .setScrollFactor(0);
-        // scene.mapButton.setInteractive();
-        // scene.mapButton.on("pointerdown", () => {
-        //   scene.scene.launch("SmallMap");
-        // });
-
         //TIMER
         scene.initialTime = 600;
         scene.timerLabel = scene.add.text(
@@ -391,19 +382,6 @@ export default class MainScene extends Phaser.Scene {
       scene.state.numPlayers = numPlayers;
       if (scene.state.gameStarted) {
         scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
-        // scene.add.text(400, 300, "Player Left: Game over").setScrollFactor(0);
-        // scene.playAgain = scene.add
-        //   .text(400, 500, "Play Again", {
-        //     fill: "#00ff00",
-        //     fontSize: "30px",
-        //   })
-        //   .setOrigin(0.5)
-        //   .setScrollFactor(0);
-        // scene.playAgain.setInteractive();
-        // scene.playAgain.on("pointerdown", () => {
-        //   scene.socket.emit("restartGame");
-        //   scene.sys.game.destroy(true);
-        // });
       }
       // if (scene.otherPlayers && scene.otherPlayers.getChildren.length) {
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -412,6 +390,11 @@ export default class MainScene extends Phaser.Scene {
         }
       });
       // }
+    });
+
+    // INITIALIZE PROGRESS BAR
+    this.socket.on("updateTaskAmount", function () {
+      scene.progressBar.changeTaskAmount(scene.state.numPlayers * 3);
     });
 
     // PROGRESS BAR UPDATE
@@ -852,11 +835,7 @@ export default class MainScene extends Phaser.Scene {
     );
 
     // START BUTTON VISIBLE
-    if (
-      this.state.numPlayers >= 3 &&
-      this.startClickable === true &&
-      this.startButton
-    ) {
+    if (this.joined && this.startClickable === true && this.startButton) {
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
@@ -864,11 +843,6 @@ export default class MainScene extends Phaser.Scene {
         scene.socket.emit("startGame", scene.state.roomKey);
       });
       this.startClickable = false;
-    }
-    if (this.state.numPlayers < 3 && this.joined) {
-      this.startButton.disableInteractive();
-      this.startButton.setVisible(false);
-      this.startClickable = true;
     }
     if (this.beginTimer) {
       this.countdown();
