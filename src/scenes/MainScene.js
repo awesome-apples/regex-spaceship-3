@@ -388,14 +388,30 @@ export default class MainScene extends Phaser.Scene {
     this.socket.on('disconnected', function (arg) {
       const { playerId, numPlayers } = arg;
       scene.state.numPlayers = numPlayers;
-      if (scene.gameStarted) {
+      console.log("game started:", scene.state.gameStarted);
+      if (scene.state.gameStarted) {
         scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
+        // scene.add.text(400, 300, "Player Left: Game over").setScrollFactor(0);
+        // scene.playAgain = scene.add
+        //   .text(400, 500, "Play Again", {
+        //     fill: "#00ff00",
+        //     fontSize: "30px",
+        //   })
+        //   .setOrigin(0.5)
+        //   .setScrollFactor(0);
+        // scene.playAgain.setInteractive();
+        // scene.playAgain.on("pointerdown", () => {
+        //   scene.socket.emit("restartGame");
+        //   scene.sys.game.destroy(true);
+        // });
       }
+      // if (scene.otherPlayers && scene.otherPlayers.getChildren.length) {
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
         if (playerId === otherPlayer.playerId) {
           otherPlayer.destroy();
         }
       });
+      // }
     });
 
     // PROGRESS BAR UPDATE
@@ -403,7 +419,7 @@ export default class MainScene extends Phaser.Scene {
       const { gameScore } = arg;
       scene.progressBar.increase(gameScore - scene.state.gameScore);
       scene.state.gameScore = gameScore;
-      if (scene.state.gameScore >= scene.state.allRandomTasks.length) {
+      if (scene.state.gameScore >= scene.progressBar.taskAmount) {
         scene.instructionsButton.destroy();
         scene.scene.stop('RegexScene');
         scene.physics.pause();
