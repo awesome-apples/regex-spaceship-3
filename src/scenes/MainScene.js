@@ -371,12 +371,26 @@ export default class MainScene extends Phaser.Scene {
       scene.state.numPlayers = numPlayers;
       if (scene.gameStarted) {
         scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
+        // scene.add.text(400, 300, "Player Left: Game over");
+        // scene.playAgain = scene.add
+        //   .text(400, 500, "Play Again", {
+        //     fill: "#00ff00",
+        //     fontSize: "30px",
+        //   })
+        //   .setOrigin(0.5);
+        // scene.playAgain.setInteractive();
+        // scene.playAgain.on("pointerdown", () => {
+        //   scene.socket.emit("restartGame");
+        //   scene.sys.game.destroy(true);
+        // });
       }
-      scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
-        if (playerId === otherPlayer.playerId) {
-          otherPlayer.destroy();
-        }
-      });
+      if (scene.otherPlayers && scene.otherPlayers.getChildren.length) {
+        scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
+          if (playerId === otherPlayer.playerId) {
+            otherPlayer.destroy();
+          }
+        });
+      }
     });
 
     // PROGRESS BAR UPDATE
