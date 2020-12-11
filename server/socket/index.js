@@ -36,7 +36,6 @@ module.exports = (io) => {
       //add to player to scores obj
       roomInfo.scores[socket.id] = { name: "", points: 0 };
       roomInfo.numPlayers = Object.keys(roomInfo.players).length;
-
       // send the players object to the new player
       socket.emit("currentPlayers", {
         players: roomInfo.players,
@@ -235,6 +234,11 @@ module.exports = (io) => {
     });
     socket.on("isKeyValid", function (input) {
       if (
+        Object.keys(gameRooms).includes(input) &&
+        gameRooms[input].numPlayers >= 3
+      ) {
+        socket.emit("gameAlreadyFull");
+      } else if (
         Object.keys(gameRooms).includes(input) &&
         !gameRooms[input].gameStarted
       ) {

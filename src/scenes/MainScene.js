@@ -245,7 +245,7 @@ export default class MainScene extends Phaser.Scene {
         });
 
         //TIMER
-        scene.initialTime = 0;
+        scene.initialTime = 600;
         scene.timerLabel = scene.add.text(
           680,
           16,
@@ -256,7 +256,6 @@ export default class MainScene extends Phaser.Scene {
           }
         );
         scene.timerLabel.setScrollFactor(0);
-        scene.timerLabel.setVisible(false);
 
         //PROGRESS BAR
         scene.progressText = scene.add.text(30, 16, "Progress Tracker", {
@@ -633,9 +632,7 @@ export default class MainScene extends Phaser.Scene {
 
     // START TIMER
     this.socket.on("startTimer", function () {
-      scene.initialTime = scene.state.numPlayers * 180;
       scene.beginTimer = Date.now();
-      scene.timerLabel.setVisible(true);
     });
 
     // RESUME PHYSICS: CLOSED REGEXSCENE
