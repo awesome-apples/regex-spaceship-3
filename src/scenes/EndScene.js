@@ -21,6 +21,7 @@ export default class EndScene extends Phaser.Scene {
     this.load.html("nameform", "assets/text/nameform.html");
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
+    this.load.audio("click", "audio/Button_Click.wav");
   }
 
   create() {
@@ -42,6 +43,8 @@ export default class EndScene extends Phaser.Scene {
       scene.outcome.setColor("#ff0000");
       scene.outcome.setText("YOU LOSE");
     }
+
+    scene.click = scene.sound.add("click");
 
     scene.add.text(393, 163, "Final Scores", {
       fill: "#00ff00",
@@ -79,6 +82,7 @@ export default class EndScene extends Phaser.Scene {
     });
 
     scene.endSubmitContainer.on("pointerdown", () => {
+      scene.click.play();
       if (scene.scores[scene.socket.id].name.length < 1) {
         const inputText = document.getElementsByName("username")[0].value;
         scene.scores[scene.socket.id].name = inputText;

@@ -21,10 +21,18 @@ export default class RegexScene extends Phaser.Scene {
     this.load.html("taskform", "assets/text/taskform.html");
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
+
+    this.load.audio("click", "audio/Button_Click.wav");
+    this.load.audio("correct", "audio/Correct.mp3");
+    this.load.audio("incorrect", "audio/Incorrect.wav");
   }
 
   create() {
     const scene = this;
+
+    scene.click = scene.sound.add("click");
+    scene.correct = scene.sound.add("correct");
+    scene.incorrect = scene.sound.add("incorrect");
 
     const keyObj = scene.input.keyboard.addKey("enter");
     keyObj.enabled = false;
@@ -93,6 +101,7 @@ export default class RegexScene extends Phaser.Scene {
       scene.returnContainer.setFillStyle(0xfa8128);
     });
     scene.returnContainer.on("pointerdown", () => {
+      scene.click.play();
       scene.socket.emit("resumePhysics");
       scene.scene.stop("RegexScene");
     });
@@ -154,6 +163,7 @@ export default class RegexScene extends Phaser.Scene {
       scene.submitContainer.setFillStyle(0xa06deb);
     });
     scene.submitContainer.on("pointerdown", () => {
+      scene.click.play();
       const inputText = scene.inputElement.getChildByName("code");
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
@@ -169,6 +179,7 @@ export default class RegexScene extends Phaser.Scene {
 
         if (scene.output.win) {
           scene.isCorrect.setVisible(true);
+          scene.correct.play();
           scene.socket.emit("scoreUpdate", {
             scoreObj: {
               points: 50,
@@ -184,6 +195,7 @@ export default class RegexScene extends Phaser.Scene {
           scene.socket.emit("completedTask", { roomKey: scene.roomKey });
         } else {
           scene.isIncorrect.setVisible(true);
+          scene.incorrect.play();
           scene.socket.emit("scoreUpdate", {
             scoreObj: { points: -5 },
             roomKey: scene.roomKey,
