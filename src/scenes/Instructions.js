@@ -49,25 +49,24 @@ export default class Instructions extends Phaser.Scene {
     scene.add.text(
       155,
       140,
-      'Gameplay \n\n-Use the arrow keys to walk to the room your task is in. \n\n-Walk up to the red highlighted item. \n\n-When you are touching the item, it will turn green, this means you can click it with your mouse. \n\n-A pop up will appear. You can put your answer in the input tab.',
+      'Gameplay \n\n-Use the arrow keys to walk to the room your task is in. \n\n\n\n-Walk up to the red highlighted item. \n\n\n-When you are touching the item, it will turn green, this means you can click it with your mouse. \n\n\n\n\n-A pop up will appear. You can put your answer in the input tab.',
       {
         fill: '#00ff00',
         fontSize: '15px',
         fontStyle: 'bold',
         align: 'left',
-        wordWrap: { width: 480, height: 445, useAdvancedWrap: true },
+        wordWrap: { width: 240, height: 445, useAdvancedWrap: true },
       }
     );
     scene.add.text(
-      155,
-      320,
-      'RegEx Basics \n\n-All regular expressions start and end with / \n\n-RegEx will find the first instance of what you are looking for, unless you put a g after your closing / (this is called the global flag) \n\n-\\s represents whitespace \n\n-[ ] will look for all the characters you put within it, in any order \n\n- | represents "or"',
+      405,
+      140,
+      'RegEx Basics \n\n-All regular expressions \nstart and end with / \n\n-RegEx will find the \nfirst instance of what you \nare looking for, unless \nyou put a g after your \nclosing / (this is called \nthe global flag) \n\n-\\s represents whitespace \n\n-[ ] will look for all \nthe characters you put \nwithin it, in any order \n\n- | represents "or"',
       {
         fill: '#00ff00',
         fontSize: '15px',
         fontStyle: 'bold',
         align: 'left',
-        wordWrap: { width: 480, height: 445, useAdvancedWrap: true },
       }
     );
   }

@@ -98,7 +98,7 @@ async function seed() {
       string: 'Emma January 12, Zorp 8th Lunar Rotation, Carlos December 6',
       hint: '/ / g',
       expectedOutput: 'Emma January 12, Carlos December 6',
-      possibleSolution: '/Zorp 8th Lunar Rotation, /g',
+      possibleSolution: '/Zorp 8th Lunar Rotation,\\s/g',
       callback: "(alien) => ''",
       location: 'birthdayList',
       category: 'replace',
@@ -112,7 +112,7 @@ async function seed() {
       hint: '/ ( ) / g',
       expectedOutput:
         'wire wire wire wire wire wire wire wire wire wire wire wire',
-      possibleSolution: '/(bug )/g',
+      possibleSolution: '/(bug\\s)/g',
       callback: "(c) => ''",
       location: 'engineRoom',
       category: 'replace',
