@@ -23,7 +23,7 @@ async function seed() {
       problem:
         'The alien has destroyed our inventory tracker! We need to recount all our rations. Luckily, we have a list of box contents. Given the string below, write a regular expression matches the word “rations”, based on your input, we will count the number of boxes we have.',
       string:
-        'toilet paper, circuit boards, oxygen tanks, rations, rations, circuit boards, space suits, toilet paper, circuit boards, rations, space suits',
+        'toilet paper, oxygen tanks, rations, rations, circuit boards, space suits, circuit boards, rations',
       hint: '/ / g',
       expectedOutput: '3',
       possibleSolution: '/rations/g',
@@ -72,7 +72,7 @@ async function seed() {
       problem:
         'The alien put a bunch of space junk in our vending machine! It is crucial to keep our crew snacking. Write a regex that matches only the items that should be found in our vending machines.',
       string:
-        'Rocks, meteors, chips, rocks, soda, meteors, candy, rocks, rocks, meteors',
+        'Rocks, meteors, chips, rocks, soda, meteors, candy, rocks, slime',
       hint: '/ | / g',
       expectedOutput: 'chips, soda, candy',
       possibleSolution: '/chips|soda|candy/g',
@@ -84,10 +84,10 @@ async function seed() {
       problem:
         'The alien put a bunch of space junk in our vending machine! It is crucial to keep our crew snacking. Write a regex that returns only the items that should be found in our vending machines.',
       string:
-        'chocolate, slime, potato chips, rocks, contract for world domination, cookies',
+        'chocolate, slime, chips, rocks, contract for world domination, cookies',
       hint: '/ | / g',
-      expectedOutput: 'chocolate, potato chips, cookies',
-      possibleSolution: '/chocolate|potato chips|cookies/g',
+      expectedOutput: 'chocolate, chips, cookies',
+      possibleSolution: '/chocolate|chips|cookies/g',
       location: 'vendingMachine',
       category: 'match',
       nickname: 'Reorganize Snacks',
@@ -95,11 +95,10 @@ async function seed() {
     Task.create({
       problem:
         'The alien has managed to tarnish our precious company birthday list! Someone on the team might send a birthday present to an alien! Write a regex that matches the alien name and birthday on this list, and we will remove it for you',
-      string:
-        'Emma January 12, George March 6, Zviverzxkinzop 8th Lunar Rotation, Carlos December 6',
+      string: 'Emma January 12, Zorp 8th Lunar Rotation, Carlos December 6',
       hint: '/ / g',
-      expectedOutput: 'Emma January 12, George March 6, Carlos December 6',
-      possibleSolution: '/Zviverzxkinzop 8th Lunar Rotation, /g',
+      expectedOutput: 'Emma January 12, Carlos December 6',
+      possibleSolution: '/Zorp 8th Lunar Rotation,\\s/g',
       callback: "(alien) => ''",
       location: 'birthdayList',
       category: 'replace',
@@ -113,7 +112,7 @@ async function seed() {
       hint: '/ ( ) / g',
       expectedOutput:
         'wire wire wire wire wire wire wire wire wire wire wire wire',
-      possibleSolution: '/(bug )/g',
+      possibleSolution: '/(bug\\s)/g',
       callback: "(c) => ''",
       location: 'engineRoom',
       category: 'replace',
