@@ -70,19 +70,8 @@ export default class WaitingRoom extends Phaser.Scene {
 
     //MUSIC
     scene.click = scene.sound.add("click");
-
-    // const up = scene.input.keyboard.addKey("up");
-    // const left = scene.input.keyboard.addKey("left");
-    // const right = scene.input.keyboard.addKey("right");
-    // const down = scene.input.keyboard.addKey("down");
-
     const keyObj = scene.input.keyboard.addKey("enter");
     keyObj.enabled = false;
-    // up.enabled = false;
-    // down.enabled = false;
-    // left.enabled = false;
-    // right.enabled = false;
-
     scene.popUp = scene.add.image(400, 300, "computer");
     scene.requestBox = scene.add.image(300, 280, "popup");
     scene.enterBox = scene.add.image(500, 350, "popup");
@@ -104,7 +93,6 @@ export default class WaitingRoom extends Phaser.Scene {
     scene.inputElement.on("click", function (event) {
       scene.click.play();
       if (event.target.name === "enterRoom") {
-        scene.inputElement.removeListener("click");
         const input = scene.inputElement.getChildByName("code-form");
         let uppercase = input.value.replace(/[a-z]/g, (L) => L.toUpperCase());
         scene.socket.emit("isKeyValid", uppercase);
