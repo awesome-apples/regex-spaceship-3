@@ -140,6 +140,7 @@ module.exports = (io) => {
       io.to(roomKey).emit("destroyButton");
       io.to(roomKey).emit("startTimer");
       io.to(roomKey).emit("activatePanels");
+      io.to(roomKey).emit("updateTaskAmount");
     });
     socket.on("disablePanel", function (data) {
       const { controlPanel, roomKey } = data;

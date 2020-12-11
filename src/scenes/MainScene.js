@@ -150,14 +150,15 @@ export default class MainScene extends Phaser.Scene {
       0,
       0
     );
-    this.aboveLayer = this.map.createStaticLayer(
-      "Above Player",
+    this.waitingRoomWall = this.map.createDynamicLayer(
+      "Waiting Room Wall",
       this.tileset,
       0,
       0
     );
     this.worldLayer.setCollisionByProperty({ collides: true });
     this.wallLayer.setCollisionByProperty({ collides: true });
+    this.waitingRoomWall.setCollisionByProperty({ collides: true });
     this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
 
     // LAUNCH WAITING ROOM
@@ -197,24 +198,24 @@ export default class MainScene extends Phaser.Scene {
         );
         scene.roomkeyText.setScrollFactor(0);
 
-        //NEED 3 PLAYERS poster
-        scene.needPlayersPoster = scene.add.graphics();
-        scene.needPlayersPoster.lineStyle(1, 0x000000);
-        scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
-        scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
-        scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
-        scene.needPlayersText = scene.add.text(
-          1070,
-          273,
-          "You can start when 3 players enter the game",
-          {
-            fill: "#ff0000",
-            fontSize: "12px",
-            fontStyle: "bold",
-            align: "center",
-            wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
-          }
-        );
+        // //NEED 3 PLAYERS poster
+        // scene.needPlayersPoster = scene.add.graphics();
+        // scene.needPlayersPoster.lineStyle(1, 0x000000);
+        // scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
+        // scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
+        // scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
+        // scene.needPlayersText = scene.add.text(
+        //   1070,
+        //   273,
+        //   "You can start when 3 players enter the game",
+        //   {
+        //     fill: "#ff0000",
+        //     fontSize: "12px",
+        //     fontStyle: "bold",
+        //     align: "center",
+        //     wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
+        //   }
+        // );
 
         //INSTRUCTIONS BUTTON
         scene.instructionsButton = scene.add
@@ -329,7 +330,7 @@ export default class MainScene extends Phaser.Scene {
         });
 
         //TIMER
-        scene.initialTime = 600;
+        scene.initialTime = 0;
         scene.timerLabel = scene.add.text(
           680,
           16,
@@ -340,6 +341,7 @@ export default class MainScene extends Phaser.Scene {
           }
         );
         scene.timerLabel.setScrollFactor(0);
+        scene.timerLabel.setVisible(false);
 
         //PROGRESS BAR
         scene.progressText = scene.add.text(30, 16, "Progress Tracker", {
@@ -396,16 +398,6 @@ export default class MainScene extends Phaser.Scene {
             location: scene.randomTasks[i].location,
           });
         }
-        //SET WAITING FOR MORE PLAYERS TEXT
-        // if (scene.startClickable) {
-        //   scene.waitingText = scene.add
-        //     .text(400, 393, 'Waiting for more players to join', {
-        //       fontSize: '20px',
-        //       fill: '#ff0000',
-        //     })
-        //     .setScrollFactor(0)
-        //     .setOrigin(0.5);
-        // }
       });
     }
 
@@ -467,19 +459,6 @@ export default class MainScene extends Phaser.Scene {
       scene.state.numPlayers = numPlayers;
       if (scene.state.gameStarted) {
         scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
-        // scene.add.text(400, 300, "Player Left: Game over").setScrollFactor(0);
-        // scene.playAgain = scene.add
-        //   .text(400, 500, "Play Again", {
-        //     fill: "#00ff00",
-        //     fontSize: "30px",
-        //   })
-        //   .setOrigin(0.5)
-        //   .setScrollFactor(0);
-        // scene.playAgain.setInteractive();
-        // scene.playAgain.on("pointerdown", () => {
-        //   scene.socket.emit("restartGame");
-        //   scene.sys.game.destroy(true);
-        // });
       }
       // if (scene.otherPlayers && scene.otherPlayers.getChildren.length) {
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -488,6 +467,11 @@ export default class MainScene extends Phaser.Scene {
         }
       });
       // }
+    });
+
+    // INITIALIZE PROGRESS BAR
+    this.socket.on("updateTaskAmount", function () {
+      scene.progressBar.changeTaskAmount(scene.state.numPlayers * 3);
     });
 
     // PROGRESS BAR UPDATE
@@ -725,12 +709,18 @@ export default class MainScene extends Phaser.Scene {
       .setScrollFactor(0);
     scene.startButton.setVisible(false);
     this.socket.on("destroyButton", function () {
+      scene.waitingRoomWall.removeTileAt(27, 15);
+      scene.waitingRoomWall.removeTileAt(28, 15);
+      scene.waitingRoomWall.removeTileAt(29, 15);
+      scene.waitingRoomWall.removeTileAt(30, 15);
       scene.startButton.destroy();
     });
 
     // START TIMER
     this.socket.on("startTimer", function () {
+      scene.initialTime = scene.state.numPlayers * 180;
       scene.beginTimer = Date.now();
+      scene.timerLabel.setVisible(true);
     });
 
     // RESUME PHYSICS: CLOSED REGEXSCENE
@@ -928,14 +918,7 @@ export default class MainScene extends Phaser.Scene {
     );
 
     // START BUTTON VISIBLE
-    if (
-      this.state.numPlayers >= 3 &&
-      this.startClickable === true &&
-      this.startButton
-    ) {
-      // if (this.waitingText) {
-      //   this.waitingText.setVisible(false);
-      // }
+    if (this.joined && this.startClickable === true && this.startButton) {
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
@@ -943,14 +926,6 @@ export default class MainScene extends Phaser.Scene {
         scene.socket.emit("startGame", scene.state.roomKey);
       });
       this.startClickable = false;
-    }
-    if (this.state.numPlayers < 3 && this.joined) {
-      this.startButton.disableInteractive();
-      this.startButton.setVisible(false);
-      this.startClickable = true;
-      // if (this.waitingText) {
-      //   this.waitingText.setVisible(true);
-      // }
     }
     if (this.beginTimer) {
       this.countdown();
@@ -1101,6 +1076,7 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
+    scene.physics.add.collider(scene.astronaut, scene.waitingRoomWall);
 
     //CAMERA
     scene.camera = scene.cameras.main;

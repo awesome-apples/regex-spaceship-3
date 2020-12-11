@@ -103,6 +103,7 @@ export default class WaitingRoom extends Phaser.Scene {
     scene.inputElement.on("click", function (event) {
       scene.click.play();
       if (event.target.name === "enterRoom") {
+        scene.inputElement.removeListener("click");
         const input = scene.inputElement.getChildByName("code-form");
         let uppercase = input.value.replace(/[a-z]/g, (L) => L.toUpperCase());
         scene.socket.emit("isKeyValid", uppercase);
