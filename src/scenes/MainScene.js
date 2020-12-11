@@ -1141,7 +1141,6 @@ export default class MainScene extends Phaser.Scene {
           socket: scene.socket,
           didWin: false,
         });
-        scene.scene.stop("RegexScene");
       }
     }
   }
