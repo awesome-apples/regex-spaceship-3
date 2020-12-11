@@ -8,10 +8,13 @@ export default class SmallMap extends Phaser.Scene {
   preload() {
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("map", "assets/backgrounds/small_map.png");
+    this.load.audio("click", "audio/Button_Click.wav");
   }
 
   async create() {
     const scene = this;
+
+    scene.click = scene.sound.add("click");
 
     scene.graphics = scene.add.image(400, 300, "computer");
     scene.mapImg = scene.add.image(400, 300, "map").setScale(0.5);
@@ -31,7 +34,7 @@ export default class SmallMap extends Phaser.Scene {
       5,
       0xfa8128
     );
-    scene.returnText = scene.add.text(147, 493, "Return", {
+    scene.returnText = scene.add.text(148, 494, "Return", {
       fill: "#000000",
       fontSize: "15px",
       fontStyle: "bold",
@@ -45,6 +48,7 @@ export default class SmallMap extends Phaser.Scene {
       scene.returnContainer.setFillStyle(0xfa8128);
     });
     scene.returnContainer.on("pointerdown", () => {
+      scene.click.play();
       scene.scene.stop("SmallMap");
     });
   }

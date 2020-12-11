@@ -260,15 +260,6 @@ export default class MainScene extends Phaser.Scene {
           scene.scene.launch("SmallMap");
         });
 
-        // scene.mapButton = scene.add
-        //   .dom(400, 300, "button", "width: 100px; height: 25px", "map")
-        //   .setOrigin(0)
-        //   .setScrollFactor(0);
-        // scene.mapButton.setInteractive();
-        // scene.mapButton.on("pointerdown", () => {
-        //   scene.scene.launch("SmallMap");
-        // });
-
         //VOLUME
         scene.volumeSpeaker = scene.add
           .image(727, 65, "speakerOn")
@@ -1144,13 +1135,13 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
-        scene.scene.stop("RegexScene");
         scene.music.stop();
         this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,
           didWin: false,
         });
+        scene.scene.stop("RegexScene");
       }
     }
   }
