@@ -165,7 +165,7 @@ export default class MainScene extends Phaser.Scene {
           gameScore,
           allRandomTasks,
         } = state;
-
+        scene.physics.resume();
         // STATE
         scene.state.allRandomTasks = allRandomTasks;
         scene.state.roomKey = roomKey;
