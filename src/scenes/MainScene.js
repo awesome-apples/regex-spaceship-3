@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import ProgressBar from "../entity/progressBar";
 import ControlPanel from "../entity/ControlPanel";
-import Speaker from "../entity/Speaker";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -77,6 +76,11 @@ export default class MainScene extends Phaser.Scene {
       "../assets/atlas/atlas.png",
       "../assets/atlas/atlas.json"
     );
+    this.load.image("speakerOn", "assets/sprites/speaker_on.png");
+    this.load.image("speakerOff", "assets/sprites/speaker_off.png");
+    this.load.image("volumeUp", "assets/sprites/volume_up.png");
+    this.load.image("volumeDown", "assets/sprites/volume_down.png");
+    this.load.image("startButton", "assets/sprites/startButton.png");
 
     //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
@@ -94,6 +98,8 @@ export default class MainScene extends Phaser.Scene {
     });
 
     //AUDIO
+    this.load.audio("music", "audio/Waiting_Room.mp3");
+
     this.load.audio("click", "audio/Button_Click.wav");
     this.load.audio("timerAlert", "audio/Timer_Alert.mp3");
     this.load.audio("birthdaySFX", "audio/ControlPanel/Birthday.wav");
@@ -103,13 +109,21 @@ export default class MainScene extends Phaser.Scene {
     this.load.audio("lavatorySFX", "audio/ControlPanel/Lavatory.mp3");
     this.load.audio("medbaySFX", "audio/ControlPanel/Medbay.wav");
     this.load.audio("vendingSFX", "audio/ControlPanel/Vending.wav");
+    this.load.audio("folderFlip", "audio/Folder_Flip.wav");
   }
 
   create() {
     const scene = this;
 
+    scene.music = scene.sound.add("music", {
+      volume: 0.5,
+      loop: true,
+    });
+    scene.music.play();
+
     scene.click = scene.sound.add("click");
-    scene.timerAlert = scene.sound.add("timerAlert");
+    scene.timerAlert = scene.sound.add("timerAlert", { volume: 0.75 });
+    scene.folderFlip = scene.sound.add("folderFlip", { volume: 0.75 });
 
     scene.birthdaySFX = scene.sound.add("birthdaySFX");
     scene.cargoSFX = scene.sound.add("cargoSFX");
@@ -223,6 +237,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsAreOpen = false;
 
         scene.instructionsButton.on("pointerdown", () => {
+          scene.folderFlip.play();
           scene.scene.launch("Instructions");
         });
 
@@ -241,7 +256,82 @@ export default class MainScene extends Phaser.Scene {
 
         scene.mapButton.setInteractive();
         scene.mapButton.on("pointerdown", () => {
+          scene.folderFlip.play();
           scene.scene.launch("SmallMap");
+        });
+
+        // scene.mapButton = scene.add
+        //   .dom(400, 300, "button", "width: 100px; height: 25px", "map")
+        //   .setOrigin(0)
+        //   .setScrollFactor(0);
+        // scene.mapButton.setInteractive();
+        // scene.mapButton.on("pointerdown", () => {
+        //   scene.scene.launch("SmallMap");
+        // });
+
+        //VOLUME
+        scene.volumeSpeaker = scene.add
+          .image(727, 65, "speakerOn")
+          .setScrollFactor(0)
+          .setScale(0.3);
+        scene.volumeUp = scene.add
+          .image(757, 65, "volumeUp")
+          .setScrollFactor(0)
+          .setScale(0.3);
+        scene.volumeDown = scene.add
+          .image(697, 65, "volumeDown")
+          .setScrollFactor(0)
+          .setScale(0.3);
+
+        scene.volumeUp.setInteractive();
+        scene.volumeDown.setInteractive();
+        scene.volumeSpeaker.setInteractive();
+
+        scene.volumeUp.on("pointerdown", () => {
+          scene.volumeUp.setTint(0xc2c2c2);
+          let newVol = scene.music.volume + 0.1;
+          scene.music.setVolume(newVol);
+          if (scene.music.volume < 0.2) {
+            scene.volumeSpeaker.setTexture("speakerOn");
+          }
+          if (scene.music.volume >= 0.9) {
+            scene.volumeUp.setTint(0xff0000);
+            scene.volumeUp.disableInteractive();
+          } else {
+            scene.volumeDown.clearTint();
+            scene.volumeDown.setInteractive();
+          }
+        });
+
+        scene.volumeDown.on("pointerdown", () => {
+          scene.volumeDown.setTint(0xc2c2c2);
+          let newVol = scene.music.volume - 0.1;
+          scene.music.setVolume(newVol);
+          if (scene.music.volume <= 0.2) {
+            scene.volumeDown.setTint(0xff0000);
+            scene.volumeDown.disableInteractive();
+            scene.volumeSpeaker.setTexture("speakerOff");
+          } else {
+            scene.volumeUp.clearTint();
+            scene.volumeUp.setInteractive();
+          }
+        });
+
+        scene.volumeDown.on("pointerup", () => {
+          scene.volumeDown.clearTint();
+        });
+        scene.volumeUp.on("pointerup", () => {
+          scene.volumeUp.clearTint();
+        });
+
+        scene.volumeSpeaker.on("pointerdown", () => {
+          if (scene.volumeSpeaker.texture.key === "speakerOn") {
+            scene.volumeSpeaker.setTexture("speakerOff");
+            scene.music.setMute(true);
+          } else {
+            scene.volumeSpeaker.setTexture("speakerOn");
+            scene.music.setMute(false);
+          }
         });
 
         //TIMER
@@ -618,9 +708,11 @@ export default class MainScene extends Phaser.Scene {
 
     // START BUTTON
     scene.startButton = scene.add
-      .dom(400, 350, "button", "width: 70px; height: 25px", "START")
+      .image(400, 350, "startButton")
       .setOrigin(0.5)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setScale(0.2);
+
     scene.startButton.setVisible(false);
     this.socket.on("destroyButton", function () {
       scene.waitingRoomWall.removeTileAt(27, 15);
@@ -1052,6 +1144,8 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
+        scene.scene.stop("RegexScene");
+        scene.music.stop();
         this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,

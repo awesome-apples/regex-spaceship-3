@@ -22,10 +22,21 @@ export default class EndScene extends Phaser.Scene {
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
     this.load.audio("click", "audio/Button_Click.wav");
+    this.load.audio("endMusic", "audio/End_Screen.wav");
+    this.load.audio("leaderboardUpdate", "audio/leaderBoard_Update.wav");
   }
 
   create() {
     const scene = this;
+
+    scene.endMusic = scene.sound.add("endMusic", { volume: 0.06, loop: true });
+
+    scene.leaderboardUpdate = scene.sound.add("leaderboardUpdate", {
+      volume: 0.5,
+    });
+
+    scene.endMusic.play();
+
     scene.popUp = scene.add.image(400, 300, "computer");
     scene.textBoxWindowScores = scene.add
       .image(510, 315, "popup")
@@ -82,7 +93,6 @@ export default class EndScene extends Phaser.Scene {
     });
 
     scene.endSubmitContainer.on("pointerdown", () => {
-      scene.click.play();
       if (scene.scores[scene.socket.id].name.length < 1) {
         const inputText = document.getElementsByName("username")[0].value;
         scene.scores[scene.socket.id].name = inputText;
@@ -101,6 +111,7 @@ export default class EndScene extends Phaser.Scene {
     });
 
     scene.socket.on("displayScores", function (updatedScores) {
+      scene.leaderboardUpdate.play();
       let scoreArr = [];
       let playersInfo = [];
 
