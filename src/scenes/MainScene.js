@@ -69,9 +69,27 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("vendingMachine", "assets/sprites/vendingMachine.png");
     this.load.image("medBay", "assets/sprites/medbay/desk.png");
     this.load.image("mainroom", "assets/backgrounds/mainroom.png");
-    this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
     this.load.image("instructions", "assets/sprites/folder.png");
+
+    //tilemap and map objects
     this.load.tilemapTiledJSON("map", "../assets/map/spaceship.json");
+    this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
+    this.load.image("beam", "assets/sprites/decorations/beam.png");
+    this.load.image("brokenscreen", "assets/sprites/decorations/brokenscreen.png");
+    this.load.image("chair", "assets/sprites/decorations/chair.png");
+    this.load.image("coffeemachine", "assets/sprites/decorations/coffeemachine.png");
+    this.load.image("desk", "assets/sprites/decorations/desk.png");
+    this.load.image("grate", "assets/sprites/decorations/grate.png");
+    this.load.image("locker", "assets/sprites/decorations/locker.png");
+    this.load.image("medicinemachine", "assets/sprites/decorations/medicinemachine.png");
+    this.load.image("oil", "assets/sprites/decorations/oil.png");
+    this.load.image("pipe", "assets/sprites/decorations/pipe.png");
+    this.load.image("purifier", "assets/sprites/decorations/purifier.png");
+    this.load.image("toilet", "assets/sprites/decorations/toilet.png");
+    this.load.image("tube", "assets/sprites/decorations/tube.png");
+    this.load.image("watermachine", "assets/sprites/decorations/watermachine.png");
+    this.load.image("wires", "assets/sprites/decorations/wires.png");
+    
     this.load.atlas(
       "atlas",
       "../assets/atlas/atlas.png",
@@ -124,40 +142,86 @@ export default class MainScene extends Phaser.Scene {
     keyObj.enabled = false;
 
     // tilemap
-    this.map = this.make.tilemap({ key: "map" });
-    this.tileset = this.map.addTilesetImage("spaceship", "tiles");
-    this.tileset2 = this.map.addTilesetImage("Images", "tiles");
-    this.belowLayer = this.map.createStaticLayer(
-      "Below Player",
-      this.tileset,
-      0,
-      0
-    );
-    this.worldLayer = this.map.createStaticLayer("World", this.tileset, 0, 0);
-    this.wallLayer = this.map.createStaticLayer(
-      "Wall Stuff",
-      this.tileset,
-      0,
-      0
-    );
-    // this.decorations = this.map.createDynamicLayer(
-    //   "Decorations",
-    //   this.tileset2,
-    //   0,
-    //   0
-    // );
-    this.aboveLayer = this.map.createStaticLayer(
-      "Above Player",
-      this.tileset,
-      0,
-      0
-    );
-    this.worldLayer.setCollisionByProperty({ collides: true });
-    this.wallLayer.setCollisionByProperty({ collides: true });
-    this.SpawnPoint = this.map.getObjectLayer("Spawn Point")["objects"];
-    this.decorations = this.map.getObjectLayer("Decorations")["objects"];
-    console.log('decorations', this.decorations)
-    //this.decorations.setCollisionByProperty({ collides: true });
+    scene.map = scene.make.tilemap({ key: "map" });
+    scene.tileset = scene.map.addTilesetImage("spaceship", "tiles");
+    scene.belowLayer = scene.map.createStaticLayer("Below Player", scene.tileset, 0, 0);
+    scene.worldLayer = scene.map.createStaticLayer("World", scene.tileset, 0, 0);
+    scene.wallLayer = scene.map.createStaticLayer("Wall Stuff", scene.tileset, 0, 0);
+    scene.worldLayer.setCollisionByProperty({ collides: true });
+    scene.wallLayer.setCollisionByProperty({ collides: true });
+
+    // decorations
+    scene.decorations = scene.physics.add.staticGroup();
+
+    scene.coffeemachine = scene.add.sprite(1606, 1309, "coffeemachine")
+      .setDisplaySize(40, 88)
+      .setSize(40, 88);
+    scene.decorations.add(scene.coffeemachine);
+
+    scene.locker = scene.add.sprite(2305, 1311, "locker")
+      .setDisplaySize(113, 102)
+      .setSize(113, 102);
+    scene.decorations.add(scene.locker);
+
+    scene.medicinemachine = scene.add.sprite(1588, 2147, "medicinemachine")
+      .setDisplaySize(56, 87)
+      .setSize(56, 87);
+    scene.decorations.add(scene.medicinemachine);
+
+    scene.watermachine = scene.add.sprite(2214, 1323, "watermachine")
+      .setDisplaySize(26, 88)
+      .setSize(26, 88);
+    scene.decorations.add(scene.medicinemachine);
+
+    scene.chair = scene.add.sprite(1300, 1387, "chair")
+      .setDisplaySize(51, 59)
+      .setSize(51, 59);
+    scene.decorations.add(scene.chair);
+    
+    scene.purifier = scene.add.sprite(1421, 2144, "purifier")
+      .setDisplaySize(38, 62)
+      .setSize(38, 62);
+    scene.decorations.add(scene.purifier)
+
+    scene.desk1 = scene.add.sprite(1501, 2367, "desk")
+      .setDisplaySize(141, 76)
+      .setSize(141, 76);
+    scene.decorations.add(scene.desk1)
+
+    scene.desk2 = scene.add.sprite(2145, 2367, "desk")
+      .setDisplaySize(141, 76)
+      .setSize(141, 76);
+    scene.decorations.add(scene.desk2)
+
+    scene.tube1 = scene.add.sprite(1700, 2373, "tube")
+      .setDisplaySize(38, 130)
+      .setSize(38, 130);
+    scene.decorations.add(scene.tube1)
+
+    scene.tube2 = scene.add.sprite(1940, 2373, "tube")
+      .setDisplaySize(38, 130)
+      .setSize(38, 130);
+    scene.decorations.add(scene.tube2)
+
+    scene.beam1 = scene.add.sprite(622, 1711, "beam")
+      .setDisplaySize(45, 158)
+      .setSize(45, 158);
+    scene.decorations.add(scene.beam1)
+
+    scene.beam2 = scene.add.sprite(815, 1711, "beam")
+      .setDisplaySize(45, 158)
+      .setSize(45, 158);
+    scene.decorations.add(scene.beam2)
+
+    scene.beam3 = scene.add.sprite(622, 2148, "beam")
+      .setDisplaySize(45, 158)
+      .setSize(45, 158);
+    scene.decorations.add(scene.beam3)
+
+    scene.beam4 = scene.add.sprite(814, 2148, "beam")
+      .setDisplaySize(45, 158)
+      .setSize(45, 158);
+    scene.decorations.add(scene.beam4)
 
     // LAUNCH WAITING ROOM
     scene.scene.launch("WaitingRoom", { socket: scene.socket });
@@ -469,7 +533,7 @@ export default class MainScene extends Phaser.Scene {
       "cargoHold"
     );
     this.controlPanelEngineRoom = this.controlPanelGroup
-      .create(715, 1878, "engineRoom")
+      .create(715, 1925, "engineRoom")
       .setScale(0.8);
     this.controlPanelVendingMachine = this.controlPanelGroup.create(
       1310,
@@ -1035,7 +1099,7 @@ export default class MainScene extends Phaser.Scene {
     }
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
-    // scene.physics.add.collider(scene.astronaut, this.decorations);
+    scene.physics.add.collider(scene.astronaut, this.decorations);
 
     //CAMERA
     scene.camera = scene.cameras.main;
