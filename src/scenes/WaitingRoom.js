@@ -60,12 +60,16 @@ export default class WaitingRoom extends Phaser.Scene {
       loadingText.destroy();
       percentText.destroy();
     });
+
+    //AUDIO
+    this.load.audio("click", "audio/Button_Click.wav");
   }
 
   create() {
     const scene = this;
 
     //MUSIC
+    scene.click = scene.sound.add("click");
     scene.waitingMusic = scene.sound.add("waitingMusic", {
       volume: 1,
       loop: true,
@@ -94,6 +98,7 @@ export default class WaitingRoom extends Phaser.Scene {
     scene.inputElement = scene.add.dom(500, 400).createFromCache("codeform");
     scene.inputElement.addListener("click");
     scene.inputElement.on("click", function (event) {
+      scene.click.play();
       if (event.target.name === "enterRoom") {
         const input = scene.inputElement.getChildByName("code-form");
         let uppercase = input.value.replace(/[a-z]/g, (L) => L.toUpperCase());
@@ -104,6 +109,7 @@ export default class WaitingRoom extends Phaser.Scene {
     //REQUEST ROOMKEY BUTTON
     scene.requestButton.setInteractive();
     scene.requestButton.on("pointerdown", () => {
+      scene.click.play();
       scene.socket.emit("getRoomCode");
       scene.requestButton.disableInteractive();
     });

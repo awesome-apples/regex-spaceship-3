@@ -21,260 +21,284 @@ export default class RegexScene extends Phaser.Scene {
     this.load.html('taskform', 'assets/text/taskform.html');
     this.load.image('computer', 'assets/backgrounds/computer.png');
     this.load.image('popup', 'assets/backgrounds/singlepopup.png');
+
+    this.load.audio('click', 'audio/Button_Click.wav');
+    this.load.audio('correct', 'audio/Correct.mp3');
+    this.load.audio('incorrect', 'audio/Incorrect.wav');
   }
 
-  async create() {
+  create() {
     const scene = this;
+
+    scene.click = scene.sound.add('click');
+    scene.correct = scene.sound.add('correct');
+    scene.incorrect = scene.sound.add('incorrect');
 
     const keyObj = scene.input.keyboard.addKey('enter');
     keyObj.enabled = false;
 
-    try {
-      scene.graphics = scene.add.image(400, 320, 'computer').setScale(1, 0.85);
-      scene.promptPopup = scene.add
-        .image(270, 315, 'popup')
-        .setScale(1.05, 1.7);
-      scene.inputPopup = scene.add.image(540, 260, 'popup');
-      scene.outputPopup = scene.add
-        .image(500, 410, 'popup')
-        .setScale(1.2, 0.75);
+    scene.graphics = scene.add.image(400, 320, 'computer').setScale(1, 0.85);
+    scene.promptPopup = scene.add.image(270, 315, 'popup').setScale(1.05, 1.7);
+    scene.inputPopup = scene.add.image(540, 260, 'popup');
+    scene.outputPopup = scene.add.image(500, 410, 'popup').setScale(1.2, 0.75);
 
-      scene.add.text(155, 185, 'Error!! Must be resolved!', {
-        fill: '#00ff00',
-        fontSize: '14px',
-        fontStyle: 'bold',
-      });
+    scene.add.text(155, 185, 'Error!! Must be resolved!', {
+      fill: '#00ff00',
+      fontSize: '14px',
+      fontStyle: 'bold',
+    });
 
-      // TASK PROBLEM TEXT
-      scene.add.text(155, 210, `${scene.randomTask.problem}`, {
-        fill: '#00ff00',
-        fontSize: '12px',
-        fontStyle: 'bold',
-        align: 'left',
-        wordWrap: { width: 240, height: 445, useAdvancedWrap: true },
-      });
+    // TASK PROBLEM TEXT
+    scene.add.text(155, 210, `${scene.randomTask.problem}`, {
+      fill: '#00ff00',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      align: 'left',
+      wordWrap: { width: 240, height: 445, useAdvancedWrap: true },
+    });
 
-      // GIVEN STRING TEXT
-      scene.add.text(155, 400, `"${scene.randomTask.string}"`, {
-        fill: '#00ff00',
-        fontSize: '12px',
-        fontStyle: 'bold',
-        align: 'left',
-        wordWrap: { width: 220, height: 445, useAdvancedWrap: true },
-      });
+    // GIVEN STRING TEXT
+    scene.add.text(155, 400, `"${scene.randomTask.string}"`, {
+      fill: '#00ff00',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      align: 'left',
+      wordWrap: { width: 220, height: 445, useAdvancedWrap: true },
+    });
 
-      // input area
-      scene.add.text(428, 182, 'Input', {
-        fill: '#00ff00',
-        fontSize: '12px',
-        fontStyle: 'bold',
-      });
-      scene.inputElement = scene.add.dom(597, 294).createFromCache('taskform');
+    // input area
+    scene.add.text(428, 182, 'Input', {
+      fill: '#00ff00',
+      fontSize: '12px',
+      fontStyle: 'bold',
+    });
+    scene.inputElement = scene.add.dom(597, 294).createFromCache('taskform');
 
-      // output area
-      scene.add.text(360, 350, 'Output', {
-        fill: '#00ff00',
-        fontSize: '12px',
-        fontStyle: 'bold',
-      });
+    // output area
+    scene.add.text(360, 350, 'Output', {
+      fill: '#00ff00',
+      fontSize: '12px',
+      fontStyle: 'bold',
+    });
 
-      //RETURN BUTTON
-      scene.returnContainer = scene.add.rexRoundRectangle(
-        175,
-        502,
-        80,
-        25,
-        5,
-        0xfa8128
-      );
-      scene.returnText = scene.add.text(147, 493, 'Return', {
-        fill: '#000000',
-        fontSize: '15px',
-        fontStyle: 'bold',
-      });
+    //RETURN BUTTON
+    scene.returnContainer = scene.add.rexRoundRectangle(
+      175,
+      502,
+      80,
+      25,
+      5,
+      0xfa8128
+    );
+    scene.returnText = scene.add.text(147, 493, 'Return', {
+      fill: '#000000',
+      fontSize: '15px',
+      fontStyle: 'bold',
+    });
 
-      scene.returnContainer.setInteractive();
-      scene.returnContainer.on('pointerover', () => {
-        scene.returnContainer.setFillStyle(0xfaa562);
-      });
-      scene.returnContainer.on('pointerout', () => {
-        scene.returnContainer.setFillStyle(0xfa8128);
-      });
-      scene.returnContainer.on('pointerdown', () => {
-        scene.socket.emit('resumePhysics');
-        scene.scene.stop('RegexScene');
-      });
+    scene.returnContainer.setInteractive();
+    scene.returnContainer.on('pointerover', () => {
+      scene.returnContainer.setFillStyle(0xfaa562);
+    });
+    scene.returnContainer.on('pointerout', () => {
+      scene.returnContainer.setFillStyle(0xfa8128);
+    });
+    scene.returnContainer.on('pointerdown', () => {
+      scene.socket.emit('resumePhysics');
+      scene.scene.stop('RegexScene');
+    });
 
-      //HINT BUTTON
-      scene.returnContainer = scene.add.rexRoundRectangle(
-        610,
-        320,
-        80,
-        25,
-        5,
-        0xfa8128
-      );
-      scene.returnText = scene.add.text(593, 315, 'Hint', {
-        fill: '#000000',
-        fontSize: '15px',
-        fontStyle: 'bold',
-      });
+    //HINT BUTTON
+    scene.returnContainer = scene.add.rexRoundRectangle(
+      610,
+      320,
+      80,
+      25,
+      5,
+      0xfa8128
+    );
+    scene.returnText = scene.add.text(593, 315, 'Hint', {
+      fill: '#000000',
+      fontSize: '15px',
+      fontStyle: 'bold',
+    });
 
-      scene.returnContainer.setInteractive();
-      scene.returnContainer.on('pointerover', () => {
-        scene.returnContainer.setFillStyle(0xfaa562);
-      });
-      scene.returnContainer.on('pointerout', () => {
-        scene.returnContainer.setFillStyle(0xfa8128);
-      });
-      scene.returnContainer.on('pointerdown', () => {
-        scene.add.text(425, 315, `Try these: ${scene.randomTask.hint}`, {
-          fill: '#00ff00',
-          fontSize: '12px',
-          fontStyle: 'bold',
-        });
-      });
-
-      scene.outputText = scene.add.text(360, 373, '', {
+    scene.returnContainer.setInteractive();
+    scene.returnContainer.on('pointerover', () => {
+      scene.returnContainer.setFillStyle(0xfaa562);
+    });
+    scene.returnContainer.on('pointerout', () => {
+      scene.returnContainer.setFillStyle(0xfa8128);
+    });
+    scene.returnContainer.on('pointerdown', () => {
+      scene.click.play();
+      scene.add.text(425, 315, `Try these: ${scene.randomTask.hint}`, {
         fill: '#00ff00',
         fontSize: '12px',
         fontStyle: 'bold',
-        align: 'left',
-        wordWrap: { width: 290, height: 300, useAdvancedWrap: true },
       });
-      scene.outputText.setVisible(false);
+    });
 
-      scene.isCorrect = scene.add.text(350, 480, 'Correct', {
-        fill: '#00ff00',
-        fontSize: '30px',
-        fontStyle: 'bold',
-        boundsAlignH: 'center',
-      });
-      scene.isIncorrect = scene.add.text(320, 480, 'Incorrect', {
-        fill: '#ff0000',
-        fontSize: '30px',
-        fontStyle: 'bold',
-        boundsAlignH: 'center',
-      });
+    scene.outputText = scene.add.text(360, 373, '', {
+      fill: '#00ff00',
+      fontSize: '12px',
+      fontStyle: 'bold',
+      align: 'left',
+      wordWrap: { width: 290, height: 300, useAdvancedWrap: true },
+    });
+    scene.outputText.setVisible(false);
+
+    scene.isCorrect = scene.add.text(350, 480, 'Correct', {
+      fill: '#00ff00',
+      fontSize: '30px',
+      fontStyle: 'bold',
+      boundsAlignH: 'center',
+    });
+    scene.isIncorrect = scene.add.text(320, 480, 'Incorrect', {
+      fill: '#ff0000',
+      fontSize: '30px',
+      fontStyle: 'bold',
+      boundsAlignH: 'center',
+    });
+    scene.isCorrect.setVisible(false);
+    scene.isIncorrect.setVisible(false);
+
+    // TIME BONUS
+    scene.timeBonus = 0;
+    scene.socket.on('sendTimeToRegex', function (time) {
+      scene.timeBonus = time;
+    });
+
+    // SUBMIT BUTTON
+    scene.submitContainer = scene.add.rexRoundRectangle(
+      620,
+      502,
+      80,
+      25,
+      5,
+      0xa06deb
+    );
+    scene.submitText = scene.add.text(593, 493, 'Submit', {
+      fill: '#000000',
+      fontSize: '15px',
+      fontStyle: 'bold',
+    });
+
+    scene.submitContainer.setInteractive();
+    scene.submitContainer.on('pointerover', () => {
+      scene.submitContainer.setFillStyle(0xaf8feb);
+    });
+    scene.submitContainer.on('pointerout', () => {
+      scene.submitContainer.setFillStyle(0xa06deb);
+    });
+    scene.submitContainer.on('pointerdown', () => {
+      const inputText = scene.inputElement.getChildByName('code');
       scene.isCorrect.setVisible(false);
       scene.isIncorrect.setVisible(false);
 
-      // TIME BONUS
-      scene.timeBonus = 0;
-      scene.socket.on('sendTimeToRegex', function (time) {
-        scene.timeBonus = time;
-      });
+      if (inputText.value !== '') {
+        scene.output = scene.handleInput(
+          scene,
+          inputText.value,
+          scene.randomTask
+        );
+        scene.outputText.setText(scene.output.text);
+        scene.outputText.setVisible(true);
 
-      // SUBMIT BUTTON
-      scene.submitContainer = scene.add.rexRoundRectangle(
-        620,
-        502,
-        80,
-        25,
-        5,
-        0xa06deb
-      );
-      scene.submitText = scene.add.text(593, 493, 'Submit', {
-        fill: '#000000',
-        fontSize: '15px',
-        fontStyle: 'bold',
-      });
-
-      scene.submitContainer.setInteractive();
-      scene.submitContainer.on('pointerover', () => {
-        scene.submitContainer.setFillStyle(0xaf8feb);
-      });
-      scene.submitContainer.on('pointerout', () => {
-        scene.submitContainer.setFillStyle(0xa06deb);
-      });
-      scene.submitContainer.on('pointerdown', () => {
-        const inputText = scene.inputElement.getChildByName('code');
-        scene.isCorrect.setVisible(false);
-        scene.isIncorrect.setVisible(false);
-
-        if (inputText.value !== '') {
-          scene.output = scene.handleInput(
-            scene,
-            inputText.value,
-            scene.randomTask
-          );
-          scene.outputText.setText(scene.output.text);
-          scene.outputText.setVisible(true);
-
-          if (scene.output.win) {
-            scene.isCorrect.setVisible(true);
-            scene.socket.emit('scoreUpdate', {
-              scoreObj: {
-                points: 50,
-                timeBonus: scene.timeBonus,
-              },
-              roomKey: scene.roomKey,
-            });
-            scene.submitButton.disableInteractive();
-            scene.socket.emit('disablePanel', {
-              controlPanel: scene.controlPanel,
-              roomKey: scene.roomKey,
-            });
-            scene.socket.emit('completedTask', { roomKey: scene.roomKey });
-          } else {
-            scene.isIncorrect.setVisible(true);
-            scene.socket.emit('scoreUpdate', {
-              scoreObj: { points: -5 },
-              roomKey: scene.roomKey,
-            });
-          }
+        if (scene.output.win) {
+          scene.isCorrect.setVisible(true);
+          scene.socket.emit('scoreUpdate', {
+            scoreObj: {
+              points: 50,
+              timeBonus: scene.timeBonus,
+            },
+            roomKey: scene.roomKey,
+          });
+          scene.submitButton.disableInteractive();
+          scene.socket.emit('disablePanel', {
+            controlPanel: scene.controlPanel,
+            roomKey: scene.roomKey,
+          });
+          scene.socket.emit('completedTask', { roomKey: scene.roomKey });
+        } else {
+          scene.isIncorrect.setVisible(true);
+          scene.socket.emit('scoreUpdate', {
+            scoreObj: { points: -5 },
+            roomKey: scene.roomKey,
+          });
         }
-      });
+      }
+    });
 
-      //old submit button
-      // scene.submitButton = scene.add.text(570, 490, "Submit", {
-      //   fill: "#00ff00",
-      //   fontSize: "30px",
-      //   fontStyle: "bold",
-      // });
-      // scene.submitButton.setInteractive();
+    // TIME BONUS
+    scene.timeBonus = 0;
+    scene.socket.on('sendTimeToRegex', function (time) {
+      scene.timeBonus = time;
+    });
 
-      // scene.submitButton.on("pointerdown", () => {
-      //   const inputText = scene.inputElement.getChildByName("code");
-      //   scene.isCorrect.setVisible(false);
-      //   scene.isIncorrect.setVisible(false);
+    // SUBMIT BUTTON
+    scene.submitContainer = scene.add.rexRoundRectangle(
+      620,
+      502,
+      80,
+      25,
+      5,
+      0xa06deb
+    );
+    scene.submitText = scene.add.text(593, 493, 'Submit', {
+      fill: '#000000',
+      fontSize: '15px',
+      fontStyle: 'bold',
+    });
 
-      //   if (inputText.value !== "") {
-      //     scene.output = scene.handleInput(
-      //       scene,
-      //       inputText.value,
-      //       scene.randomTask
-      //     );
-      //     scene.outputText.setText(scene.output.text);
-      //     scene.outputText.setVisible(true);
+    scene.submitContainer.setInteractive();
+    scene.submitContainer.on('pointerover', () => {
+      scene.submitContainer.setFillStyle(0xaf8feb);
+    });
+    scene.submitContainer.on('pointerout', () => {
+      scene.submitContainer.setFillStyle(0xa06deb);
+    });
+    scene.submitContainer.on('pointerdown', () => {
+      scene.click.play();
+      const inputText = scene.inputElement.getChildByName('code');
+      scene.isCorrect.setVisible(false);
+      scene.isIncorrect.setVisible(false);
 
-      //     if (scene.output.win) {
-      //       scene.isCorrect.setVisible(true);
-      //       scene.socket.emit("scoreUpdate", {
-      //         scoreObj: {
-      //           points: 50,
-      //           timeBonus: scene.timeBonus,
-      //         },
-      //         roomKey: scene.roomKey,
-      //       });
-      //       scene.submitButton.disableInteractive();
-      //       scene.socket.emit("disablePanel", {
-      //         controlPanel: scene.controlPanel,
-      //         roomKey: scene.roomKey,
-      //       });
-      //       scene.socket.emit("completedTask", { roomKey: scene.roomKey });
-      //     } else {
-      //       scene.isIncorrect.setVisible(true);
-      //       scene.socket.emit("scoreUpdate", {
-      //         scoreObj: { points: -5 },
-      //         roomKey: scene.roomKey,
-      //       });
-      //     }
-      //   }
-      // });
-    } catch (err) {
-      next(err);
-    }
+      if (inputText.value !== '') {
+        scene.output = scene.handleInput(
+          scene,
+          inputText.value,
+          scene.randomTask
+        );
+        scene.outputText.setText(scene.output.text);
+        scene.outputText.setVisible(true);
+
+        if (scene.output.win) {
+          scene.isCorrect.setVisible(true);
+          scene.correct.play();
+          scene.socket.emit('scoreUpdate', {
+            scoreObj: {
+              points: 50,
+              timeBonus: scene.timeBonus,
+            },
+            roomKey: scene.roomKey,
+          });
+          scene.submitContainer.disableInteractive();
+          scene.socket.emit('disablePanel', {
+            controlPanel: scene.controlPanel,
+            roomKey: scene.roomKey,
+          });
+          scene.socket.emit('completedTask', { roomKey: scene.roomKey });
+        } else {
+          scene.isIncorrect.setVisible(true);
+          scene.incorrect.play();
+          scene.socket.emit('scoreUpdate', {
+            scoreObj: { points: -5 },
+            roomKey: scene.roomKey,
+          });
+        }
+      }
+    });
   }
   // PROCESS INPUT TEXT
   handleInput(scene, input, randomTask) {
@@ -312,6 +336,7 @@ export default class RegexScene extends Phaser.Scene {
       win: result.correct,
     };
   }
+
   // VALIDATORS
   matchValidator(regex, randomTask) {
     let output;

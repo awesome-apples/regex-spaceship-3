@@ -20,6 +20,32 @@ export default class Instructions extends Phaser.Scene {
       fontStyle: 'bold',
     });
 
+    //RETURN BUTTON
+    scene.returnContainer = scene.add.rexRoundRectangle(
+      175,
+      502,
+      80,
+      25,
+      5,
+      0xfa8128
+    );
+    scene.returnText = scene.add.text(147, 493, 'Return', {
+      fill: '#000000',
+      fontSize: '15px',
+      fontStyle: 'bold',
+    });
+
+    scene.returnContainer.setInteractive();
+    scene.returnContainer.on('pointerover', () => {
+      scene.returnContainer.setFillStyle(0xfaa562);
+    });
+    scene.returnContainer.on('pointerout', () => {
+      scene.returnContainer.setFillStyle(0xfa8128);
+    });
+    scene.returnContainer.on('pointerdown', () => {
+      scene.scene.stop('Instructions');
+    });
+
     scene.add.text(
       155,
       140,
