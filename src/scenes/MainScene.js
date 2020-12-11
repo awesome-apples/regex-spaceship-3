@@ -857,9 +857,6 @@ export default class MainScene extends Phaser.Scene {
       this.startClickable === true &&
       this.startButton
     ) {
-      // if (this.waitingText) {
-      //   this.waitingText.setVisible(false);
-      // }
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
@@ -872,9 +869,6 @@ export default class MainScene extends Phaser.Scene {
       this.startButton.disableInteractive();
       this.startButton.setVisible(false);
       this.startClickable = true;
-      // if (this.waitingText) {
-      //   this.waitingText.setVisible(true);
-      // }
     }
     if (this.beginTimer) {
       this.countdown();
