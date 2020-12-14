@@ -1,7 +1,6 @@
 import Phaser from "phaser";
 import ProgressBar from "../entity/progressBar";
 import ControlPanel from "../entity/ControlPanel";
-import Speaker from "../entity/Speaker";
 
 export default class MainScene extends Phaser.Scene {
   constructor() {
@@ -121,6 +120,11 @@ export default class MainScene extends Phaser.Scene {
       "../assets/atlas/atlas.png",
       "../assets/atlas/atlas.json"
     );
+    this.load.image("speakerOn", "assets/sprites/speaker_on.png");
+    this.load.image("speakerOff", "assets/sprites/speaker_off.png");
+    this.load.image("volumeUp", "assets/sprites/volume_up.png");
+    this.load.image("volumeDown", "assets/sprites/volume_down.png");
+    this.load.image("startButton", "assets/sprites/startButton.png");
 
     //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
@@ -138,6 +142,8 @@ export default class MainScene extends Phaser.Scene {
     });
 
     //AUDIO
+    this.load.audio("music", "audio/Waiting_Room.mp3");
+
     this.load.audio("click", "audio/Button_Click.wav");
     this.load.audio("timerAlert", "audio/Timer_Alert.mp3");
     this.load.audio("birthdaySFX", "audio/ControlPanel/Birthday.wav");
@@ -147,13 +153,21 @@ export default class MainScene extends Phaser.Scene {
     this.load.audio("lavatorySFX", "audio/ControlPanel/Lavatory.mp3");
     this.load.audio("medbaySFX", "audio/ControlPanel/Medbay.wav");
     this.load.audio("vendingSFX", "audio/ControlPanel/Vending.wav");
+    this.load.audio("folderFlip", "audio/Folder_Flip.wav");
   }
 
   create() {
     const scene = this;
 
+    scene.music = scene.sound.add("music", {
+      volume: 0.5,
+      loop: true,
+    });
+    scene.music.play();
+
     scene.click = scene.sound.add("click");
-    scene.timerAlert = scene.sound.add("timerAlert");
+    scene.timerAlert = scene.sound.add("timerAlert", { volume: 0.75 });
+    scene.folderFlip = scene.sound.add("folderFlip", { volume: 0.75 });
 
     scene.birthdaySFX = scene.sound.add("birthdaySFX");
     scene.cargoSFX = scene.sound.add("cargoSFX");
@@ -173,8 +187,10 @@ export default class MainScene extends Phaser.Scene {
     scene.belowLayer = scene.map.createStaticLayer("Below Player", scene.tileset, 0, 0);
     scene.worldLayer = scene.map.createStaticLayer("World", scene.tileset, 0, 0);
     scene.wallLayer = scene.map.createStaticLayer("Wall Stuff", scene.tileset, 0, 0);
+    scene.waitingRoomWall = scene.map.createDynamicLayer("Waiting Room Wall", scene.tileset, 0, 0);   
     scene.worldLayer.setCollisionByProperty({ collides: true });
     scene.wallLayer.setCollisionByProperty({ collides: true });
+    scene.waitingRoomWall.setCollisionByProperty({ collides: true });
 
     // decorations
     scene.decorations = scene.physics.add.staticGroup();
@@ -462,24 +478,24 @@ export default class MainScene extends Phaser.Scene {
         );
         scene.roomkeyText.setScrollFactor(0);
 
-        //NEED 3 PLAYERS poster
-        scene.needPlayersPoster = scene.add.graphics();
-        scene.needPlayersPoster.lineStyle(1, 0x000000);
-        scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
-        scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
-        scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
-        scene.needPlayersText = scene.add.text(
-          1070,
-          273,
-          "You can start when 3 players enter the game",
-          {
-            fill: "#ff0000",
-            fontSize: "12px",
-            fontStyle: "bold",
-            align: "center",
-            wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
-          }
-        );
+        // //NEED 3 PLAYERS poster
+        // scene.needPlayersPoster = scene.add.graphics();
+        // scene.needPlayersPoster.lineStyle(1, 0x000000);
+        // scene.needPlayersPoster.fillStyle(0xd3d3d3, 0.8);
+        // scene.needPlayersPoster.strokeRect(1064, 270, 120, 50);
+        // scene.needPlayersPoster.fillRect(1064, 270, 120, 50);
+        // scene.needPlayersText = scene.add.text(
+        //   1070,
+        //   273,
+        //   "You can start when 3 players enter the game",
+        //   {
+        //     fill: "#ff0000",
+        //     fontSize: "12px",
+        //     fontStyle: "bold",
+        //     align: "center",
+        //     wordWrap: { width: 130, height: 50, useAdvancedWrap: true },
+        //   }
+        // );
 
         //INSTRUCTIONS BUTTON
         scene.instructionsButton = scene.add
@@ -498,6 +514,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsAreOpen = false;
 
         scene.instructionsButton.on("pointerdown", () => {
+          scene.folderFlip.play();
           scene.scene.launch("Instructions");
         });
 
@@ -516,17 +533,74 @@ export default class MainScene extends Phaser.Scene {
 
         scene.mapButton.setInteractive();
         scene.mapButton.on("pointerdown", () => {
+          scene.folderFlip.play();
           scene.scene.launch("SmallMap");
         });
 
-        // scene.mapButton = scene.add
-        //   .dom(400, 300, "button", "width: 100px; height: 25px", "map")
-        //   .setOrigin(0)
-        //   .setScrollFactor(0);
-        // scene.mapButton.setInteractive();
-        // scene.mapButton.on("pointerdown", () => {
-        //   scene.scene.launch("SmallMap");
-        // });
+        //VOLUME
+        scene.volumeSpeaker = scene.add
+          .image(727, 65, "speakerOn")
+          .setScrollFactor(0)
+          .setScale(0.3);
+        scene.volumeUp = scene.add
+          .image(757, 65, "volumeUp")
+          .setScrollFactor(0)
+          .setScale(0.3);
+        scene.volumeDown = scene.add
+          .image(697, 65, "volumeDown")
+          .setScrollFactor(0)
+          .setScale(0.3);
+
+        scene.volumeUp.setInteractive();
+        scene.volumeDown.setInteractive();
+        scene.volumeSpeaker.setInteractive();
+
+        scene.volumeUp.on("pointerdown", () => {
+          scene.volumeUp.setTint(0xc2c2c2);
+          let newVol = scene.music.volume + 0.1;
+          scene.music.setVolume(newVol);
+          if (scene.music.volume < 0.2) {
+            scene.volumeSpeaker.setTexture("speakerOn");
+          }
+          if (scene.music.volume >= 0.9) {
+            scene.volumeUp.setTint(0xff0000);
+            scene.volumeUp.disableInteractive();
+          } else {
+            scene.volumeDown.clearTint();
+            scene.volumeDown.setInteractive();
+          }
+        });
+
+        scene.volumeDown.on("pointerdown", () => {
+          scene.volumeDown.setTint(0xc2c2c2);
+          let newVol = scene.music.volume - 0.1;
+          scene.music.setVolume(newVol);
+          if (scene.music.volume <= 0.2) {
+            scene.volumeDown.setTint(0xff0000);
+            scene.volumeDown.disableInteractive();
+            scene.volumeSpeaker.setTexture("speakerOff");
+          } else {
+            scene.volumeUp.clearTint();
+            scene.volumeUp.setInteractive();
+          }
+        });
+
+        scene.volumeDown.on("pointerup", () => {
+          scene.volumeDown.clearTint();
+        });
+        scene.volumeUp.on("pointerup", () => {
+          scene.volumeUp.clearTint();
+        });
+
+        scene.volumeSpeaker.on("pointerdown", () => {
+          if (scene.volumeSpeaker.texture.key === "speakerOn") {
+            scene.volumeSpeaker.setTexture("speakerOff");
+            scene.music.setMute(true);
+          } else {
+            scene.volumeSpeaker.setTexture("speakerOn");
+            scene.music.setMute(false);
+          }
+        });
 
         //TIMER
         scene.initialTime = 600;
@@ -596,16 +670,6 @@ export default class MainScene extends Phaser.Scene {
             location: scene.randomTasks[i].location,
           });
         }
-        //SET WAITING FOR MORE PLAYERS TEXT
-        // if (scene.startClickable) {
-        //   scene.waitingText = scene.add
-        //     .text(400, 393, 'Waiting for more players to join', {
-        //       fontSize: '20px',
-        //       fill: '#ff0000',
-        //     })
-        //     .setScrollFactor(0)
-        //     .setOrigin(0.5);
-        // }
       });
     }
 
@@ -667,19 +731,6 @@ export default class MainScene extends Phaser.Scene {
       scene.state.numPlayers = numPlayers;
       if (scene.state.gameStarted) {
         scene.progressBar.changeTaskAmount(scene.progressBar.taskAmount - 3);
-        // scene.add.text(400, 300, "Player Left: Game over").setScrollFactor(0);
-        // scene.playAgain = scene.add
-        //   .text(400, 500, "Play Again", {
-        //     fill: "#00ff00",
-        //     fontSize: "30px",
-        //   })
-        //   .setOrigin(0.5)
-        //   .setScrollFactor(0);
-        // scene.playAgain.setInteractive();
-        // scene.playAgain.on("pointerdown", () => {
-        //   scene.socket.emit("restartGame");
-        //   scene.sys.game.destroy(true);
-        // });
       }
       // if (scene.otherPlayers && scene.otherPlayers.getChildren.length) {
       scene.otherPlayers.getChildren().forEach(function (otherPlayer) {
@@ -688,6 +739,11 @@ export default class MainScene extends Phaser.Scene {
         }
       });
       // }
+    });
+
+    // INITIALIZE PROGRESS BAR
+    this.socket.on("updateTaskAmount", function () {
+      scene.progressBar.changeTaskAmount(scene.state.numPlayers * 3);
     });
 
     // PROGRESS BAR UPDATE
@@ -920,11 +976,17 @@ export default class MainScene extends Phaser.Scene {
 
     // START BUTTON
     scene.startButton = scene.add
-      .dom(400, 350, "button", "width: 70px; height: 25px", "START")
+      .image(400, 350, "startButton")
       .setOrigin(0.5)
-      .setScrollFactor(0);
+      .setScrollFactor(0)
+      .setScale(0.2);
+
     scene.startButton.setVisible(false);
     this.socket.on("destroyButton", function () {
+      scene.waitingRoomWall.removeTileAt(27, 15);
+      scene.waitingRoomWall.removeTileAt(28, 15);
+      scene.waitingRoomWall.removeTileAt(29, 15);
+      scene.waitingRoomWall.removeTileAt(30, 15);
       scene.startButton.destroy();
     });
 
@@ -1128,14 +1190,7 @@ export default class MainScene extends Phaser.Scene {
     );
 
     // START BUTTON VISIBLE
-    if (
-      this.state.numPlayers >= 3 &&
-      this.startClickable === true &&
-      this.startButton
-    ) {
-      // if (this.waitingText) {
-      //   this.waitingText.setVisible(false);
-      // }
+    if (this.joined && this.startClickable === true && this.startButton) {
       this.startButton.setVisible(true);
       this.startButton.setInteractive();
       this.startButton.on("pointerdown", () => {
@@ -1143,14 +1198,6 @@ export default class MainScene extends Phaser.Scene {
         scene.socket.emit("startGame", scene.state.roomKey);
       });
       this.startClickable = false;
-    }
-    if (this.state.numPlayers < 3 && this.joined) {
-      this.startButton.disableInteractive();
-      this.startButton.setVisible(false);
-      this.startClickable = true;
-      // if (this.waitingText) {
-      //   this.waitingText.setVisible(true);
-      // }
     }
     if (this.beginTimer) {
       this.countdown();
@@ -1302,6 +1349,7 @@ export default class MainScene extends Phaser.Scene {
     scene.astronaut.setVisible(true);
     scene.physics.add.collider(scene.astronaut, this.worldLayer);
     scene.physics.add.collider(scene.astronaut, this.decorations);
+    scene.physics.add.collider(scene.astronaut, scene.waitingRoomWall);
 
     //CAMERA
     scene.camera = scene.cameras.main;
@@ -1365,6 +1413,7 @@ export default class MainScene extends Phaser.Scene {
         scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
+        scene.music.stop();
         this.scene.launch("EndScene", {
           ...scene.state,
           socket: scene.socket,

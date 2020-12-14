@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { func } from "prop-types";
 
 export default class WaitingRoom extends Phaser.Scene {
   constructor() {
@@ -44,7 +45,6 @@ export default class WaitingRoom extends Phaser.Scene {
     this.load.html("codeform", "assets/text/codeform.html");
     this.load.image("computer", "assets/backgrounds/computer.png");
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
-    this.load.audio("waitingMusic", "audio/Waiting_Room.mp3");
 
     //LOADING SCREEN LISTENERS
     this.load.on("progress", function (value) {
@@ -70,24 +70,8 @@ export default class WaitingRoom extends Phaser.Scene {
 
     //MUSIC
     scene.click = scene.sound.add("click");
-    scene.waitingMusic = scene.sound.add("waitingMusic", {
-      volume: 1,
-      loop: true,
-    });
-    scene.waitingMusic.play();
-
-    // const up = scene.input.keyboard.addKey("up");
-    // const left = scene.input.keyboard.addKey("left");
-    // const right = scene.input.keyboard.addKey("right");
-    // const down = scene.input.keyboard.addKey("down");
-
     const keyObj = scene.input.keyboard.addKey("enter");
     keyObj.enabled = false;
-    // up.enabled = false;
-    // down.enabled = false;
-    // left.enabled = false;
-    // right.enabled = false;
-
     scene.popUp = scene.add.image(400, 300, "computer");
     scene.requestBox = scene.add.image(300, 280, "popup");
     scene.enterBox = scene.add.image(500, 350, "popup");
@@ -148,6 +132,9 @@ export default class WaitingRoom extends Phaser.Scene {
     });
     scene.socket.on("gameAlreadyStarted", function () {
       scene.notValidText.setText("Game has already begun");
+    });
+    scene.socket.on("gameAlreadyFull", function () {
+      scene.notValidText.setText("Game is already full");
     });
   }
 }
