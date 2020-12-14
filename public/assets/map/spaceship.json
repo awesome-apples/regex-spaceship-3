@@ -111,39 +111,39 @@
                 }, 
                 {
                  "gid":278,
-                 "height":156.369982547993,
+                 "height":140.956,
                  "id":58,
-                 "name":"",
+                 "name":"forklift",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":233.333333333333,
-                 "x":2328.66666666667,
-                 "y":1749.70331588133
+                 "width":210.333,
+                 "x":2355.67,
+                 "y":1752.7
                 }, 
                 {
                  "gid":280,
-                 "height":41.3333333333333,
+                 "height":41.3333,
                  "id":59,
                  "name":"oil1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":78.5333333333332,
-                 "x":576.466666666667,
-                 "y":1891.33333333333
+                 "width":78.5333,
+                 "x":576.467,
+                 "y":1891.33
                 }, 
                 {
                  "gid":279,
-                 "height":42.2764227642276,
+                 "height":42.2764,
                  "id":60,
                  "name":"wires1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":43.3333333333333,
-                 "x":537.666666666667,
-                 "y":1635.60975609756
+                 "width":43.3333,
+                 "x":537.667,
+                 "y":1635.61
                 }, 
                 {
                  "gid":279,
@@ -154,8 +154,8 @@
                  "type":"",
                  "visible":true,
                  "width":43.3333,
-                 "x":857.000016666667,
-                 "y":2293.52846666667
+                 "x":857,
+                 "y":2293.53
                 }, 
                 {
                  "gid":281,
@@ -177,7 +177,7 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":33.8181818181818,
+                 "width":33.8182,
                  "x":1226,
                  "y":1481
                 }, 
@@ -195,15 +195,15 @@
                 }, 
                 {
                  "gid":284,
-                 "height":139.24064171123,
+                 "height":139.241,
                  "id":66,
                  "name":"pipe2",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":94,
-                 "x":2689.83333333333,
-                 "y":2637.4073083779
+                 "x":2689.83,
+                 "y":2637.41
                 }, 
                 {
                  "gid":287,
@@ -213,8 +213,8 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":78.0779220779221,
-                 "x":2446.92207792208,
+                 "width":78.0779,
+                 "x":2446.92,
                  "y":2475.5
                 }, 
                 {
@@ -226,7 +226,7 @@
                  "type":"",
                  "visible":true,
                  "width":78.0779,
-                 "x":2445.96105,
+                 "x":2445.96,
                  "y":2511.5
                 }, 
                 {
@@ -238,7 +238,7 @@
                  "type":"",
                  "visible":true,
                  "width":78.0779,
-                 "x":2447.46105,
+                 "x":2447.46,
                  "y":2549.5
                 }, 
                 {
@@ -249,25 +249,25 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":74.4303797468355,
-                 "x":2447.56962025316,
+                 "width":74.4304,
+                 "x":2447.57,
                  "y":2633
                 }, 
                 {
                  "gid":288,
-                 "height":34.8103448275862,
+                 "height":34.8103,
                  "id":72,
                  "name":"grate1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":36.0535714285715,
-                 "x":2621.94642857143,
-                 "y":2634.31034482759
+                 "width":36.0536,
+                 "x":2621.95,
+                 "y":2634.31
                 }, 
                 {
                  "gid":293,
-                 "height":58.3917525773196,
+                 "height":58.3918,
                  "id":73,
                  "name":"bed2",
                  "rotation":0,
@@ -275,7 +275,7 @@
                  "visible":true,
                  "width":118,
                  "x":1422,
-                 "y":2416.39175257732
+                 "y":2416.39
                 }, 
                 {
                  "gid":293,
@@ -287,35 +287,35 @@
                  "visible":true,
                  "width":118,
                  "x":1423,
-                 "y":2337.8041
+                 "y":2337.8
                 }, 
                 {
                  "gid":292,
-                 "height":65.4893617021277,
+                 "height":65.4894,
                  "id":76,
                  "name":"desk1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":120.705882352941,
-                 "x":2103.29411764706,
-                 "y":2370.48936170213
+                 "width":120.706,
+                 "x":2104.29,
+                 "y":2367.49
                 }, 
                 {
                  "gid":294,
-                 "height":44.5243902439024,
+                 "height":44.5244,
                  "id":78,
                  "name":"stool1",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":38.4315789473684,
-                 "x":2144.56842105263,
-                 "y":2420.5243902439
+                 "width":38.4316,
+                 "x":2144.57,
+                 "y":2420.52
                 }, 
                 {
                  "gid":291,
-                 "height":76.2782608695652,
+                 "height":76.2783,
                  "id":80,
                  "name":"filecabinet1",
                  "rotation":0,
@@ -323,7 +323,259 @@
                  "visible":true,
                  "width":43,
                  "x":2044,
-                 "y":2369.27826086957
+                 "y":2369.28
+                }, 
+                {
+                 "gid":296,
+                 "height":42.9688,
+                 "id":81,
+                 "name":"beaker",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":25,
+                 "x":2190,
+                 "y":2314.97
+                }, 
+                {
+                 "gid":295,
+                 "height":40.9359,
+                 "id":82,
+                 "name":"plant2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":31,
+                 "x":2049,
+                 "y":2310.94
+                }, 
+                {
+                 "gid":298,
+                 "height":31,
+                 "id":84,
+                 "name":"trashcan",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":31,
+                 "x":2202,
+                 "y":2419
+                }, 
+                {
+                 "gid":299,
+                 "height":45.0936,
+                 "id":85,
+                 "name":"sterilizer",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":46,
+                 "x":2118,
+                 "y":2314.09
+                }, 
+                {
+                 "gid":300,
+                 "height":43.3333,
+                 "id":86,
+                 "name":"chair1",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":43.3333,
+                 "x":1300.67,
+                 "y":1371.33
+                }, 
+                {
+                 "gid":301,
+                 "height":29.6667,
+                 "id":87,
+                 "name":"sidetable2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":33.9048,
+                 "x":1306.1,
+                 "y":1409
+                }, 
+                {
+                 "gid":302,
+                 "height":73.1489,
+                 "id":88,
+                 "name":"plant3",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":36,
+                 "x":1263,
+                 "y":1372.15
+                }, 
+                {
+                 "gid":309,
+                 "height":48.6667,
+                 "id":89,
+                 "name":"table2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":51.9111,
+                 "x":1388.76,
+                 "y":1666.33
+                }, 
+                {
+                 "gid":303,
+                 "height":48,
+                 "id":90,
+                 "name":"chair2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":33,
+                 "x":1522.67,
+                 "y":1434
+                }, 
+                {
+                 "gid":304,
+                 "height":47.3333,
+                 "id":91,
+                 "name":"chair3",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":34.0208,
+                 "x":1467.31,
+                 "y":1479.33
+                }, 
+                {
+                 "gid":305,
+                 "height":47.3333,
+                 "id":92,
+                 "name":"chair4",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":34.0208,
+                 "x":1451.98,
+                 "y":1666
+                }, 
+                {
+                 "gid":306,
+                 "height":44.4848,
+                 "id":93,
+                 "name":"chair5",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":34.9524,
+                 "x":1396.71,
+                 "y":1723.15
+                }, 
+                {
+                 "gid":309,
+                 "height":48.6667,
+                 "id":95,
+                 "name":"table1",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":51.9111,
+                 "x":1516.04,
+                 "y":1490.33
+                }, 
+                {
+                 "gid":307,
+                 "height":22.6667,
+                 "id":96,
+                 "name":"food1",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":25.9048,
+                 "x":1525.43,
+                 "y":1461
+                }, 
+                {
+                 "gid":308,
+                 "height":28,
+                 "id":97,
+                 "name":"food2",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":31.1111,
+                 "x":1398.89,
+                 "y":1651
+                }, 
+                {
+                 "gid":310,
+                 "height":90.3972,
+                 "id":98,
+                 "name":"shelf",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":141,
+                 "x":3359.67,
+                 "y":2251.73
+                }, 
+                {
+                 "gid":314,
+                 "height":48,
+                 "id":99,
+                 "name":"globe",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":32,
+                 "x":3372.33,
+                 "y":2180
+                }, 
+                {
+                 "gid":315,
+                 "height":28,
+                 "id":100,
+                 "name":"satellite",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":28,
+                 "x":3417.33,
+                 "y":2178
+                }, 
+                {
+                 "gid":316,
+                 "height":48,
+                 "id":101,
+                 "name":"telescope",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":36,
+                 "x":3456.67,
+                 "y":2177.33
+                }, 
+                {
+                 "gid":304,
+                 "height":47.3333,
+                 "id":103,
+                 "name":"cockpitchair",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":34.0208,
+                 "x":3534.32,
+                 "y":1981
+                }, 
+                {
+                 "gid":317,
+                 "height":140,
+                 "id":104,
+                 "name":"cockpitpanel",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":252.466666666667,
+                 "x":3083.53333333333,
+                 "y":2080
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -332,7 +584,7 @@
          "y":0
         }],
  "nextlayerid":11,
- "nextobjectid":81,
+ "nextobjectid":105,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.4.3",
@@ -4216,7 +4468,7 @@
          "margin":0,
          "name":"Images",
          "spacing":0,
-         "tilecount":18,
+         "tilecount":38,
          "tileheight":512,
          "tiles":[
                 {
@@ -4350,6 +4602,124 @@
                  "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/stool.png",
                  "imageheight":95,
                  "imagewidth":82
+                }, 
+                {
+                 "id":46,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/plant.png"
+                }, 
+                {
+                 "id":47,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/beaker.png",
+                 "imageheight":110,
+                 "imagewidth":64
+                }, 
+                {
+                 "id":48,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/firstaidkit.png",
+                 "imageheight":85,
+                 "imagewidth":87
+                }, 
+                {
+                 "id":49,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/trashcan.png",
+                 "imageheight":16,
+                 "imagewidth":16
+                }, 
+                {
+                 "id":50,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/sterilizer.png",
+                 "imageheight":199,
+                 "imagewidth":203
+                }, 
+                {
+                 "id":51,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/chair1.png",
+                 "imageheight":32,
+                 "imagewidth":32
+                }, 
+                {
+                 "id":52,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/sidetable2.png",
+                 "imageheight":21,
+                 "imagewidth":24
+                }, 
+                {
+                 "id":53,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/plant3.png",
+                 "imageheight":191,
+                 "imagewidth":94
+                }, 
+                {
+                 "id":54,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/chair2.png",
+                 "imageheight":32,
+                 "imagewidth":22
+                }, 
+                {
+                 "id":55,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/chair3.png",
+                 "imageheight":32,
+                 "imagewidth":23
+                }, 
+                {
+                 "id":56,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/chair4.png",
+                 "imageheight":32,
+                 "imagewidth":23
+                }, 
+                {
+                 "id":57,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/chair5.png",
+                 "imageheight":28,
+                 "imagewidth":22
+                }, 
+                {
+                 "id":58,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/food1.png",
+                 "imageheight":14,
+                 "imagewidth":16
+                }, 
+                {
+                 "id":59,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/food2.png",
+                 "imageheight":18,
+                 "imagewidth":20
+                }, 
+                {
+                 "id":60,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/table1.png",
+                 "imageheight":30,
+                 "imagewidth":32
+                }, 
+                {
+                 "id":61,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/shelf.png",
+                 "imageheight":184,
+                 "imagewidth":287
+                }, 
+                {
+                 "id":65,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/globe.png",
+                 "imageheight":48,
+                 "imagewidth":32
+                }, 
+                {
+                 "id":66,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/satellite.png",
+                 "imageheight":28,
+                 "imagewidth":28
+                }, 
+                {
+                 "id":67,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/telescope.png",
+                 "imageheight":48,
+                 "imagewidth":36
+                }, 
+                {
+                 "id":68,
+                 "image":"..\/..\/..\/..\/..\/..\/..\/..\/..\/Desktop\/Tilemap\/Sprites\/cockpitpanel.png",
+                 "imageheight":300,
+                 "imagewidth":541
                 }],
          "tilewidth":764
         }],
