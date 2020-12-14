@@ -23,7 +23,7 @@ export default class EndScene extends Phaser.Scene {
     this.load.image("popup", "assets/backgrounds/singlepopup.png");
     this.load.audio("click", "audio/Button_Click.wav");
     this.load.audio("endMusic", "audio/End_Screen.wav");
-    this.load.audio("leaderboardUpdate", "audio/leaderBoard_Update.wav");
+    this.load.audio("leaderboardUpdate", "audio/leaderboard_Update.wav");
   }
 
   create() {
