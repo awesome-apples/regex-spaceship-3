@@ -74,17 +74,21 @@ export default class MainScene extends Phaser.Scene {
     //tilemap and map objects
     this.load.tilemapTiledJSON("map", "../assets/map/spaceship.json");
     this.load.image("tiles", "assets/spritesheets/scifi_space_rpg_tiles.png");
+    this.load.image("bed", "assets/sprites/decorations/bed.png");
     this.load.image("beam", "assets/sprites/decorations/beam.png");
     this.load.image("brokenscreen", "assets/sprites/decorations/brokenscreen.png");
     this.load.image("chair", "assets/sprites/decorations/chair.png");
     this.load.image("coffeemachine", "assets/sprites/decorations/coffeemachine.png");
     this.load.image("desk", "assets/sprites/decorations/desk.png");
+    this.load.image("filecabinet", "assets/sprites/decorations/filecabinet.png");
     this.load.image("grate", "assets/sprites/decorations/grate.png");
     this.load.image("locker", "assets/sprites/decorations/locker.png");
     this.load.image("medicinemachine", "assets/sprites/decorations/medicinemachine.png");
     this.load.image("oil", "assets/sprites/decorations/oil.png");
     this.load.image("pipe", "assets/sprites/decorations/pipe.png");
+    this.load.image("pipe2", "assets/sprites/decorations/pipe2.png");
     this.load.image("purifier", "assets/sprites/decorations/purifier.png");
+    this.load.image("stool", "assets/sprites/decorations/stool.png");
     this.load.image("toilet", "assets/sprites/decorations/toilet.png");
     this.load.image("tube", "assets/sprites/decorations/tube.png");
     this.load.image("watermachine", "assets/sprites/decorations/watermachine.png");
@@ -183,15 +187,10 @@ export default class MainScene extends Phaser.Scene {
       .setSize(38, 62);
     scene.decorations.add(scene.purifier)
 
-    scene.desk1 = scene.add.sprite(1501, 2367, "desk")
-      .setDisplaySize(141, 76)
-      .setSize(141, 76);
+    scene.desk1 = scene.add.sprite(2164, 2334, "desk")
+      .setDisplaySize(120, 65)
+      .setSize(120, 65);
     scene.decorations.add(scene.desk1)
-
-    scene.desk2 = scene.add.sprite(2145, 2367, "desk")
-      .setDisplaySize(141, 76)
-      .setSize(141, 76);
-    scene.decorations.add(scene.desk2)
 
     scene.tube1 = scene.add.sprite(1700, 2373, "tube")
       .setDisplaySize(38, 130)
@@ -222,6 +221,69 @@ export default class MainScene extends Phaser.Scene {
       .setDisplaySize(45, 158)
       .setSize(45, 158);
     scene.decorations.add(scene.beam4)
+
+    scene.oil1 = scene.add.sprite(615, 1871, "oil")
+      .setDisplaySize(78, 41)
+      .setSize(78, 41);
+
+    scene.wires1 = scene.add.sprite(557, 1615, "wires")
+      .setDisplaySize(42, 42)
+      .setSize(42, 42);
+
+    scene.wires2 = scene.add.sprite(877, 2272, "wires")
+      .setDisplaySize(42, 42)
+      .setSize(42, 42);
+
+    scene.toilet1 = scene.add.sprite(2486, 2478, "toilet")
+      .setDisplaySize(78, 36)
+      .setSize(78, 36);
+    scene.decorations.add(scene.toilet1)
+
+    scene.toilet2 = scene.add.sprite(2486, 2514, "toilet")
+      .setDisplaySize(78, 36)
+      .setSize(78, 36);
+    scene.decorations.add(scene.toilet2)
+
+    scene.toilet3 = scene.add.sprite(2486, 2552, "toilet")
+      .setDisplaySize(78, 36)
+      .setSize(78, 36);
+    scene.decorations.add(scene.toilet3)
+
+    scene.pipe1 = scene.add.sprite(2485, 2613, "pipe")
+      .setDisplaySize(74, 42)
+      .setSize(74, 42);
+    scene.decorations.add(scene.pipe1)
+
+    scene.pipe2 = scene.add.sprite(2736, 2569, "pipe2")
+      .setDisplaySize(94, 139)
+      .setSize(94, 139);
+    scene.decorations.add(scene.pipe2)
+
+    scene.grate1 = scene.add.sprite(2640, 2617, "grate")
+      .setDisplaySize(36, 34)
+      .setSize(36, 34);
+
+    scene.bed1 = scene.add.sprite(1481, 2309, "bed")
+      .setDisplaySize(118, 58)
+      .setSize(118, 58);
+    scene.decorations.add(scene.bed1)
+
+    scene.bed2 = scene.add.sprite(1481, 2389, "bed")
+      .setDisplaySize(118, 58)
+      .setSize(118, 58);
+    scene.decorations.add(scene.bed2)
+
+    scene.stool1 = scene.add.sprite(2163, 2397, "stool")
+      .setDisplaySize(38, 44)
+      .setSize(38, 44);
+    scene.decorations.add(scene.stool1)
+
+    scene.filecabinet = scene.add.sprite(2066, 2330, "filecabinet")
+      .setDisplaySize(43, 76)
+      .setSize(43, 76);
+    scene.decorations.add(scene.filecabinet)
+
+      
 
     // LAUNCH WAITING ROOM
     scene.scene.launch("WaitingRoom", { socket: scene.socket });
@@ -517,7 +579,7 @@ export default class MainScene extends Phaser.Scene {
       classType: ControlPanel,
     });
     this.controlPanelLavatory = this.controlPanelGroup
-      .create(2470, 2444, "lavatory")
+      .create(2470, 2424, "lavatory")
       .setScale(0.3);
     this.controlPanelBirthdayList = this.controlPanelGroup
       .create(1486, 1350, "birthdayList")
