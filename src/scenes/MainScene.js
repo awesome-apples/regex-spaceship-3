@@ -56,10 +56,6 @@ export default class MainScene extends Phaser.Scene {
     percentText.setOrigin(0.5, 0.5);
 
     //TEXTURES
-    this.load.spritesheet("astronaut", "assets/spritesheets/astronaut3.png", {
-      frameWidth: 29,
-      frameHeight: 37,
-    });
     this.load.image("lavatory", "assets/sprites/lavatory.png");
     this.load.image("birthdayList", "assets/sprites/birthdayList.png");
     this.load.image("cockpit", "assets/sprites/console_w.png");
@@ -67,7 +63,6 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("engineRoom", "assets/sprites/engineroom/engineroom2.png");
     this.load.image("vendingMachine", "assets/sprites/vendingMachine.png");
     this.load.image("medBay", "assets/sprites/medbay/desk.png");
-    this.load.image("mainroom", "assets/backgrounds/mainroom.png");
     this.load.image("instructions", "assets/sprites/folder.png");
 
     //tilemap and map objects
@@ -76,24 +71,39 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("bed", "assets/sprites/decorations/bed.png");
     this.load.image("beaker", "assets/sprites/decorations/beaker.png");
     this.load.image("beam", "assets/sprites/decorations/beam.png");
-    this.load.image("brokenscreen", "assets/sprites/decorations/brokenscreen.png");
+    this.load.image(
+      "brokenscreen",
+      "assets/sprites/decorations/brokenscreen.png"
+    );
     this.load.image("chair1", "assets/sprites/decorations/chair1.png");
     this.load.image("chair2", "assets/sprites/decorations/chair2.png");
     this.load.image("chair3", "assets/sprites/decorations/chair3.png");
     this.load.image("chair4", "assets/sprites/decorations/chair4.png");
     this.load.image("chair5", "assets/sprites/decorations/chair5.png");
-    this.load.image("cockpitpanel", "assets/sprites/decorations/cockpitpanel.png");
-    this.load.image("coffeemachine", "assets/sprites/decorations/coffeemachine.png");
+    this.load.image(
+      "cockpitpanel",
+      "assets/sprites/decorations/cockpitpanel.png"
+    );
+    this.load.image(
+      "coffeemachine",
+      "assets/sprites/decorations/coffeemachine.png"
+    );
     this.load.image("couch1", "assets/sprites/decorations/couch1.png");
     this.load.image("desk", "assets/sprites/decorations/desk.png");
-    this.load.image("filecabinet", "assets/sprites/decorations/filecabinet.png");
+    this.load.image(
+      "filecabinet",
+      "assets/sprites/decorations/filecabinet.png"
+    );
     this.load.image("food1", "assets/sprites/decorations/food1.png");
     this.load.image("food2", "assets/sprites/decorations/food2.png");
     this.load.image("forklift", "assets/sprites/decorations/forklift.png");
     this.load.image("globe", "assets/sprites/decorations/globe.png");
     this.load.image("grate", "assets/sprites/decorations/grate.png");
     this.load.image("locker", "assets/sprites/decorations/locker.png");
-    this.load.image("medicinemachine", "assets/sprites/decorations/medicinemachine.png");
+    this.load.image(
+      "medicinemachine",
+      "assets/sprites/decorations/medicinemachine.png"
+    );
     this.load.image("oil", "assets/sprites/decorations/oil.png");
     this.load.image("pipe", "assets/sprites/decorations/pipe.png");
     this.load.image("pipe2", "assets/sprites/decorations/pipe2.png");
@@ -112,9 +122,12 @@ export default class MainScene extends Phaser.Scene {
     this.load.image("toilet", "assets/sprites/decorations/toilet.png");
     this.load.image("trashcan", "assets/sprites/decorations/trashcan.png");
     this.load.image("tube", "assets/sprites/decorations/tube.png");
-    this.load.image("watermachine", "assets/sprites/decorations/watermachine.png");
+    this.load.image(
+      "watermachine",
+      "assets/sprites/decorations/watermachine.png"
+    );
     this.load.image("wires", "assets/sprites/decorations/wires.png");
-    
+
     this.load.atlas(
       "atlas",
       "../assets/atlas/atlas.png",
@@ -184,10 +197,30 @@ export default class MainScene extends Phaser.Scene {
     // tilemap
     scene.map = scene.make.tilemap({ key: "map" });
     scene.tileset = scene.map.addTilesetImage("spaceship", "tiles");
-    scene.belowLayer = scene.map.createStaticLayer("Below Player", scene.tileset, 0, 0);
-    scene.worldLayer = scene.map.createStaticLayer("World", scene.tileset, 0, 0);
-    scene.wallLayer = scene.map.createStaticLayer("Wall Stuff", scene.tileset, 0, 0);
-    scene.waitingRoomWall = scene.map.createDynamicLayer("Waiting Room Wall", scene.tileset, 0, 0);   
+    scene.belowLayer = scene.map.createStaticLayer(
+      "Below Player",
+      scene.tileset,
+      0,
+      0
+    );
+    scene.worldLayer = scene.map.createStaticLayer(
+      "World",
+      scene.tileset,
+      0,
+      0
+    );
+    scene.wallLayer = scene.map.createStaticLayer(
+      "Wall Stuff",
+      scene.tileset,
+      0,
+      0
+    );
+    scene.waitingRoomWall = scene.map.createDynamicLayer(
+      "Waiting Room Wall",
+      scene.tileset,
+      0,
+      0
+    );
     scene.worldLayer.setCollisionByProperty({ collides: true });
     scene.wallLayer.setCollisionByProperty({ collides: true });
     scene.waitingRoomWall.setCollisionByProperty({ collides: true });
@@ -195,251 +228,301 @@ export default class MainScene extends Phaser.Scene {
     // decorations
     scene.decorations = scene.physics.add.staticGroup();
 
-    scene.coffeemachine = scene.add.sprite(1606, 1309, "coffeemachine")
+    scene.coffeemachine = scene.add
+      .sprite(1606, 1309, "coffeemachine")
       .setDisplaySize(40, 88)
       .setSize(40, 88);
     scene.decorations.add(scene.coffeemachine);
 
-    scene.locker = scene.add.sprite(2305, 1311, "locker")
+    scene.locker = scene.add
+      .sprite(2305, 1311, "locker")
       .setDisplaySize(113, 102)
       .setSize(113, 102);
     scene.decorations.add(scene.locker);
 
-    scene.medicinemachine = scene.add.sprite(1588, 2147, "medicinemachine")
+    scene.medicinemachine = scene.add
+      .sprite(1588, 2147, "medicinemachine")
       .setDisplaySize(56, 87)
       .setSize(56, 87);
     scene.decorations.add(scene.medicinemachine);
 
-    scene.watermachine = scene.add.sprite(2214, 1323, "watermachine")
+    scene.watermachine = scene.add
+      .sprite(2214, 1323, "watermachine")
       .setDisplaySize(26, 88)
       .setSize(26, 88);
     scene.decorations.add(scene.medicinemachine);
-    
-    scene.purifier = scene.add.sprite(1421, 2144, "purifier")
+
+    scene.purifier = scene.add
+      .sprite(1421, 2144, "purifier")
       .setDisplaySize(38, 62)
       .setSize(38, 62);
-    scene.decorations.add(scene.purifier)
+    scene.decorations.add(scene.purifier);
 
-    scene.desk1 = scene.add.sprite(2164, 2334, "desk")
+    scene.desk1 = scene.add
+      .sprite(2164, 2334, "desk")
       .setDisplaySize(120, 65)
       .setSize(120, 65);
-    scene.decorations.add(scene.desk1)
+    scene.decorations.add(scene.desk1);
 
-    scene.tube1 = scene.add.sprite(1700, 2373, "tube")
+    scene.tube1 = scene.add
+      .sprite(1700, 2373, "tube")
       .setDisplaySize(38, 130)
       .setSize(38, 130);
-    scene.decorations.add(scene.tube1)
+    scene.decorations.add(scene.tube1);
 
-    scene.tube2 = scene.add.sprite(1940, 2373, "tube")
+    scene.tube2 = scene.add
+      .sprite(1940, 2373, "tube")
       .setDisplaySize(38, 130)
       .setSize(38, 130);
-    scene.decorations.add(scene.tube2)
+    scene.decorations.add(scene.tube2);
 
-    scene.beam1 = scene.add.sprite(622, 1711, "beam")
+    scene.beam1 = scene.add
+      .sprite(622, 1711, "beam")
       .setDisplaySize(45, 158)
       .setSize(45, 158);
-    scene.decorations.add(scene.beam1)
+    scene.decorations.add(scene.beam1);
 
-    scene.beam2 = scene.add.sprite(815, 1711, "beam")
+    scene.beam2 = scene.add
+      .sprite(815, 1711, "beam")
       .setDisplaySize(45, 158)
       .setSize(45, 158);
-    scene.decorations.add(scene.beam2)
+    scene.decorations.add(scene.beam2);
 
-    scene.beam3 = scene.add.sprite(622, 2148, "beam")
+    scene.beam3 = scene.add
+      .sprite(622, 2148, "beam")
       .setDisplaySize(45, 158)
       .setSize(45, 158);
-    scene.decorations.add(scene.beam3)
+    scene.decorations.add(scene.beam3);
 
-    scene.beam4 = scene.add.sprite(814, 2148, "beam")
+    scene.beam4 = scene.add
+      .sprite(814, 2148, "beam")
       .setDisplaySize(45, 158)
       .setSize(45, 158);
-    scene.decorations.add(scene.beam4)
+    scene.decorations.add(scene.beam4);
 
-    scene.oil1 = scene.add.sprite(615, 1871, "oil")
+    scene.oil1 = scene.add
+      .sprite(615, 1871, "oil")
       .setDisplaySize(78, 41)
       .setSize(78, 41);
 
-    scene.wires1 = scene.add.sprite(557, 1615, "wires")
+    scene.wires1 = scene.add
+      .sprite(557, 1615, "wires")
       .setDisplaySize(42, 42)
       .setSize(42, 42);
 
-    scene.wires2 = scene.add.sprite(877, 2272, "wires")
+    scene.wires2 = scene.add
+      .sprite(877, 2272, "wires")
       .setDisplaySize(42, 42)
       .setSize(42, 42);
 
-    scene.toilet1 = scene.add.sprite(2486, 2478, "toilet")
+    scene.toilet1 = scene.add
+      .sprite(2486, 2478, "toilet")
       .setDisplaySize(78, 36)
       .setSize(78, 36);
-    scene.decorations.add(scene.toilet1)
+    scene.decorations.add(scene.toilet1);
 
-    scene.toilet2 = scene.add.sprite(2486, 2514, "toilet")
+    scene.toilet2 = scene.add
+      .sprite(2486, 2514, "toilet")
       .setDisplaySize(78, 36)
       .setSize(78, 36);
-    scene.decorations.add(scene.toilet2)
+    scene.decorations.add(scene.toilet2);
 
-    scene.toilet3 = scene.add.sprite(2486, 2552, "toilet")
+    scene.toilet3 = scene.add
+      .sprite(2486, 2552, "toilet")
       .setDisplaySize(78, 36)
       .setSize(78, 36);
-    scene.decorations.add(scene.toilet3)
+    scene.decorations.add(scene.toilet3);
 
-    scene.pipe1 = scene.add.sprite(2485, 2613, "pipe")
+    scene.pipe1 = scene.add
+      .sprite(2485, 2613, "pipe")
       .setDisplaySize(74, 42)
       .setSize(74, 42);
-    scene.decorations.add(scene.pipe1)
+    scene.decorations.add(scene.pipe1);
 
-    scene.pipe2 = scene.add.sprite(2736, 2569, "pipe2")
+    scene.pipe2 = scene.add
+      .sprite(2736, 2569, "pipe2")
       .setDisplaySize(94, 139)
       .setSize(94, 139);
-    scene.decorations.add(scene.pipe2)
+    scene.decorations.add(scene.pipe2);
 
-    scene.grate1 = scene.add.sprite(2640, 2617, "grate")
+    scene.grate1 = scene.add
+      .sprite(2640, 2617, "grate")
       .setDisplaySize(36, 34)
       .setSize(36, 34);
 
-    scene.bed1 = scene.add.sprite(1481, 2309, "bed")
+    scene.bed1 = scene.add
+      .sprite(1481, 2309, "bed")
       .setDisplaySize(118, 58)
       .setSize(118, 58);
-    scene.decorations.add(scene.bed1)
+    scene.decorations.add(scene.bed1);
 
-    scene.bed2 = scene.add.sprite(1481, 2389, "bed")
+    scene.bed2 = scene.add
+      .sprite(1481, 2389, "bed")
       .setDisplaySize(118, 58)
       .setSize(118, 58);
-    scene.decorations.add(scene.bed2)
+    scene.decorations.add(scene.bed2);
 
-    scene.stool1 = scene.add.sprite(2163, 2397, "stool")
+    scene.stool1 = scene.add
+      .sprite(2163, 2397, "stool")
       .setDisplaySize(38, 44)
       .setSize(38, 44);
-    scene.decorations.add(scene.stool1)
+    scene.decorations.add(scene.stool1);
 
-    scene.filecabinet = scene.add.sprite(2066, 2330, "filecabinet")
+    scene.filecabinet = scene.add
+      .sprite(2066, 2330, "filecabinet")
       .setDisplaySize(43, 76)
       .setSize(43, 76);
-    scene.decorations.add(scene.filecabinet)
+    scene.decorations.add(scene.filecabinet);
 
-    scene.forklift = scene.add.sprite(2461, 1682, "forklift")
+    scene.forklift = scene.add
+      .sprite(2461, 1682, "forklift")
       .setDisplaySize(210, 140)
       .setSize(210, 140);
-    scene.decorations.add(scene.forklift)
+    scene.decorations.add(scene.forklift);
 
-    scene.couch1 = scene.add.sprite(1241, 1532, "couch1")
+    scene.couch1 = scene.add
+      .sprite(1241, 1532, "couch1")
       .setDisplaySize(35, 105)
       .setSize(35, 105);
-    scene.decorations.add(scene.couch1)
+    scene.decorations.add(scene.couch1);
 
-    scene.sidetable = scene.add.sprite(1241, 1464, "sidetable")
+    scene.sidetable = scene.add
+      .sprite(1241, 1464, "sidetable")
       .setDisplaySize(33, 31)
       .setSize(33, 31);
-    scene.decorations.add(scene.sidetable)
+    scene.decorations.add(scene.sidetable);
 
-    scene.plant1 = scene.add.sprite(1244, 1444, "plant1")
+    scene.plant1 = scene.add
+      .sprite(1244, 1444, "plant1")
       .setDisplaySize(24, 40)
       .setSize(24, 40);
-    scene.decorations.add(scene.plant1)
+    scene.decorations.add(scene.plant1);
 
-    scene.plant2 = scene.add.sprite(2064, 2291, "plant2")
+    scene.plant2 = scene.add
+      .sprite(2064, 2291, "plant2")
       .setDisplaySize(31, 40)
       .setSize(31, 40);
-    scene.decorations.add(scene.plant2)
+    scene.decorations.add(scene.plant2);
 
-    scene.beaker = scene.add.sprite(2202, 2293, "beaker")
+    scene.beaker = scene.add
+      .sprite(2202, 2293, "beaker")
       .setDisplaySize(25, 42)
       .setSize(25, 42);
-    scene.decorations.add(scene.beaker)
+    scene.decorations.add(scene.beaker);
 
-    scene.trashcan = scene.add.sprite(2217, 2404, "trashcan")
+    scene.trashcan = scene.add
+      .sprite(2217, 2404, "trashcan")
       .setDisplaySize(31, 31)
       .setSize(31, 31);
-    scene.decorations.add(scene.trashcan)
+    scene.decorations.add(scene.trashcan);
 
-    scene.sterilizer = scene.add.sprite(2141, 2290, "sterilizer")
+    scene.sterilizer = scene.add
+      .sprite(2141, 2290, "sterilizer")
       .setDisplaySize(46, 45)
       .setSize(46, 45);
-    scene.decorations.add(scene.sterilizer)
+    scene.decorations.add(scene.sterilizer);
 
-    scene.chair1 = scene.add.sprite(1322, 1399, "chair1")
+    scene.chair1 = scene.add
+      .sprite(1322, 1399, "chair1")
       .setDisplaySize(43, 43)
       .setSize(43, 43);
-    scene.decorations.add(scene.chair1)
+    scene.decorations.add(scene.chair1);
 
-    scene.sidetable2 = scene.add.sprite(1323, 1444, "sidetable2")
+    scene.sidetable2 = scene.add
+      .sprite(1323, 1444, "sidetable2")
       .setDisplaySize(33, 29)
       .setSize(33, 29);
-    scene.decorations.add(scene.sidetable2)
+    scene.decorations.add(scene.sidetable2);
 
-    scene.plant3 = scene.add.sprite(1281, 1385, "plant3")
+    scene.plant3 = scene.add
+      .sprite(1281, 1385, "plant3")
       .setDisplaySize(36, 73)
       .setSize(36, 73);
-    scene.decorations.add(scene.plant3)
+    scene.decorations.add(scene.plant3);
 
-    scene.table1 = scene.add.sprite(1539, 1463, "table1")
+    scene.table1 = scene.add
+      .sprite(1539, 1463, "table1")
       .setDisplaySize(51, 48)
       .setSize(51, 48);
-    scene.decorations.add(scene.table1)
+    scene.decorations.add(scene.table1);
 
-    scene.table2 = scene.add.sprite(1413, 1644, "table1")
+    scene.table2 = scene.add
+      .sprite(1413, 1644, "table1")
       .setDisplaySize(51, 48)
       .setSize(51, 48);
-    scene.decorations.add(scene.table2)
+    scene.decorations.add(scene.table2);
 
-    scene.chair2 = scene.add.sprite(1538, 1409, "chair2")
+    scene.chair2 = scene.add
+      .sprite(1538, 1409, "chair2")
       .setDisplaySize(33, 48)
       .setSize(33, 48);
-    scene.decorations.add(scene.chair2)
+    scene.decorations.add(scene.chair2);
 
-    scene.chair3 = scene.add.sprite(1483, 1455, "chair3")
+    scene.chair3 = scene.add
+      .sprite(1483, 1455, "chair3")
       .setDisplaySize(34, 47)
       .setSize(34, 47);
-    scene.decorations.add(scene.chair3)
+    scene.decorations.add(scene.chair3);
 
-    scene.chair4 = scene.add.sprite(1468, 1642, "chair4")
+    scene.chair4 = scene.add
+      .sprite(1468, 1642, "chair4")
       .setDisplaySize(34, 47)
       .setSize(34, 47);
-    scene.decorations.add(scene.chair4)
+    scene.decorations.add(scene.chair4);
 
-    scene.chair5 = scene.add.sprite(1414, 1701, "chair5")
+    scene.chair5 = scene.add
+      .sprite(1414, 1701, "chair5")
       .setDisplaySize(34, 44)
       .setSize(34, 44);
-    scene.decorations.add(scene.chair5)
+    scene.decorations.add(scene.chair5);
 
-    scene.food1 = scene.add.sprite(1414, 1637, "food1")
+    scene.food1 = scene.add
+      .sprite(1414, 1637, "food1")
       .setDisplaySize(25, 22)
       .setSize(25, 22);
-    scene.decorations.add(scene.food1)
+    scene.decorations.add(scene.food1);
 
-    scene.food2 = scene.add.sprite(1539, 1449, "food2")
+    scene.food2 = scene.add
+      .sprite(1539, 1449, "food2")
       .setDisplaySize(31, 28)
       .setSize(31, 28);
-    scene.decorations.add(scene.food2)
+    scene.decorations.add(scene.food2);
 
-    scene.shelf = scene.add.sprite(3430, 2207, "shelf")
+    scene.shelf = scene.add
+      .sprite(3430, 2207, "shelf")
       .setDisplaySize(141, 90)
       .setSize(141, 90);
-    scene.decorations.add(scene.shelf)
+    scene.decorations.add(scene.shelf);
 
-    scene.cockpitchair = scene.add.sprite(3551, 1957, "chair3")
+    scene.cockpitchair = scene.add
+      .sprite(3551, 1957, "chair3")
       .setDisplaySize(34, 47)
       .setSize(34, 47);
     //scene.decorations.add(scene.cockpitchair)
 
-    scene.globe = scene.add.sprite(3388, 2156, "globe")
+    scene.globe = scene.add
+      .sprite(3388, 2156, "globe")
       .setDisplaySize(32, 48)
       .setSize(32, 48);
-    scene.decorations.add(scene.globe)
+    scene.decorations.add(scene.globe);
 
-    scene.satellite = scene.add.sprite(3432, 2164, "satellite")
+    scene.satellite = scene.add
+      .sprite(3432, 2164, "satellite")
       .setDisplaySize(28, 28)
       .setSize(28, 28);
-    scene.decorations.add(scene.satellite)
+    scene.decorations.add(scene.satellite);
 
-    scene.telescope = scene.add.sprite(3475, 2153, "telescope")
+    scene.telescope = scene.add
+      .sprite(3475, 2153, "telescope")
       .setDisplaySize(36, 48)
       .setSize(36, 48);
-    scene.decorations.add(scene.telescope)
+    scene.decorations.add(scene.telescope);
 
-    scene.cockpitpanel = scene.add.sprite(3211, 2009, "cockpitpanel")
+    scene.cockpitpanel = scene.add
+      .sprite(3211, 2009, "cockpitpanel")
       .setDisplaySize(252, 140)
       .setSize(252, 140);
-    scene.decorations.add(scene.cockpitpanel)
+    scene.decorations.add(scene.cockpitpanel);
 
     // LAUNCH WAITING ROOM
     scene.scene.launch("WaitingRoom", { socket: scene.socket });
