@@ -195,7 +195,7 @@ export default class StoryScene extends Phaser.Scene {
         this.nextContainer.setFillStyle(0x04d153);
       });
       this.nextContainer.on("pointerout", () => {
-        this.nextContainer.fillStyle(0x03c04a);
+        this.nextContainer.setFillStyle(0x03c04a);
       });
       this.nextContainer.on("pointerdown", () => {
         this.click.play();
