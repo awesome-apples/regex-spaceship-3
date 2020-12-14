@@ -835,7 +835,6 @@ export default class MainScene extends Phaser.Scene {
       scene.progressBar.increase(gameScore - scene.state.gameScore);
       scene.state.gameScore = gameScore;
       if (scene.state.gameScore >= scene.progressBar.taskAmount) {
-        // scene.instructionsButton.destroy();
         scene.scene.stop("RegexScene");
         scene.physics.pause();
         scene.scene.launch("EndScene", {
@@ -1493,7 +1492,6 @@ export default class MainScene extends Phaser.Scene {
       }
       this.beginTimer = currentTime;
       if (this.initialTime === 0) {
-        // scene.instructionsButton.destroy();
         this.beginTimer = false;
         scene.physics.pause();
         scene.music.stop();
